@@ -245,7 +245,7 @@ function ChartTooltipContent({
                         {itemConfig?.label || item.name}
                       </span>
                     </div>
-                    {item.value && (
+                    {item.value != null && (
                       <span className='text-foreground font-mono font-medium tabular-nums'>
                         {typeof item.value === 'number'
                           ? new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(
@@ -302,7 +302,7 @@ function ChartLegendContent({
 
         return (
           <div
-            key={item.value}
+            key={`${item.value ?? ''}-${item.dataKey ?? ''}`}
             className={cn(
               '[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3'
             )}

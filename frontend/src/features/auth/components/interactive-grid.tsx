@@ -18,7 +18,7 @@ export function InteractiveGridPattern({
   className,
   squaresClassName,
   ...props
-}: InteractiveGridPatternProps) {
+}: InteractiveGridPatternProps): React.JSX.Element {
   const [horizontal, vertical] = squares;
   const [hoveredSquare, setHoveredSquare] = useState<number | null>(null);
 
@@ -34,7 +34,7 @@ export function InteractiveGridPattern({
         const y = Math.floor(index / horizontal) * height;
         return (
           <rect
-            key={index}
+            key={`grid-${index}`}
             x={x}
             y={y}
             width={width}

@@ -1,11 +1,7 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
-import * as matchers from '@testing-library/jest-dom/matchers';
 import React from 'react';
-
-// oxlint-disable-next-line @typescript-eslint/no-explicit-any
-expect.extend(matchers as any);
 
 afterEach(() => {
   cleanup();

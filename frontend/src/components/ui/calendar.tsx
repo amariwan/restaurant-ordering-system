@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 
-const Chevron = ({ orientation }: { orientation?: 'left' | 'right' }) => {
+const Chevron = ({ orientation }: { orientation?: 'left' | 'right' | 'up' | 'down' }) => {
   if (orientation === 'left') {
     return <ChevronLeftIcon className='size-4' />;
   }

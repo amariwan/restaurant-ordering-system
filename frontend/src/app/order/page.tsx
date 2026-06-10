@@ -416,7 +416,6 @@ interface MenuGridProps {
   onAdd: (item: any) => void;
   noItemsLabel: string;
   addLabel: string;
-  _loadingLabel: string;
 }
 
 interface CartContentProps {
@@ -523,8 +522,7 @@ function MenuGrid({
   setImageErrors,
   onAdd,
   noItemsLabel,
-  addLabel,
-  _loadingLabel
+  addLabel
 }: MenuGridProps) {
   if (isLoading) {
     return (
