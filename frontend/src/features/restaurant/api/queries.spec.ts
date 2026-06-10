@@ -20,7 +20,7 @@ vi.mock('@/features/restaurant/api/service', () => ({
   ordersCreate: vi.fn(),
   paymentsCreate: vi.fn(),
   usersUpdate: vi.fn(),
-  usersDelete: vi.fn(),
+  usersDelete: vi.fn()
 }));
 
 import {
@@ -31,7 +31,7 @@ import {
   ordersAllOptions,
   ordersDetailOptions,
   paymentsByOrderOptions,
-  usersAllOptions,
+  usersAllOptions
 } from './queries';
 
 describe('keys', () => {
@@ -52,7 +52,12 @@ describe('keys', () => {
 
   it('has orders sub-keys', () => {
     expect(keys.orders.all).toEqual(['restaurant', 'orders']);
-    expect(keys.orders.list({ status: 'pending' })).toEqual(['restaurant', 'orders', 'list', { status: 'pending' }]);
+    expect(keys.orders.list({ status: 'pending' })).toEqual([
+      'restaurant',
+      'orders',
+      'list',
+      { status: 'pending' }
+    ]);
     expect(keys.orders.detail(3)).toEqual(['restaurant', 'orders', 'detail', 3]);
   });
 

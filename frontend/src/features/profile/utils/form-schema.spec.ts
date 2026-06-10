@@ -10,7 +10,7 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: 'US',
       city: 'NYC',
-      jobs: [],
+      jobs: []
     });
     expect(result.success).toBe(true);
   });
@@ -23,7 +23,7 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: 'US',
       city: 'NYC',
-      jobs: [],
+      jobs: []
     });
     expect(result.success).toBe(false);
   });
@@ -36,7 +36,7 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: 'US',
       city: 'NYC',
-      jobs: [],
+      jobs: []
     });
     expect(result.success).toBe(false);
   });
@@ -49,7 +49,7 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: '',
       city: 'NYC',
-      jobs: [],
+      jobs: []
     });
     expect(result.success).toBe(false);
   });
@@ -62,14 +62,16 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: 'US',
       city: 'NYC',
-      jobs: [{
-        jobcountry: 'US',
-        jobcity: 'SF',
-        jobtitle: 'Engineer',
-        employer: 'Acme',
-        startdate: '2020-01-01',
-        enddate: '2023-01-01',
-      }],
+      jobs: [
+        {
+          jobcountry: 'US',
+          jobcity: 'SF',
+          jobtitle: 'Engineer',
+          employer: 'Acme',
+          startdate: '2020-01-01',
+          enddate: '2023-01-01'
+        }
+      ]
     });
     expect(result.success).toBe(true);
   });
@@ -82,14 +84,16 @@ describe('profileSchema', () => {
       contactno: 1234567890,
       country: 'US',
       city: 'NYC',
-      jobs: [{
-        jobcountry: 'US',
-        jobcity: 'SF',
-        jobtitle: 'Engineer',
-        employer: 'Acme',
-        startdate: '01-01-2020',
-        enddate: '01-01-2023',
-      }],
+      jobs: [
+        {
+          jobcountry: 'US',
+          jobcity: 'SF',
+          jobtitle: 'Engineer',
+          employer: 'Acme',
+          startdate: '01-01-2020',
+          enddate: '01-01-2023'
+        }
+      ]
     });
     expect(result.success).toBe(false);
   });

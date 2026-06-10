@@ -25,7 +25,7 @@ import type {
   UpdateReservationPayload,
   UpdateReservationStatusPayload,
   ReservationFilters,
-  ChangePasswordPayload,
+  ChangePasswordPayload
 } from './types';
 import { getToken as getStoredToken } from '../lib/auth-store';
 
@@ -93,10 +93,13 @@ async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> 
     try {
       // dynamic import to avoid bundling in client
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { cookies } = await import('next/headers')
-      const cookieStore = await cookies()
-      const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join('; ')
-      if (cookieHeader && !headers.cookie) headers.cookie = cookieHeader
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      const cookieHeader = cookieStore
+        .getAll()
+        .map((c) => `${c.name}=${c.value}`)
+        .join('; ');
+      if (cookieHeader && !headers.cookie) headers.cookie = cookieHeader;
     } catch {
       // ignore
     }
@@ -115,7 +118,11 @@ async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> 
     const method = (options.method ?? 'GET').toUpperCase();
     if (method !== 'GET' && method !== 'HEAD') {
       try {
-        const match = document.cookie.match(new RegExp('(?:^|; )' + 'restaurant_csrf'.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+        const match = document.cookie.match(
+          new RegExp(
+            '(?:^|; )' + 'restaurant_csrf'.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'
+          )
+        );
         if (match && match[1]) headers['X-CSRF-TOKEN'] = decodeURIComponent(match[1]);
       } catch {
         // ignore
@@ -149,7 +156,7 @@ async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> 
   return res.json() as Promise<T>;
 }
 
-function buildQuery(params?: Record<string, any>): string {
+function buildQuery(params?: Record<string, unknown>): string {
   if (!params) return '';
   const qs = new URLSearchParams();
   for (const k of Object.keys(params)) {
@@ -161,16 +168,16 @@ function buildQuery(params?: Record<string, any>): string {
   return s ? `?${s}` : '';
 }
 
-async function apiGet<T>(path: string, params?: Record<string, any>): Promise<T> {
+async function apiGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
   return fetchApi<T>(`${path}${buildQuery(params)}`);
 }
 
-async function apiPost<T>(path: string, data?: any): Promise<T> {
+async function apiPost<T>(path: string, data?: unknown): Promise<T> {
   const isForm = typeof FormData !== 'undefined' && data instanceof FormData;
   return fetchApi<T>(path, { method: 'POST', body: isForm ? data : JSON.stringify(data) });
 }
 
-async function apiPut<T>(path: string, data?: any): Promise<T> {
+async function apiPut<T>(path: string, data?: unknown): Promise<T> {
   return fetchApi<T>(path, { method: 'PUT', body: JSON.stringify(data) });
 }
 
@@ -184,7 +191,11 @@ export async function authLogin(data: { email: string; password: string }): Prom
   return apiPost<AuthResponse>('/auth/login', data);
 }
 
-export async function authRegister(data: { name: string; email: string; password: string }): Promise<AuthResponse> {
+export async function authRegister(data: {
+  name: string;
+  email: string;
+  password: string;
+}): Promise<AuthResponse> {
   return apiPost<AuthResponse>('/auth/register', data);
 }
 
@@ -202,8 +213,17 @@ export async function menuGetCategories(): Promise<Category[]> {
   return apiGet<Category[]>('/menu/categories');
 }
 
-export async function menuGetItems(filters?: MenuFilters, page = 1, pageSize = 20): Promise<PaginatedResponse<MenuItem>> {
-  return apiGet<PaginatedResponse<MenuItem>>('/menu', { categoryId: filters?.categoryId, available: filters?.available, page, pageSize });
+export async function menuGetItems(
+  filters?: MenuFilters,
+  page = 1,
+  pageSize = 20
+): Promise<PaginatedResponse<MenuItem>> {
+  return apiGet<PaginatedResponse<MenuItem>>('/menu', {
+    categoryId: filters?.categoryId,
+    available: filters?.available,
+    page,
+    pageSize
+  });
 }
 
 export async function menuCreateCategory(data: CreateCategoryPayload): Promise<void> {
@@ -256,8 +276,17 @@ export async function tablesDelete(id: number): Promise<void> {
 
 // --- Orders ---
 
-export async function ordersGetAll(filters?: OrdersFilters, page = 1, pageSize = 20): Promise<PaginatedResponse<Order>> {
-  return apiGet<PaginatedResponse<Order>>('/orders', { status: filters?.status, tableId: filters?.tableId, page, pageSize });
+export async function ordersGetAll(
+  filters?: OrdersFilters,
+  page = 1,
+  pageSize = 20
+): Promise<PaginatedResponse<Order>> {
+  return apiGet<PaginatedResponse<Order>>('/orders', {
+    status: filters?.status,
+    tableId: filters?.tableId,
+    page,
+    pageSize
+  });
 }
 
 export async function ordersGetById(id: number): Promise<Order> {
@@ -268,7 +297,10 @@ export async function ordersCreate(data: CreateOrderPayload): Promise<Order> {
   return apiPost<Order>('/orders', data);
 }
 
-export async function ordersUpdateStatus(id: number, data: UpdateOrderStatusPayload): Promise<Order> {
+export async function ordersUpdateStatus(
+  id: number,
+  data: UpdateOrderStatusPayload
+): Promise<Order> {
   return apiPut<Order>(`/orders/${id}/status`, data);
 }
 
@@ -286,7 +318,10 @@ export async function ordersRemoveItem(orderId: number, itemId: number): Promise
 
 // --- Payments ---
 
-export async function paymentsCreate(orderId: number, data: CreatePaymentPayload): Promise<Payment> {
+export async function paymentsCreate(
+  orderId: number,
+  data: CreatePaymentPayload
+): Promise<Payment> {
   return apiPost<Payment>(`/payments${buildQuery({ orderId })}`, data);
 }
 
@@ -304,7 +339,11 @@ export async function authChangePassword(data: ChangePasswordPayload): Promise<U
 
 // --- Users ---
 
-export async function usersGetAll(search?: string, page = 1, pageSize = 20): Promise<PaginatedResponse<User>> {
+export async function usersGetAll(
+  search?: string,
+  page = 1,
+  pageSize = 20
+): Promise<PaginatedResponse<User>> {
   return apiGet<PaginatedResponse<User>>('/users', { search, page, pageSize });
 }
 
@@ -318,8 +357,17 @@ export async function usersDelete(id: number): Promise<void> {
 
 // --- Reservations ---
 
-export async function reservationsGetAll(filters?: ReservationFilters, page = 1, pageSize = 20): Promise<PaginatedResponse<Reservation>> {
-  return apiGet<PaginatedResponse<Reservation>>('/reservations', { status: filters?.status, date: filters?.date, page, pageSize });
+export async function reservationsGetAll(
+  filters?: ReservationFilters,
+  page = 1,
+  pageSize = 20
+): Promise<PaginatedResponse<Reservation>> {
+  return apiGet<PaginatedResponse<Reservation>>('/reservations', {
+    status: filters?.status,
+    date: filters?.date,
+    page,
+    pageSize
+  });
 }
 
 export async function reservationsGetById(id: number): Promise<Reservation> {
@@ -330,11 +378,17 @@ export async function reservationsCreate(data: CreateReservationPayload): Promis
   return apiPost<Reservation>('/reservations', data);
 }
 
-export async function reservationsUpdate(id: number, data: UpdateReservationPayload): Promise<Reservation> {
+export async function reservationsUpdate(
+  id: number,
+  data: UpdateReservationPayload
+): Promise<Reservation> {
   return apiPut<Reservation>(`/reservations/${id}`, data);
 }
 
-export async function reservationsUpdateStatus(id: number, data: UpdateReservationStatusPayload): Promise<Reservation> {
+export async function reservationsUpdateStatus(
+  id: number,
+  data: UpdateReservationStatusPayload
+): Promise<Reservation> {
   return apiPut<Reservation>(`/reservations/${id}/status`, data);
 }
 

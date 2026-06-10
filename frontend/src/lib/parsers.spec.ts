@@ -25,20 +25,25 @@ describe('getSortingStateParser', () => {
 
   it('serializes to JSON', () => {
     const parser = getSortingStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const result = parser.serialize([{ id: 'name', desc: true } as any]);
     expect(result).toBe('[{"id":"name","desc":true}]');
   });
 
   it('equality check returns true for identical arrays', () => {
     const parser = getSortingStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const a = [{ id: 'name', desc: false }] as any;
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const b = [{ id: 'name', desc: false }] as any;
     expect(parser.eq!(a, b)).toBe(true);
   });
 
   it('equality check returns false for different arrays', () => {
     const parser = getSortingStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const a = [{ id: 'name', desc: false }] as any;
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const b = [{ id: 'name', desc: true }] as any;
     expect(parser.eq!(a, b)).toBe(false);
   });
@@ -51,7 +56,13 @@ describe('getSortingStateParser', () => {
 });
 
 describe('getFiltersStateParser', () => {
-  const validFilter = { id: 'name', value: 'test', variant: 'text', operator: 'iLike', filterId: 'f1' };
+  const validFilter = {
+    id: 'name',
+    value: 'test',
+    variant: 'text',
+    operator: 'iLike',
+    filterId: 'f1'
+  };
 
   it('parses valid filter JSON', () => {
     const parser = getFiltersStateParser();
@@ -77,20 +88,25 @@ describe('getFiltersStateParser', () => {
 
   it('serializes to JSON', () => {
     const parser = getFiltersStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const result = parser.serialize([validFilter as any]);
     expect(JSON.parse(result)).toEqual([validFilter]);
   });
 
   it('equality returns true for identical filters', () => {
     const parser = getFiltersStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const a = [validFilter] as any;
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const b = [validFilter] as any;
     expect(parser.eq!(a, b)).toBe(true);
   });
 
   it('equality returns false for different filters', () => {
     const parser = getFiltersStateParser();
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const a = [{ ...validFilter, value: 'a' }] as any;
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     const b = [{ ...validFilter, value: 'b' }] as any;
     expect(parser.eq!(a, b)).toBe(false);
   });

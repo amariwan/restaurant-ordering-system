@@ -3,13 +3,13 @@ import { signIn } from './client';
 
 vi.mock('@/features/restaurant/api/service', () => ({
   authLogin: vi.fn(),
-  authLogout: vi.fn(),
+  authLogout: vi.fn()
 }));
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
   setToken: vi.fn(),
   setUser: vi.fn(),
-  clearAuth: vi.fn(),
+  clearAuth: vi.fn()
 }));
 
 import { authLogin } from '@/features/restaurant/api/service';
@@ -24,30 +24,35 @@ describe('signIn', () => {
   it('returns ok on successful login', async () => {
     (authLogin as ReturnType<typeof vi.fn>).mockResolvedValue({
       token: 'jwt-token',
-      user: { id: 1, name: 'Test', email: 'test@test.com', role: 'Waiter' },
+      user: { id: 1, name: 'Test', email: 'test@test.com', role: 'Waiter' }
     });
 
     const result = await signIn('credentials', {
       email: 'test@test.com',
       password: 'pass123',
-      redirect: false,
+      redirect: false
     });
 
     expect(result).toEqual({ ok: true });
     expect(setToken).toHaveBeenCalledWith('jwt-token');
-    expect(setUser).toHaveBeenCalledWith({ id: 1, name: 'Test', email: 'test@test.com', role: 'Waiter' });
+    expect(setUser).toHaveBeenCalledWith({
+      id: 1,
+      name: 'Test',
+      email: 'test@test.com',
+      role: 'Waiter'
+    });
   });
 
   it('returns ok on successful login with redirect', async () => {
     (authLogin as ReturnType<typeof vi.fn>).mockResolvedValue({
       token: 'jwt-token',
-      user: { id: 1, name: 'Test', email: 'test@test.com', role: 'Waiter' },
+      user: { id: 1, name: 'Test', email: 'test@test.com', role: 'Waiter' }
     });
 
     const result = await signIn('credentials', {
       email: 'test@test.com',
       password: 'pass123',
-      redirect: true,
+      redirect: true
     });
 
     expect(result).toEqual({ ok: true });
@@ -58,7 +63,7 @@ describe('signIn', () => {
 
     const result = await signIn('credentials', {
       email: 'test@test.com',
-      password: 'wrong',
+      password: 'wrong'
     });
 
     expect(result).toEqual({ error: 'Invalid credentials' });
@@ -69,7 +74,7 @@ describe('signIn', () => {
 
     const result = await signIn('credentials', {
       email: 'test@test.com',
-      password: 'wrong',
+      password: 'wrong'
     });
 
     expect(result).toEqual({ error: 'Login failed' });

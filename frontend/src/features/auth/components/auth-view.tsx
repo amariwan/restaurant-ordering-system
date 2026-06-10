@@ -108,9 +108,7 @@ export default function AuthView() {
         <div className='text-sidebar-foreground relative z-20 mt-auto'>
           <blockquote className='space-y-2'>
             <p className='text-lg'>
-              {mode === 'signin'
-                ? t.authView.accessStaffWorkflow
-                : t.authView.createAccountText}
+              {mode === 'signin' ? t.authView.accessStaffWorkflow : t.authView.createAccountText}
             </p>
             <footer className='text-sidebar-foreground/70 text-sm'>Restaurant Operations</footer>
           </blockquote>
@@ -121,20 +119,30 @@ export default function AuthView() {
           <div className='flex items-center gap-2 rounded-lg border p-1 bg-muted/50'>
             <button
               type='button'
-              onClick={() => { setMode('signin'); setError(''); }}
+              onClick={() => {
+                setMode('signin');
+                setError('');
+              }}
               className={cn(
                 'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
-                mode === 'signin' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                mode === 'signin'
+                  ? 'bg-background shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {AUTH_MODES[mode]}
             </button>
             <button
               type='button'
-              onClick={() => { setMode('signup'); setError(''); }}
+              onClick={() => {
+                setMode('signup');
+                setError('');
+              }}
               className={cn(
                 'rounded-md px-4 py-1.5 text-sm font-medium transition-colors',
-                mode === 'signup' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                mode === 'signup'
+                  ? 'bg-background shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {AUTH_MODES[mode]}
@@ -150,37 +158,19 @@ export default function AuthView() {
             )}
             <div className='space-y-2'>
               <Label htmlFor='email'>Email</Label>
-              <Input
-                id='email'
-                name='email'
-                type='email'
-                required
-                placeholder='you@example.com'
-              />
+              <Input id='email' name='email' type='email' required placeholder='you@example.com' />
             </div>
             <div className='space-y-2'>
               <Label htmlFor='password'>Password</Label>
-              <Input
-                id='password'
-                name='password'
-                type='password'
-                required
-              />
+              <Input id='password' name='password' type='password' required />
             </div>
             {mode === 'signup' && (
               <div className='space-y-2'>
                 <Label htmlFor='confirmPassword'>{t.authView.confirmPassword}</Label>
-                <Input
-                  id='confirmPassword'
-                  name='confirmPassword'
-                  type='password'
-                  required
-                />
+                <Input id='confirmPassword' name='confirmPassword' type='password' required />
               </div>
             )}
-            {error && (
-              <p className='text-destructive text-sm text-center'>{error}</p>
-            )}
+            {error && <p className='text-destructive text-sm text-center'>{error}</p>}
             <Button type='submit' className='w-full' isLoading={isPending}>
               {AUTH_MODES[mode]}
             </Button>

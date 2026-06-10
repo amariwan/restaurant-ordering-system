@@ -18,15 +18,35 @@ export const ROUTES: RouteMeta[] = [
   { path: '/reserve', isPublic: true, layout: 'public' },
 
   // Dashboard area (requires authentication)
-  { path: '/dashboard', requiresAuth: true, requiredRoles: ['Admin', 'Waiter', 'Kitchen'], layout: 'dashboard' },
+  {
+    path: '/dashboard',
+    requiresAuth: true,
+    requiredRoles: ['Admin', 'Waiter', 'Kitchen'],
+    layout: 'dashboard'
+  },
   { path: '/admin/users', requiresAuth: true, requiredRoles: ['Admin'], layout: 'dashboard' },
   { path: '/admin/tables', requiresAuth: true, requiredRoles: ['Admin'], layout: 'dashboard' },
   { path: '/admin/menu', requiresAuth: true, requiredRoles: ['Admin'], layout: 'dashboard' },
   { path: '/admin', requiresAuth: true, requiredRoles: ['Admin'], layout: 'dashboard' },
-  { path: '/kitchen', requiresAuth: true, requiredRoles: ['Kitchen', 'Admin'], layout: 'dashboard' },
+  {
+    path: '/kitchen',
+    requiresAuth: true,
+    requiredRoles: ['Kitchen', 'Admin'],
+    layout: 'dashboard'
+  },
   { path: '/cart', isPublic: true, layout: 'public' },
-  { path: '/orders', requiresAuth: true, requiredRoles: ["Kitchen", "Waiter", 'Admin'], layout: 'dashboard' },
-  { path: '/reservations', requiresAuth: true, requiredRoles: ['Admin', 'Waiter'], layout: 'dashboard' },
+  {
+    path: '/orders',
+    requiresAuth: true,
+    requiredRoles: ['Kitchen', 'Waiter', 'Admin'],
+    layout: 'dashboard'
+  },
+  {
+    path: '/reservations',
+    requiresAuth: true,
+    requiredRoles: ['Admin', 'Waiter'],
+    layout: 'dashboard'
+  },
   { path: '/menu', isPublic: true, layout: 'public' },
   { path: '/order', isPublic: true, layout: 'none' },
   { path: '/profile', requiresAuth: true, layout: 'dashboard' },
@@ -44,8 +64,10 @@ export function getRouteMeta(pathname: string) {
   // ensure leading slash
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
   // sort by longest path first
-  const sorted = [...ROUTES].sort((a, b) => b.path.length - a.path.length);
-  return sorted.find((r) => path === r.path || path.startsWith(r.path + '/') || path.startsWith(r.path));
+  const sorted = [...ROUTES].toSorted((a, b) => b.path.length - a.path.length);
+  return sorted.find(
+    (r) => path === r.path || path.startsWith(r.path + '/') || path.startsWith(r.path)
+  );
 }
 
 export default ROUTES;

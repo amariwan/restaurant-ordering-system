@@ -6,7 +6,10 @@ export const metadata: Metadata = { title: 'Privacy Policy', robots: { index: fa
 
 export default function PrivacyPolicyPage() {
   return (
-    <PageContainer pageTitle='Privacy Policy' pageDescription='How the restaurant ordering system collects, stores, and protects restaurant and staff data.'>
+    <PageContainer
+      pageTitle='Privacy Policy'
+      pageDescription='How the restaurant ordering system collects, stores, and protects restaurant and staff data.'
+    >
       <PrivacyPageClient />
     </PageContainer>
   );

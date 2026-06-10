@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useMediaQuery } from './use-media-query';
 
 describe('useMediaQuery', () => {
@@ -12,8 +12,8 @@ describe('useMediaQuery', () => {
       matches: false,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { result } = renderHook(() => useMediaQuery());
     expect(result.current.isOpen).toBe(false);
@@ -24,8 +24,8 @@ describe('useMediaQuery', () => {
       matches: true,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { result } = renderHook(() => useMediaQuery());
     expect(result.current.isOpen).toBe(true);
@@ -37,8 +37,8 @@ describe('useMediaQuery', () => {
       matches: false,
       media: query,
       addEventListener,
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     renderHook(() => useMediaQuery());
 
@@ -51,8 +51,8 @@ describe('useMediaQuery', () => {
       matches: false,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener,
-    })) as any;
+      removeEventListener
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { unmount } = renderHook(() => useMediaQuery());
     unmount();

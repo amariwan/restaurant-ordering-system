@@ -17,7 +17,9 @@ export default function WaiterDashboard() {
 
   const today = new Date().toDateString();
   const todayOrders = orders.items.filter((o) => new Date(o.createdAt).toDateString() === today);
-  const active = orders.items.filter((o) => o.status === 'pending' || o.status === 'preparing').length;
+  const active = orders.items.filter(
+    (o) => o.status === 'pending' || o.status === 'preparing'
+  ).length;
   const ready = orders.items.filter((o) => o.status === 'ready').length;
   const occupied = tables.filter((tbl) => tbl.status === 'occupied').length;
 
@@ -44,7 +46,9 @@ export default function WaiterDashboard() {
           <CardContent className='pt-6'>
             <div className='flex items-center justify-between'>
               <div>
-                <p className='text-sm text-muted-foreground'>{t.orders.status.pending} / {t.orders.status.preparing}</p>
+                <p className='text-sm text-muted-foreground'>
+                  {t.orders.status.pending} / {t.orders.status.preparing}
+                </p>
                 <p className='text-3xl font-bold mt-1'>{active}</p>
               </div>
               <Icons.clock className='size-8 text-yellow-500' />
@@ -69,7 +73,9 @@ export default function WaiterDashboard() {
             <div className='flex items-center justify-between'>
               <div>
                 <p className='text-sm text-muted-foreground'>{t.admin.activeTables}</p>
-                <p className='text-3xl font-bold mt-1'>{occupied} / {tables.length}</p>
+                <p className='text-3xl font-bold mt-1'>
+                  {occupied} / {tables.length}
+                </p>
               </div>
               <Icons.table className='size-8 text-primary' />
             </div>
@@ -108,10 +114,17 @@ export default function WaiterDashboard() {
               className='flex items-center justify-between gap-2 py-2 border-b last:border-b-0 hover:bg-muted/50 -mx-2 px-2 rounded transition-colors'
             >
               <div>
-                <span className='font-medium'>{t.orders.orderNumber}{o.id}</span>
-                <span className='text-muted-foreground ml-2'>{t.orders.table} {o.tableNumber}</span>
+                <span className='font-medium'>
+                  {t.orders.orderNumber}
+                  {o.id}
+                </span>
+                <span className='text-muted-foreground ml-2'>
+                  {t.orders.table} {o.tableNumber}
+                </span>
               </div>
-              <Badge variant={STATUS_CONFIG[o.status]?.variant ?? 'secondary'}>{t.orders.status[o.status]}</Badge>
+              <Badge variant={STATUS_CONFIG[o.status]?.variant ?? 'secondary'}>
+                {t.orders.status[o.status]}
+              </Badge>
             </Link>
           ))}
         </CardContent>

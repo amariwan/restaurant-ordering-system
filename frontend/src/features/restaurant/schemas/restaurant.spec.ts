@@ -7,7 +7,7 @@ import {
   tableSchema,
   paymentSchema,
   orderItemSchema,
-  createOrderSchema,
+  createOrderSchema
 } from './restaurant';
 
 describe('signInSchema', () => {
@@ -33,7 +33,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'password123',
+      confirmPassword: 'password123'
     });
     expect(result.success).toBe(true);
   });
@@ -43,7 +43,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'different',
+      confirmPassword: 'different'
     });
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -56,7 +56,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: '12345',
-      confirmPassword: '12345',
+      confirmPassword: '12345'
     });
     expect(result.success).toBe(false);
   });
@@ -66,7 +66,7 @@ describe('signUpSchema', () => {
       name: '',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'password123',
+      confirmPassword: 'password123'
     });
     expect(result.success).toBe(false);
   });
@@ -180,7 +180,7 @@ describe('createOrderSchema', () => {
   it('accepts valid order', () => {
     const result = createOrderSchema.safeParse({
       tableId: 1,
-      items: [{ menuItemId: 1, quantity: 2 }],
+      items: [{ menuItemId: 1, quantity: 2 }]
     });
     expect(result.success).toBe(true);
   });

@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function Dashboard() {
-  await requireRouteAccess('/admin')
+  await requireRouteAccess('/admin');
   const qc = getQueryClient();
   await qc.prefetchQuery(ordersAllOptions());
 

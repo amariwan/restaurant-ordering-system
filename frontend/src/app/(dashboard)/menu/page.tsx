@@ -18,12 +18,16 @@ export default function MenuPage() {
   return (
     <PageContainer
       pageTitle={orderId ? `Menu — Add to Order #${orderId}` : 'Menu'}
-      pageDescription={orderId ? 'Select items to add directly to the order.' : 'Browse available menu items and categories.'}
+      pageDescription={
+        orderId
+          ? 'Select items to add directly to the order.'
+          : 'Browse available menu items and categories.'
+      }
     >
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="space-y-6">
-          <div className="flex items-center gap-3">
-            <IconGrillFork className="w-6 h-6" />
+        <div className='space-y-6'>
+          <div className='flex items-center gap-3'>
+            <IconGrillFork className='w-6 h-6' />
           </div>
           <MenuListing orderId={orderId} tableId={tableId} />
         </div>

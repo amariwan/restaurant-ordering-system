@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useBreadcrumbs } from './use-breadcrumbs';
 
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(),
+  usePathname: vi.fn()
 }));
 
 import { usePathname } from 'next/navigation';

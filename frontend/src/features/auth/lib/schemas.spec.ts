@@ -24,7 +24,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'password123',
+      confirmPassword: 'password123'
     });
     expect(result.success).toBe(true);
   });
@@ -34,7 +34,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: '123',
-      confirmPassword: '123',
+      confirmPassword: '123'
     });
     expect(result.success).toBe(false);
   });
@@ -44,7 +44,7 @@ describe('signUpSchema', () => {
       name: 'John',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'different',
+      confirmPassword: 'different'
     });
     expect(result.success).toBe(false);
   });
@@ -54,7 +54,7 @@ describe('signUpSchema', () => {
       name: '',
       email: 'john@example.com',
       password: 'password123',
-      confirmPassword: 'password123',
+      confirmPassword: 'password123'
     });
     expect(result.success).toBe(false);
   });

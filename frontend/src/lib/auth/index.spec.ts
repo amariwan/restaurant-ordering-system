@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('next/headers', () => ({
-  cookies: vi.fn(),
+  cookies: vi.fn()
 }));
 
 const { cookies } = await import('next/headers');
@@ -11,8 +11,6 @@ const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
 const { auth } = await import('./index');
-
-
 
 describe('auth', () => {
   beforeEach(() => {
@@ -30,7 +28,7 @@ describe('auth', () => {
 
   it('returns null when fetch fails', async () => {
     (cookies as ReturnType<typeof vi.fn>).mockResolvedValue({
-      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }],
+      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }]
     });
     mockFetch.mockResolvedValue({ ok: false });
 
@@ -41,11 +39,11 @@ describe('auth', () => {
 
   it('returns null when response has no id', async () => {
     (cookies as ReturnType<typeof vi.fn>).mockResolvedValue({
-      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }],
+      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }]
     });
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ role: 'admin' }),
+      json: () => Promise.resolve({ role: 'admin' })
     });
 
     const result = await auth();
@@ -55,11 +53,11 @@ describe('auth', () => {
 
   it('returns user when authenticated with direct id', async () => {
     (cookies as ReturnType<typeof vi.fn>).mockResolvedValue({
-      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }],
+      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }]
     });
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ id: 1, role: 'admin' }),
+      json: () => Promise.resolve({ id: 1, role: 'admin' })
     });
 
     const result = await auth();
@@ -69,11 +67,11 @@ describe('auth', () => {
 
   it('returns user when authenticated with nested user.id', async () => {
     (cookies as ReturnType<typeof vi.fn>).mockResolvedValue({
-      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }],
+      getAll: () => [{ name: 'restaurant_token', value: 'jwt' }]
     });
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ user: { id: 2, role: 'waiter' } }),
+      json: () => Promise.resolve({ user: { id: 2, role: 'waiter' } })
     });
 
     const result = await auth();
@@ -85,12 +83,12 @@ describe('auth', () => {
     (cookies as ReturnType<typeof vi.fn>).mockResolvedValue({
       getAll: () => [
         { name: 'restaurant_token', value: 'test-jwt' },
-        { name: 'other', value: 'val' },
-      ],
+        { name: 'other', value: 'val' }
+      ]
     });
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ id: 1 }),
+      json: () => Promise.resolve({ id: 1 })
     });
 
     await auth();

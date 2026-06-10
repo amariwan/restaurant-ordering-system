@@ -33,7 +33,7 @@ export const en = {
     error: 'An error occurred.',
     success: 'Success!',
     welcome: 'Welcome',
-    description: 'Restaurant ordering and operations dashboard.',
+    description: 'Restaurant ordering and operations dashboard.'
   },
   nav: {
     dashboard: 'Dashboard',
@@ -52,12 +52,13 @@ export const en = {
     manageMenu: 'Manage Menu',
     operations: 'Operations',
     administration: 'Administration',
-    kitchenView: 'Kitchen View',
+    kitchenView: 'Kitchen View'
   },
   landing: {
     title: 'Restaurant',
     titleHighlight: 'Ordering System',
-    subtitle: 'A real-time dashboard for staff, kitchen, and management — order tracking, table management, menu control, and payment processing in one place.',
+    subtitle:
+      'A real-time dashboard for staff, kitchen, and management — order tracking, table management, menu control, and payment processing in one place.',
     browseMenu: 'Browse Menu',
     staffSignIn: 'Staff Sign In',
     staffLogin: 'Staff Login',
@@ -74,26 +75,31 @@ export const en = {
     reserve: 'Reserve',
     features: {
       menuManagement: 'Menu Management',
-      menuManagementDesc: 'Full CRUD for menu items and categories with availability toggles and image upload.',
+      menuManagementDesc:
+        'Full CRUD for menu items and categories with availability toggles and image upload.',
       orderProcessing: 'Order Processing',
       orderProcessingDesc: 'Create, modify, and track orders from table selection through payment.',
       liveKitchen: 'Live Kitchen View',
-      liveKitchenDesc: 'Real-time order queue with status updates. Mark items preparing → ready as you go.',
+      liveKitchenDesc:
+        'Real-time order queue with status updates. Mark items preparing → ready as you go.',
       tableManagement: 'Table Management',
-      tableManagementDesc: 'Visual table grid with free / occupied / reserved states and assignment tracking.',
+      tableManagementDesc:
+        'Visual table grid with free / occupied / reserved states and assignment tracking.',
       paymentTracking: 'Payment Tracking',
-      paymentTrackingDesc: 'Split bills, accept partial payments, and track cash or card transactions per order.',
+      paymentTrackingDesc:
+        'Split bills, accept partial payments, and track cash or card transactions per order.',
       insights: 'Insights & Analytics',
-      insightsDesc: 'Dashboard with revenue charts, order volume, and user activity breakdowns.',
+      insightsDesc: 'Dashboard with revenue charts, order volume, and user activity breakdowns.'
     },
     roles: {
       waiter: 'Waiter',
       waiterDesc: 'Take orders, manage tables, process payments from a unified dashboard.',
       kitchen: 'Kitchen',
-      kitchenDesc: 'See incoming orders in real time, update preparation status, coordinate the line.',
+      kitchenDesc:
+        'See incoming orders in real time, update preparation status, coordinate the line.',
       admin: 'Admin',
-      adminDesc: 'Full control over menu, staff, tables, reports, and system configuration.',
-    },
+      adminDesc: 'Full control over menu, staff, tables, reports, and system configuration.'
+    }
   },
   auth: {
     email: 'Email',
@@ -112,7 +118,7 @@ export const en = {
     profile: 'Profile',
     changePassword: 'Change Password',
     currentPassword: 'Current Password',
-    newPassword: 'New Password',
+    newPassword: 'New Password'
   },
   menu: {
     title: 'Menu',
@@ -145,7 +151,7 @@ export const en = {
     addedToCart: 'added to cart',
     addedToOrder: 'added to order',
     noItems: 'No menu items found.',
-    noCategories: 'No categories found.',
+    noCategories: 'No categories found.'
   },
   orders: {
     title: 'Orders',
@@ -163,7 +169,7 @@ export const en = {
       preparing: 'Preparing',
       ready: 'Ready',
       served: 'Served',
-      cancelled: 'Cancelled',
+      cancelled: 'Cancelled'
     },
     filterAll: 'All',
     filterPending: 'Pending',
@@ -196,7 +202,7 @@ export const en = {
     paymentRecorded: 'Payment recorded',
     paymentFailed: 'Payment failed',
     startPreparing: 'Start Preparing',
-    markReady: 'Mark Ready',
+    markReady: 'Mark Ready'
   },
   kitchen: {
     title: 'Kitchen',
@@ -205,7 +211,7 @@ export const en = {
     ready: 'Ready',
     markPreparing: 'Mark Preparing',
     markReady: 'Mark Ready',
-    noOrders: 'No orders in queue.',
+    noOrders: 'No orders in queue.'
   },
   cart: {
     title: 'Cart',
@@ -222,7 +228,7 @@ export const en = {
     addNote: 'Add note...',
     tablePlaceholder: 'e.g. 5',
     subtotal: 'Subtotal',
-    qty: 'Qty',
+    qty: 'Qty'
   },
   tables: {
     title: 'Tables',
@@ -232,14 +238,14 @@ export const en = {
     status: {
       free: 'Free',
       occupied: 'Occupied',
-      reserved: 'Reserved',
+      reserved: 'Reserved'
     },
     confirmDelete: 'Are you sure you want to delete this table?',
     noTables: 'No tables found.',
     invalidNumber: 'Please enter a valid table number.',
     createSuccess: 'Table created.',
     statusUpdated: 'Table status updated.',
-    deleteSuccess: 'Table deleted.',
+    deleteSuccess: 'Table deleted.'
   },
   users: {
     title: 'Users',
@@ -250,10 +256,10 @@ export const en = {
     roles: {
       admin: 'Admin',
       waiter: 'Waiter',
-      kitchen: 'Kitchen',
+      kitchen: 'Kitchen'
     },
     confirmDelete: 'Are you sure you want to delete this user?',
-    noUsers: 'No users found.',
+    noUsers: 'No users found.'
   },
   reservations: {
     title: 'Reservations',
@@ -268,7 +274,7 @@ export const en = {
       pending: 'Pending',
       confirmed: 'Confirmed',
       completed: 'Completed',
-      cancelled: 'Cancelled',
+      cancelled: 'Cancelled'
     },
     confirmDelete: 'Are you sure you want to delete this reservation?',
     noReservations: 'No reservations found.',
@@ -283,7 +289,7 @@ export const en = {
     unassigned: 'Unassigned',
     phone: 'Phone',
     complete: 'Complete',
-    confirmStatus: 'Confirm',
+    confirmStatus: 'Confirm'
   },
   admin: {
     title: 'Admin Dashboard',
@@ -295,14 +301,14 @@ export const en = {
     recentActivity: 'Recent Activity',
     noData: 'No data available.',
     overviewSubtitle: 'Overview of your restaurant operations',
-    todaySummary: 'Today\'s Summary',
+    todaySummary: "Today's Summary",
     ordersPlacedToday: '{count} orders placed today',
     active: 'Active',
     noOrdersToday: 'No orders today',
     userBreakdown: 'User Breakdown',
     roleDistribution: 'Current role distribution',
     recentOrdersDesc: 'Last five submitted orders',
-    noOrdersYet: 'No orders yet.',
+    noOrdersYet: 'No orders yet.'
   },
   profile: {
     title: 'Profile',
@@ -313,12 +319,12 @@ export const en = {
     currentPassword: 'Current Password',
     newPassword: 'New Password',
     updateSuccess: 'Profile updated successfully!',
-    passwordChanged: 'Password changed successfully!',
+    passwordChanged: 'Password changed successfully!'
   },
   language: {
     switchTo: 'Switch Language',
     en: 'English',
-    ku: 'Kurdî',
+    ku: 'Kurdî'
   },
   errors: {
     notFound: 'Page not found.',
@@ -328,20 +334,22 @@ export const en = {
     goBack: 'Go Back',
     required: 'This field is required.',
     invalidEmail: 'Invalid email address.',
-    minLength: 'Must be at least {min} characters.',
+    minLength: 'Must be at least {min} characters.'
   },
 
   authView: {
     title: 'Restaurant Dashboard',
     signIn: 'Sign In',
     register: 'Register',
-    accessStaffWorkflow: 'Access staff workflows for orders, tables, and kitchen status in one secure app.',
-    createAccountText: 'Create a new staff account to manage restaurant orders, tables, and payments.',
+    accessStaffWorkflow:
+      'Access staff workflows for orders, tables, and kitchen status in one secure app.',
+    createAccountText:
+      'Create a new staff account to manage restaurant orders, tables, and payments.',
     name: 'Name',
     confirmPassword: 'Confirm Password',
-    termsPrivacy: "By clicking continue, you agree to our",
+    termsPrivacy: 'By clicking continue, you agree to our',
     termsOfService: 'Terms of Service',
-    privacyPolicy: 'Privacy Policy',
+    privacyPolicy: 'Privacy Policy'
   },
   landingPage: {
     tableDialogTitle: 'Select a Table',
@@ -351,7 +359,7 @@ export const en = {
     cancel: 'Cancel',
     backHome: 'Back to Home',
     reservationSubmitted: 'Reservation Request Submitted',
-    reservationReceived: 'Your reservation request has been received. We will confirm it shortly.',
+    reservationReceived: 'Your reservation request has been received. We will confirm it shortly.'
   },
   reservePage: {
     title: 'Make a Reservation',
@@ -362,7 +370,7 @@ export const en = {
     guests: 'Number of Guests',
     dateTime: 'Date & Time',
     specialRequests: 'Special Requests (optional)',
-    submitButton: 'Submit Reservation',
+    submitButton: 'Submit Reservation'
   },
   profileView: {
     pleaseSignIn: 'Please sign in to view your profile.',
@@ -373,7 +381,7 @@ export const en = {
     pwDesc: 'Update your account password',
     currentPw: 'Current Password',
     newPw: 'New Password',
-    updatePw: 'Update Password',
+    updatePw: 'Update Password'
   },
   usersTable: {
     searchUsers: 'Search users...',
@@ -384,7 +392,7 @@ export const en = {
     invited: 'Invited',
     activeLabel: 'Active',
     inactiveLabel: 'Inactive',
-    invitedLabel: 'Invited',
+    invitedLabel: 'Invited'
   },
   userFormSheet: {
     editTitle: 'Edit User',
@@ -399,27 +407,34 @@ export const en = {
     pwPlaceholder: 'Min. 8 characters',
     selectRole: 'Select role',
     selectStatus: 'Select status',
-    pwError: 'Password must be at least 8 characters',
+    pwError: 'Password must be at least 8 characters'
   },
   staticAbout: {
     subtitle: 'Restaurant Ordering System for staff, kitchen, and management.',
     whatWeDo: 'What this app does',
-    whatWeDoDesc: 'This application enables restaurant teams to manage menu items, tables, orders, and payments in one central interface. Waiters can create and update orders, kitchen staff can track preparation status, and administrators can manage users, menu categories, and restaurant tables.',
+    whatWeDoDesc:
+      'This application enables restaurant teams to manage menu items, tables, orders, and payments in one central interface. Waiters can create and update orders, kitchen staff can track preparation status, and administrators can manage users, menu categories, and restaurant tables.',
     realtimeTitle: 'Real-time order workflow',
-    realtimeDesc: 'Real-time updates are powered by SignalR, so order status changes are synchronized immediately across connected kitchen and waiter views. The backend uses JWT-based authentication to secure all API access and keep restaurant data protected.',
+    realtimeDesc:
+      'Real-time updates are powered by SignalR, so order status changes are synchronized immediately across connected kitchen and waiter views. The backend uses JWT-based authentication to secure all API access and keep restaurant data protected.',
     integrationTitle: 'Backend integration',
-    integrationDesc: 'The frontend integrates with an ASP.NET Core backend API that stores restaurant data and handles authentication, authorization, orders, tables, payments, and menu items. This keeps business logic and data storage centralized and secure.',
-    footerText: 'Restaurant ordering and operations dashboard',
+    integrationDesc:
+      'The frontend integrates with an ASP.NET Core backend API that stores restaurant data and handles authentication, authorization, orders, tables, payments, and menu items. This keeps business logic and data storage centralized and secure.',
+    footerText: 'Restaurant ordering and operations dashboard'
   },
   staticPrivacy: {
     introTitle: 'Introduction',
-    introDesc: 'This Privacy Policy explains how we handle personal and operational data for the restaurant ordering system. We collect and use data only as necessary to support order management, table assignments, menu configuration, and secure access for restaurant staff.',
+    introDesc:
+      'This Privacy Policy explains how we handle personal and operational data for the restaurant ordering system. We collect and use data only as necessary to support order management, table assignments, menu configuration, and secure access for restaurant staff.',
     collectionTitle: 'Data Collection',
-    collectionDesc: 'We collect user account data required for authentication, such as email and name, and restaurant data needed to manage orders, tables, menu items, and payments. We do not collect payment card details as part of this application.',
+    collectionDesc:
+      'We collect user account data required for authentication, such as email and name, and restaurant data needed to manage orders, tables, menu items, and payments. We do not collect payment card details as part of this application.',
     useTitle: 'Use of Data',
-    useDesc: 'Collected data is used to authenticate users, authorize access, maintain order status, and keep restaurant workflows in sync. Data is not sold, shared with third parties for marketing, or used for unrelated commercial purposes.',
+    useDesc:
+      'Collected data is used to authenticate users, authorize access, maintain order status, and keep restaurant workflows in sync. Data is not sold, shared with third parties for marketing, or used for unrelated commercial purposes.',
     securityTitle: 'Security',
-    securityDesc: 'Authentication is secured using JWT tokens and password hashing in the backend. The restaurant backend stores and protects data in accordance with standard security practices for web applications.',
+    securityDesc:
+      'Authentication is secured using JWT tokens and password hashing in the backend. The restaurant backend stores and protects data in accordance with standard security practices for web applications.'
   },
   selfOrder: {
     title: 'Order from Your Table',
@@ -441,19 +456,24 @@ export const en = {
     itemsInCart: 'item(s) in cart',
     viewCart: 'View Cart',
     loading: 'Loading menu...',
-    tableUnavailable: 'This table already has an active order. Please choose another.',
+    tableUnavailable: 'This table already has an active order. Please choose another.'
   },
   staticTerms: {
     introTitle: 'Introduction',
-    introDesc: "These Terms of Service govern your access to and use of the restaurant ordering application. By using this system, you agree to comply with these terms and use the application only for its intended restaurant operations.",
+    introDesc:
+      'These Terms of Service govern your access to and use of the restaurant ordering application. By using this system, you agree to comply with these terms and use the application only for its intended restaurant operations.',
     acceptableTitle: 'Acceptable Use',
-    acceptableDesc: 'The application is intended for restaurant staff to manage orders, menu items, tables, and payments. Users must not access or modify data outside their assigned roles and must follow any restaurant-specific policies that apply to your organization.',
+    acceptableDesc:
+      'The application is intended for restaurant staff to manage orders, menu items, tables, and payments. Users must not access or modify data outside their assigned roles and must follow any restaurant-specific policies that apply to your organization.',
     warrantyTitle: 'No Warranty',
-    warrantyDesc: 'The application is provided as-is without any warranties. We do not guarantee that the system will be uninterrupted, error-free, or suitable for every restaurant setting. Use the application at your own risk and verify critical operations independently.',
+    warrantyDesc:
+      'The application is provided as-is without any warranties. We do not guarantee that the system will be uninterrupted, error-free, or suitable for every restaurant setting. Use the application at your own risk and verify critical operations independently.',
     dataTitle: 'Data Handling',
-    dataDesc: 'Restaurant data entered into the system is stored and managed by the backend service. Users should avoid entering sensitive personal or payment information beyond what is necessary for restaurant operations.',
-    updateText: "We may update these terms periodically. Continued use of the application after changes are posted constitutes acceptance of those terms.",
-  },
+    dataDesc:
+      'Restaurant data entered into the system is stored and managed by the backend service. Users should avoid entering sensitive personal or payment information beyond what is necessary for restaurant operations.',
+    updateText:
+      'We may update these terms periodically. Continued use of the application after changes are posted constitutes acceptance of those terms.'
+  }
 };
 
 export type Translations = typeof en;

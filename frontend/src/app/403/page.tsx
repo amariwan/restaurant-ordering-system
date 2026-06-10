@@ -12,7 +12,9 @@ export default function ForbiddenPage() {
         <h1 className='text-3xl font-semibold'>403 — Zugriff verweigert</h1>
         <p className='text-muted-foreground'>Du hast keine Berechtigung, diese Seite anzusehen.</p>
         <div>
-          <Link href='/' className='text-primary underline'>Zurück zur Startseite</Link>
+          <Link href='/' className='text-primary underline'>
+            Zurück zur Startseite
+          </Link>
         </div>
       </div>
     </div>

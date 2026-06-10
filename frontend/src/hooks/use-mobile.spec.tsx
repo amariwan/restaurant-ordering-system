@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach, beforeAll } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { renderHook } from '@testing-library/react';
 import { useIsMobile } from './use-mobile';
 
 describe('useIsMobile', () => {
@@ -13,8 +13,8 @@ describe('useIsMobile', () => {
       matches: false,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(false);
@@ -26,8 +26,8 @@ describe('useIsMobile', () => {
       matches: true,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(true);
@@ -40,8 +40,8 @@ describe('useIsMobile', () => {
       matches: false,
       media: query,
       addEventListener,
-      removeEventListener: vi.fn(),
-    })) as any;
+      removeEventListener: vi.fn()
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     renderHook(() => useIsMobile());
 
@@ -55,8 +55,8 @@ describe('useIsMobile', () => {
       matches: false,
       media: query,
       addEventListener: vi.fn(),
-      removeEventListener,
-    })) as any;
+      removeEventListener
+    })) as any; // oxlint-disable-line @typescript-eslint/no-explicit-any
 
     const { unmount } = renderHook(() => useIsMobile());
     unmount();

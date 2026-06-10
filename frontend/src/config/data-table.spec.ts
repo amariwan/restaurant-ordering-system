@@ -8,19 +8,19 @@ describe('dataTableConfig', () => {
   });
 
   it('has numeric operators', () => {
-    expect(dataTableConfig.numericOperators.some(o => o.value === 'gt')).toBe(true);
+    expect(dataTableConfig.numericOperators.some((o) => o.value === 'gt')).toBe(true);
   });
 
   it('has date operators', () => {
-    expect(dataTableConfig.dateOperators.some(o => o.value === 'isRelativeToToday')).toBe(true);
+    expect(dataTableConfig.dateOperators.some((o) => o.value === 'isRelativeToToday')).toBe(true);
   });
 
   it('has select operators', () => {
-    expect(dataTableConfig.selectOperators.some(o => o.value === 'eq')).toBe(true);
+    expect(dataTableConfig.selectOperators.some((o) => o.value === 'eq')).toBe(true);
   });
 
   it('has multiSelect operators', () => {
-    expect(dataTableConfig.multiSelectOperators.some(o => o.value === 'inArray')).toBe(true);
+    expect(dataTableConfig.multiSelectOperators.some((o) => o.value === 'inArray')).toBe(true);
   });
 
   it('has boolean operators', () => {
@@ -28,7 +28,7 @@ describe('dataTableConfig', () => {
   });
 
   it('has sort orders', () => {
-    expect(dataTableConfig.sortOrders.map(o => o.value)).toEqual(['asc', 'desc']);
+    expect(dataTableConfig.sortOrders.map((o) => o.value)).toEqual(['asc', 'desc']);
   });
 
   it('has filter variants', () => {

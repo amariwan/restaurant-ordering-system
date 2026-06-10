@@ -1,22 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/features/restaurant/api/service', async (importOriginal) => {
-  const actual = await importOriginal() as Record<string, unknown>;
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     ordersGetAll: vi.fn(),
-    ordersUpdateStatus: vi.fn(),
+    ordersUpdateStatus: vi.fn()
   };
 });
 
 vi.mock('@/features/restaurant/lib/signalr-store', () => ({
   getOrderHub: vi.fn(),
   startOrderHub: vi.fn(),
-  stopOrderHub: vi.fn(),
+  stopOrderHub: vi.fn()
 }));
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
-  parseRole: vi.fn(),
+  parseRole: vi.fn()
 }));
 
 import { render, screen } from '../../../../tests/support/render-with-provider';
@@ -34,9 +34,16 @@ const mockOrders = [
     userId: 1,
     status: 'pending' as const,
     items: [
-      { id: 1, menuItemId: 1, menuItemName: 'Spring Rolls', menuItemNameKu: 'سپرینگ ڕۆڵ', price: 8.5, quantity: 2 },
+      {
+        id: 1,
+        menuItemId: 1,
+        menuItemName: 'Spring Rolls',
+        menuItemNameKu: 'سپرینگ ڕۆڵ',
+        price: 8.5,
+        quantity: 2
+      }
     ],
-    createdAt: '2026-06-08T12:00:00Z',
+    createdAt: '2026-06-08T12:00:00Z'
   },
   {
     id: 2,
@@ -45,11 +52,25 @@ const mockOrders = [
     userId: 2,
     status: 'preparing' as const,
     items: [
-      { id: 2, menuItemId: 2, menuItemName: 'Steak', menuItemNameKu: 'ستیك', price: 24, quantity: 1 },
-      { id: 3, menuItemId: 3, menuItemName: 'Burger', menuItemNameKu: 'بێرگەر', price: 15, quantity: 2 },
+      {
+        id: 2,
+        menuItemId: 2,
+        menuItemName: 'Steak',
+        menuItemNameKu: 'ستیك',
+        price: 24,
+        quantity: 1
+      },
+      {
+        id: 3,
+        menuItemId: 3,
+        menuItemName: 'Burger',
+        menuItemNameKu: 'بێرگەر',
+        price: 15,
+        quantity: 2
+      }
     ],
-    createdAt: '2026-06-08T12:30:00Z',
-  },
+    createdAt: '2026-06-08T12:30:00Z'
+  }
 ];
 
 describe('OrdersListing', () => {
@@ -57,7 +78,7 @@ describe('OrdersListing', () => {
     (service.ordersGetAll as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockOrders);
     (signalrStore.getOrderHub as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       on: vi.fn(),
-      off: vi.fn(),
+      off: vi.fn()
     });
     (authStore.parseRole as unknown as ReturnType<typeof vi.fn>).mockReturnValue('Kitchen');
   });
@@ -67,7 +88,11 @@ describe('OrdersListing', () => {
   });
 
   it('renders order rows with status badges', async () => {
-    render(<Suspense fallback={<div>Loading...</div>}><OrdersListing /></Suspense>);
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <OrdersListing />
+      </Suspense>
+    );
 
     expect(await screen.findByText('#1')).toBeInTheDocument();
     expect(screen.getByText('#2')).toBeInTheDocument();
@@ -80,13 +105,21 @@ describe('OrdersListing', () => {
   it('shows empty state when no orders', async () => {
     (service.ordersGetAll as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 
-    render(<Suspense fallback={<div>Loading...</div>}><OrdersListing /></Suspense>);
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <OrdersListing />
+      </Suspense>
+    );
 
     expect(await screen.findByText(/No orders/i)).toBeInTheDocument();
   });
 
   it('shows kitchen action buttons based on order status', async () => {
-    render(<Suspense fallback={<div>Loading...</div>}><OrdersListing /></Suspense>);
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <OrdersListing />
+      </Suspense>
+    );
 
     expect(await screen.findByText('Ready')).toBeInTheDocument();
     expect(screen.getAllByText('Preparing').length).toBe(2);
@@ -95,7 +128,11 @@ describe('OrdersListing', () => {
   it('shows cancel button for waiter role', async () => {
     (authStore.parseRole as unknown as ReturnType<typeof vi.fn>).mockReturnValue('Waiter');
 
-    render(<Suspense fallback={<div>Loading...</div>}><OrdersListing /></Suspense>);
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <OrdersListing />
+      </Suspense>
+    );
 
     const cancelButtons = await screen.findAllByText('Cancel');
     expect(cancelButtons).toHaveLength(2);

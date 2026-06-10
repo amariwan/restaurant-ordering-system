@@ -6,7 +6,10 @@ export const metadata: Metadata = { title: 'About' };
 
 export default function AboutPage() {
   return (
-    <PageContainer pageTitle='About' pageDescription='Restaurant operations, workflow, and backend integration for staff and management.'>
+    <PageContainer
+      pageTitle='About'
+      pageDescription='Restaurant operations, workflow, and backend integration for staff and management.'
+    >
       <AboutPageClient />
     </PageContainer>
   );

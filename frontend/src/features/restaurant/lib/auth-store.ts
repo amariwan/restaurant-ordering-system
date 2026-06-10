@@ -38,7 +38,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
     localStorage.removeItem('restaurant_token');
     localStorage.removeItem('restaurant_user');
     set({ token: null, user: null });
-  },
+  }
 }));
 
 export function setToken(token: string | null) {

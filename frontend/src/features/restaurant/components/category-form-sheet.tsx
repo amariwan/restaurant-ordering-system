@@ -50,7 +50,10 @@ export default function CategoryFormSheet({ category, open, onOpenChange }: Prop
       }
 
       if (isEdit && category) {
-        await updateMutation.mutateAsync({ id: category.id, data: { nameEn: nameEn.trim(), nameKu: nameKu.trim() } });
+        await updateMutation.mutateAsync({
+          id: category.id,
+          data: { nameEn: nameEn.trim(), nameKu: nameKu.trim() }
+        });
         toast.success(t.common.success);
       } else {
         await createMutation.mutateAsync({ nameEn: nameEn.trim(), nameKu: nameKu.trim() });
@@ -60,8 +63,8 @@ export default function CategoryFormSheet({ category, open, onOpenChange }: Prop
       }
 
       onOpenChange(false);
-    } catch (err: any) {
-      toast.error(err?.message ?? t.common.failed);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -77,8 +80,12 @@ export default function CategoryFormSheet({ category, open, onOpenChange }: Prop
 
         <form onSubmit={handleSubmit} className='flex flex-col gap-4 pt-2'>
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.categoryNameEn}</label>
+            <label htmlFor='nameEn' className='mb-1 block text-sm font-medium'>
+              {t.menu.categoryNameEn}
+            </label>
             <input
+              id='nameEn'
+              aria-label={t.menu.categoryNameEn}
               value={nameEn}
               onChange={(e) => setNameEn(e.target.value)}
               className='w-full rounded-md border border-input px-3 py-2 bg-transparent'
@@ -87,8 +94,12 @@ export default function CategoryFormSheet({ category, open, onOpenChange }: Prop
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.categoryNameKu}</label>
+            <label htmlFor='nameKu' className='mb-1 block text-sm font-medium'>
+              {t.menu.categoryNameKu}
+            </label>
             <input
+              id='nameKu'
+              aria-label={t.menu.categoryNameKu}
               value={nameKu}
               onChange={(e) => setNameKu(e.target.value)}
               className='w-full rounded-md border border-input px-3 py-2 bg-transparent'
@@ -101,7 +112,10 @@ export default function CategoryFormSheet({ category, open, onOpenChange }: Prop
               <Button variant='outline' onClick={() => onOpenChange(false)} type='button'>
                 {t.common.cancel}
               </Button>
-              <Button type='submit' isLoading={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                type='submit'
+                isLoading={createMutation.isPending || updateMutation.isPending}
+              >
                 {isEdit ? t.common.update : t.common.create}
               </Button>
             </div>

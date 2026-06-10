@@ -9,7 +9,7 @@ describe('userSchema', () => {
       email: 'john@example.com',
       phone: '+1234567890',
       role: 'Admin',
-      status: 'Active',
+      status: 'Active'
     });
     expect(result.success).toBe(true);
   });
@@ -21,7 +21,7 @@ describe('userSchema', () => {
       email: 'john@example.com',
       phone: '+1234567890',
       role: 'Admin',
-      status: 'Active',
+      status: 'Active'
     });
     expect(result.success).toBe(false);
   });
@@ -33,7 +33,7 @@ describe('userSchema', () => {
       email: 'not-email',
       phone: '+1234567890',
       role: 'Admin',
-      status: 'Active',
+      status: 'Active'
     });
     expect(result.success).toBe(false);
   });
@@ -45,7 +45,7 @@ describe('userSchema', () => {
       email: 'john@example.com',
       phone: '',
       role: 'Admin',
-      status: 'Active',
+      status: 'Active'
     });
     expect(result.success).toBe(false);
   });

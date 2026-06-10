@@ -38,7 +38,7 @@ import { Icons } from '../icons';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
+  const { isOpen: _isOpen } = useMediaQuery();
   const router = useRouter();
   const filteredGroups = useFilteredNavGroups(navGroups);
   const user = getUser();
@@ -93,7 +93,9 @@ export default function AppSidebar() {
                         <CollapsibleContent>
                           <SidebarMenuSub>
                             {item.items?.map((subItem) => {
-                              const subLabel = subItem.navKey ? (nav[subItem.navKey] ?? subItem.title) : subItem.title;
+                              const subLabel = subItem.navKey
+                                ? (nav[subItem.navKey] ?? subItem.title)
+                                : subItem.title;
                               return (
                                 <SidebarMenuSubItem key={subItem.title}>
                                   <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
@@ -139,8 +141,15 @@ export default function AppSidebar() {
                 >
                   <Icons.user className='size-4 shrink-0' />
                   <div className='grid flex-1 text-start text-sm leading-tight'>
-                    <span suppressHydrationWarning className='truncate font-semibold'>{user?.name || 'User'}</span>
-                    <span suppressHydrationWarning className='truncate text-xs capitalize text-muted-foreground'>{role || '—'}</span>
+                    <span suppressHydrationWarning className='truncate font-semibold'>
+                      {user?.name || 'User'}
+                    </span>
+                    <span
+                      suppressHydrationWarning
+                      className='truncate text-xs capitalize text-muted-foreground'
+                    >
+                      {role || '—'}
+                    </span>
                   </div>
                   <Icons.chevronsDown className='ms-auto size-4' />
                 </SidebarMenuButton>

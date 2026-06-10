@@ -13,10 +13,9 @@ describe('useCallbackRef', () => {
   it('calls the latest callback', () => {
     const fn1 = vi.fn();
     const fn2 = vi.fn();
-    const { result, rerender } = renderHook(
-      ({ cb }) => useCallbackRef(cb),
-      { initialProps: { cb: fn1 } }
-    );
+    const { result, rerender } = renderHook(({ cb }) => useCallbackRef(cb), {
+      initialProps: { cb: fn1 }
+    });
 
     result.current();
     expect(fn1).toHaveBeenCalledTimes(1);

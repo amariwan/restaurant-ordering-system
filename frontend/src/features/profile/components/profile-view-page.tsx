@@ -26,8 +26,8 @@ export default function ProfileViewPage() {
   const { t } = useI18n();
 
   useEffect(() => {
-    setUserState(getUser())
-  }, [])
+    setUserState(getUser());
+  }, []);
 
   function startEditing() {
     if (!user) return;
@@ -48,7 +48,7 @@ export default function ProfileViewPage() {
       storeUser(updated);
       setUserState(updated);
       setEditing(false);
-    } catch (err) {
+    } catch {
       // error shown via toast or inline
     } finally {
       setSaving(false);
@@ -125,7 +125,11 @@ export default function ProfileViewPage() {
           <CardContent className='space-y-4'>
             <div className='space-y-2'>
               <Label>Current Password</Label>
-              <Input type='password' value={pwCurrent} onChange={(e) => setPwCurrent(e.target.value)} />
+              <Input
+                type='password'
+                value={pwCurrent}
+                onChange={(e) => setPwCurrent(e.target.value)}
+              />
             </div>
             <div className='space-y-2'>
               <Label>New Password</Label>
@@ -141,8 +145,8 @@ export default function ProfileViewPage() {
                   toast.success(t.profile.passwordChanged);
                   setPwCurrent('');
                   setPwNew('');
-                } catch (err: any) {
-                  toast.error(err?.message ?? t.common.error);
+                } catch (err: unknown) {
+                  toast.error(err instanceof Error ? err.message : t.common.error);
                 } finally {
                   setPwSaving(false);
                 }

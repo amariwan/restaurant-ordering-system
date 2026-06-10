@@ -4,7 +4,7 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
-  getToken: vi.fn(),
+  getToken: vi.fn()
 }));
 
 import * as service from './service';
@@ -16,7 +16,7 @@ function mockResponse(data: unknown, status = 200) {
     ok: status >= 200 && status < 300,
     status,
     json: () => Promise.resolve(data),
-    headers: new Headers(),
+    headers: new Headers()
   } as Response);
 }
 
@@ -24,7 +24,7 @@ function mockError(status: number, message: string) {
   return Promise.resolve({
     ok: false,
     status,
-    json: () => Promise.resolve({ message }),
+    json: () => Promise.resolve({ message })
   } as Response);
 }
 
@@ -39,7 +39,10 @@ describe('service', () => {
 
   describe('auth', () => {
     it('authLogin posts credentials and returns token', async () => {
-      const resp = { token: 'abc', user: { id: 1, name: 'Test', email: 't@t.com', role: 'Waiter' } };
+      const resp = {
+        token: 'abc',
+        user: { id: 1, name: 'Test', email: 't@t.com', role: 'Waiter' }
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.authLogin({ email: 't@t.com', password: 'pass' });
@@ -49,7 +52,7 @@ describe('service', () => {
         `${API_BASE}/auth/login`,
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ email: 't@t.com', password: 'pass' }),
+          body: JSON.stringify({ email: 't@t.com', password: 'pass' })
         })
       );
     });
@@ -58,7 +61,11 @@ describe('service', () => {
       const resp = { token: 'xyz', user: { id: 2, name: 'New', email: 'n@t.com', role: 'Waiter' } };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
-      const result = await service.authRegister({ name: 'New', email: 'n@t.com', password: 'pass' });
+      const result = await service.authRegister({
+        name: 'New',
+        email: 'n@t.com',
+        password: 'pass'
+      });
 
       expect(result).toEqual(resp);
     });
@@ -79,14 +86,19 @@ describe('service', () => {
 
       const result = await service.menuGetCategories();
       expect(result).toEqual(cats);
-      expect(mockFetch).toHaveBeenCalledWith(
-        `${API_BASE}/menu/categories`,
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledWith(`${API_BASE}/menu/categories`, expect.any(Object));
     });
 
     it('menuGetItems returns paginated response', async () => {
-      const resp = { items: [{ id: 1, name: 'Pizza', price: 10, categoryId: 1, categoryName: 'Mains', available: true }], totalCount: 1, page: 1, pageSize: 20, totalPages: 1 };
+      const resp = {
+        items: [
+          { id: 1, name: 'Pizza', price: 10, categoryId: 1, categoryName: 'Mains', available: true }
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+        totalPages: 1
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.menuGetItems({ categoryId: 1, available: true });
@@ -94,7 +106,15 @@ describe('service', () => {
     });
 
     it('menuGetItems works without filters', async () => {
-      const resp = { items: [{ id: 1, name: 'Pizza', price: 10, categoryId: 1, categoryName: 'Mains', available: true }], totalCount: 1, page: 1, pageSize: 20, totalPages: 1 };
+      const resp = {
+        items: [
+          { id: 1, name: 'Pizza', price: 10, categoryId: 1, categoryName: 'Mains', available: true }
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+        totalPages: 1
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.menuGetItems();
@@ -126,7 +146,23 @@ describe('service', () => {
 
   describe('orders', () => {
     it('ordersGetAll returns paginated response', async () => {
-      const resp = { items: [{ id: 1, tableId: 1, tableNumber: 1, userId: 1, status: 'pending', items: [], createdAt: '2024-01-01T00:00:00Z' }], totalCount: 1, page: 1, pageSize: 20, totalPages: 1 };
+      const resp = {
+        items: [
+          {
+            id: 1,
+            tableId: 1,
+            tableNumber: 1,
+            userId: 1,
+            status: 'pending',
+            items: [],
+            createdAt: '2024-01-01T00:00:00Z'
+          }
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+        totalPages: 1
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.ordersGetAll({ status: 'pending', tableId: 1 });
@@ -134,7 +170,23 @@ describe('service', () => {
     });
 
     it('ordersGetAll works without filters', async () => {
-      const resp = { items: [{ id: 1, tableId: 1, tableNumber: 1, userId: 1, status: 'pending', items: [], createdAt: '2024-01-01T00:00:00Z' }], totalCount: 1, page: 1, pageSize: 20, totalPages: 1 };
+      const resp = {
+        items: [
+          {
+            id: 1,
+            tableId: 1,
+            tableNumber: 1,
+            userId: 1,
+            status: 'pending',
+            items: [],
+            createdAt: '2024-01-01T00:00:00Z'
+          }
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+        totalPages: 1
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.ordersGetAll();
@@ -143,7 +195,15 @@ describe('service', () => {
 
     it('ordersCreate posts and returns order', async () => {
       const payload = { tableId: 1, items: [{ menuItemId: 1, quantity: 2 }] };
-      const order = { id: 1, tableId: 1, tableNumber: 1, userId: 1, status: 'pending', items: [{ id: 1, menuItemId: 1, menuItemName: 'Pizza', price: 10, quantity: 2 }], createdAt: '2024-01-01T00:00:00Z' };
+      const order = {
+        id: 1,
+        tableId: 1,
+        tableNumber: 1,
+        userId: 1,
+        status: 'pending',
+        items: [{ id: 1, menuItemId: 1, menuItemName: 'Pizza', price: 10, quantity: 2 }],
+        createdAt: '2024-01-01T00:00:00Z'
+      };
       mockFetch.mockResolvedValue(mockResponse(order));
 
       const result = await service.ordersCreate(payload);
@@ -153,7 +213,13 @@ describe('service', () => {
 
   describe('payments', () => {
     it('paymentsCreate creates payment', async () => {
-      const payment = { id: 1, orderId: 1, amount: 50, method: 'cash', paidAt: '2024-01-01T00:00:00Z' };
+      const payment = {
+        id: 1,
+        orderId: 1,
+        amount: 50,
+        method: 'cash',
+        paidAt: '2024-01-01T00:00:00Z'
+      };
       mockFetch.mockResolvedValue(mockResponse(payment));
 
       const result = await service.paymentsCreate(1, { amount: 50, method: 'cash' });
@@ -161,7 +227,9 @@ describe('service', () => {
     });
 
     it('paymentsGetByOrder returns payments', async () => {
-      const payments = [{ id: 1, orderId: 1, amount: 50, method: 'cash', paidAt: '2024-01-01T00:00:00Z' }];
+      const payments = [
+        { id: 1, orderId: 1, amount: 50, method: 'cash', paidAt: '2024-01-01T00:00:00Z' }
+      ];
       mockFetch.mockResolvedValue(mockResponse(payments));
 
       const result = await service.paymentsGetByOrder(1);
@@ -171,7 +239,13 @@ describe('service', () => {
 
   describe('users', () => {
     it('usersGetAll returns paginated response', async () => {
-      const resp = { items: [{ id: 1, name: 'Admin', email: 'a@a.com', role: 'Admin' }], totalCount: 1, page: 1, pageSize: 20, totalPages: 1 };
+      const resp = {
+        items: [{ id: 1, name: 'Admin', email: 'a@a.com', role: 'Admin' }],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+        totalPages: 1
+      };
       mockFetch.mockResolvedValue(mockResponse(resp));
 
       const result = await service.usersGetAll();
@@ -187,21 +261,27 @@ describe('service', () => {
     });
 
     it('throws generic error when no message in body', async () => {
-      mockFetch.mockResolvedValue(Promise.resolve({
-        ok: false,
-        status: 500,
-        json: () => Promise.reject(new Error('parse fail')),
-      } as unknown as Response));
+      mockFetch.mockResolvedValue(
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          json: () => Promise.reject(new Error('parse fail'))
+        } as unknown as Response)
+      );
 
       await expect(service.authMe()).rejects.toThrow('Unknown error');
     });
 
     it('handles 204 no content', async () => {
-      mockFetch.mockResolvedValue(Promise.resolve({
-        ok: true,
-        status: 204,
-        json: () => { throw new Error('no body'); },
-      } as unknown as Response));
+      mockFetch.mockResolvedValue(
+        Promise.resolve({
+          ok: true,
+          status: 204,
+          json: () => {
+            throw new Error('no body');
+          }
+        } as unknown as Response)
+      );
 
       const result = await service.authLogout();
       expect(result).toBeUndefined();

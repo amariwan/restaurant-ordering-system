@@ -26,6 +26,7 @@ function getInitialLocale(): Locale {
 interface I18nContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   t: Record<string, any>;
   dir: 'ltr' | 'rtl';
   str: typeof str;
@@ -57,6 +58,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const t = translations[locale];
 
   return (
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     <I18nContext.Provider value={{ locale, setLocale, t: t as Record<string, any>, str, dir }}>
       {children}
     </I18nContext.Provider>

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import ProfileViewPage from './profile-view-page';
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
-  getUser: vi.fn(),
+  getUser: vi.fn()
 }));
 
 import { getUser } from '@/features/restaurant/lib/auth-store';
@@ -24,7 +24,7 @@ describe('ProfileViewPage', () => {
       id: 1,
       name: 'Test User',
       email: 'test@example.com',
-      role: 'Admin',
+      role: 'Admin'
     });
     render(<ProfileViewPage />);
     expect(screen.getByText('Account Information')).toBeDefined();

@@ -87,7 +87,7 @@ describe('Icons', () => {
   });
 
   it('all exports are React components or objects', () => {
-    for (const [key, value] of Object.entries(Icons)) {
+    for (const [_key, value] of Object.entries(Icons)) {
       expect(['function', 'object']).toContain(typeof value);
     }
   });

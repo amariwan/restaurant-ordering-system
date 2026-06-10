@@ -15,7 +15,7 @@ function parseJwt(token: string) {
 const ROLE_ROUTES: Record<string, string> = {
   Admin: '/orders',
   Waiter: '/orders',
-  Kitchen: '/kitchen',
+  Kitchen: '/kitchen'
 };
 
 export default async function LandingPage() {
@@ -25,7 +25,10 @@ export default async function LandingPage() {
   if (token) {
     const payload = parseJwt(token);
     if (payload) {
-      const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload['role'] || '';
+      const role =
+        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+        payload['role'] ||
+        '';
       const route = ROLE_ROUTES[role] || '/orders';
       redirect(route);
     }

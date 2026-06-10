@@ -5,10 +5,10 @@ export const DEFAULT_LOCALE: Locale = 'en';
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: 'English',
-  ku: 'Kurdî',
+  ku: 'Kurdî'
 };
 
 export const LOCALE_DIRS: Record<Locale, 'ltr' | 'rtl'> = {
   en: 'ltr',
-  ku: 'rtl',
+  ku: 'rtl'
 };

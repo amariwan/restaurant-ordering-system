@@ -1,1 +1,19 @@
-(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'&&t!=='system')t=null}catch{t=null}if(!t)t='system';var r=t==='system'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):t;document.documentElement.classList.remove('light','dark');document.documentElement.classList.add(r);document.documentElement.style.colorScheme=r})();
+(function () {
+  let t;
+  try {
+    t = localStorage.getItem('theme');
+    if (t !== 'light' && t !== 'dark' && t !== 'system') t = null;
+  } catch {
+    t = null;
+  }
+  if (!t) t = 'system';
+  var r =
+    t === 'system'
+      ? window.matchMedia('(prefers-color-scheme:dark)').matches
+        ? 'dark'
+        : 'light'
+      : t;
+  document.documentElement.classList.remove('light', 'dark');
+  document.documentElement.classList.add(r);
+  document.documentElement.style.colorScheme = r;
+})();

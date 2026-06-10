@@ -13,7 +13,7 @@ interface UseColumnsOptions {
   statusLabel: string;
 }
 
-export function createColumns(options: UseColumnsOptions): ColumnDef<User, any>[] {
+export function createColumns(options: UseColumnsOptions): ColumnDef<User, unknown>[] {
   return [
     {
       id: 'name',

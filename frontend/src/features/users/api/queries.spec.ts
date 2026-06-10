@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('./service', () => ({
-  getUsers: vi.fn(),
+  getUsers: vi.fn()
 }));
 
 import { userKeys, usersQueryOptions } from './queries';
@@ -35,6 +35,7 @@ describe('usersQueryOptions', () => {
     const filters = { page: 1, limit: 10, search: 'test' };
     const options = usersQueryOptions(filters);
 
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     (options.queryFn as any)({});
 
     expect(getUsers).toHaveBeenCalledWith(filters);

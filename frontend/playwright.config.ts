@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   timeout: 30_000,
   expect: {
-    timeout: 5000,
+    timeout: 5000
   },
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -14,11 +14,11 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    screenshot: 'only-on-failure'
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } }
   ],
   webServer: process.env.CI
     ? undefined // In CI the app should already be running
@@ -26,6 +26,6 @@ export default defineConfig({
         command: 'bun dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
-        stdout: 'pipe',
-      },
+        stdout: 'pipe'
+      }
 });

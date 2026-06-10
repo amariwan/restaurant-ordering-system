@@ -41,9 +41,7 @@ export function InteractiveGridPattern({
             height={height}
             className={cn(
               'fill-transparent transition-all duration-700 ease-out',
-              hoveredSquare === index
-                ? 'fill-foreground/[0.03] duration-150'
-                : 'fill-transparent',
+              hoveredSquare === index ? 'fill-foreground/[0.03] duration-150' : 'fill-transparent',
               squaresClassName
             )}
             onMouseEnter={() => setHoveredSquare(index)}

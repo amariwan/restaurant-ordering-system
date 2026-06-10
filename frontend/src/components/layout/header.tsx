@@ -21,7 +21,8 @@ export default function Header() {
           <SearchInput />
         </div>
         <ThemeModeToggle />
-        <ThemeSelector /><LanguageSwitcher />
+        <ThemeSelector />
+        <LanguageSwitcher />
       </div>
     </header>
   );

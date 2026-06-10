@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import {
   tablesAllOptions,
   menuCategoriesOptions,
   menuItemsOptions,
-  useOrdersCreateMutation,
+  useOrdersCreateMutation
 } from '@/features/restaurant/api/queries';
 import { useCartStore } from '@/features/restaurant/lib/cart-store';
 import { useToast } from '@/components/ui/sonner';
@@ -40,6 +41,7 @@ export default function SelfOrderPage() {
 
   const { t, locale: localeRaw } = useI18n();
   const locale = localeRaw as Locale;
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   const st = (t as Record<string, any>).selfOrder as Record<string, string>;
   const toast = useToast();
   const mutation = useOrdersCreateMutation();
@@ -48,16 +50,7 @@ export default function SelfOrderPage() {
   const { data: categories } = useQuery(menuCategoriesOptions);
   const { data: menuData, isLoading: menuLoading } = useQuery(menuItemsOptions());
 
-  const {
-    items,
-    addItem,
-    removeItem,
-    updateQuantity,
-    updateNote,
-    clear,
-    total,
-    setTableId: setCartTableId,
-  } = useCartStore();
+  const { items, addItem, clear, total, setTableId: setCartTableId } = useCartStore();
 
   const filteredItems = useMemo(() => {
     if (!menuData?.items) return [];
@@ -84,8 +77,8 @@ export default function SelfOrderPage() {
         items: items.map((i) => ({
           menuItemId: i.menuItemId,
           quantity: i.quantity,
-          note: i.note ?? '',
-        })),
+          note: i.note ?? ''
+        }))
       },
       {
         onSuccess: (order) => {
@@ -96,92 +89,10 @@ export default function SelfOrderPage() {
         },
         onError: (err) => {
           toast.error(err instanceof Error ? err.message : t.common.failed);
-        },
+        }
       }
     );
   }
-
-  const CartContent = () => (
-    <div className='flex h-full flex-col'>
-      {items.length === 0 ? (
-        <div className='flex flex-1 flex-col items-center justify-center gap-3 py-12 text-center text-muted-foreground'>
-          <Icons.cart className='size-10 opacity-30' />
-          <p className='text-sm font-medium'>{st.cartEmpty}</p>
-          <p className='text-xs'>{st.cartEmptyDesc}</p>
-        </div>
-      ) : (
-        <>
-          <ScrollArea className='flex-1'>
-            <div className='space-y-3 p-1'>
-              {items.map((item) => (
-                <div key={item.menuItemId} className='rounded-lg border bg-card p-3'>
-                  <div className='flex items-start justify-between gap-2'>
-                    <div className='min-w-0 flex-1'>
-                      <p className='truncate text-sm font-medium'>
-                        {locale === 'ku' ? item.menuItemNameKu : item.menuItemName}
-                      </p>
-                      <p className='text-xs text-muted-foreground'>
-                        {formatCurrency(item.price)} × {item.quantity}
-                      </p>
-                    </div>
-                    <div className='flex items-center gap-1 shrink-0'>
-                      <Button
-                        variant='outline'
-                        size='icon'
-                        className='h-6 w-6'
-                        onClick={() => updateQuantity(item.menuItemId, -1)}
-                      >
-                        <IconMinus className='size-3' />
-                      </Button>
-                      <span className='w-5 text-center text-sm'>{item.quantity}</span>
-                      <Button
-                        variant='outline'
-                        size='icon'
-                        className='h-6 w-6'
-                        onClick={() => updateQuantity(item.menuItemId, 1)}
-                      >
-                        <IconPlus className='size-3' />
-                      </Button>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-6 w-6 text-muted-foreground hover:text-destructive'
-                        onClick={() => removeItem(item.menuItemId)}
-                      >
-                        <IconTrash className='size-3' />
-                      </Button>
-                    </div>
-                  </div>
-                  <Input
-                    className='mt-2 h-7 text-xs'
-                    placeholder={t.cart.addNote}
-                    value={item.note ?? ''}
-                    onChange={(e) => updateNote(item.menuItemId, e.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-
-          <div className='border-t pt-4 space-y-3'>
-            <div className='flex items-center justify-between text-sm font-semibold'>
-              <span>{t.cart.total}</span>
-              <span>{formatCurrency(cartTotal)}</span>
-            </div>
-            <Button
-              className='w-full'
-              size='lg'
-              disabled={items.length === 0 || mutation.isPending}
-              isLoading={mutation.isPending}
-              onClick={handlePlaceOrder}
-            >
-              {t.cart.placeOrder}
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  );
 
   return (
     <div className='flex min-h-screen flex-col bg-background'>
@@ -237,7 +148,14 @@ export default function SelfOrderPage() {
                     </SheetTitle>
                   </SheetHeader>
                   <div className='flex-1 overflow-hidden'>
-                    <CartContent />
+                    <CartContent
+                      st={st}
+                      t={t}
+                      locale={locale}
+                      cartTotal={cartTotal}
+                      mutation={mutation}
+                      handlePlaceOrder={handlePlaceOrder}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -284,7 +202,12 @@ export default function SelfOrderPage() {
                           : 'cursor-not-allowed border-dashed border-muted bg-muted/30 opacity-60'
                       )}
                     >
-                      <Icons.table className={cn('size-6 mb-1', isFree ? 'text-primary' : 'text-muted-foreground')} />
+                      <Icons.table
+                        className={cn(
+                          'size-6 mb-1',
+                          isFree ? 'text-primary' : 'text-muted-foreground'
+                        )}
+                      />
                       <span className='text-lg font-bold leading-none'>{table.number}</span>
                       <span
                         className={cn(
@@ -347,13 +270,12 @@ export default function SelfOrderPage() {
                     menuItemName: item.nameEn,
                     menuItemNameKu: item.nameKu,
                     price: item.price,
-                    quantity: 1,
+                    quantity: 1
                   });
                   toast.success(`${localizedValue(item, 'name', locale)} ${t.menu.addedToCart}`);
                 }}
                 noItemsLabel={t.menu.noItems}
                 addLabel={t.menu.add}
-                loadingLabel={st.loading}
               />
             </div>
 
@@ -403,13 +325,12 @@ export default function SelfOrderPage() {
                       menuItemName: item.nameEn,
                       menuItemNameKu: item.nameKu,
                       price: item.price,
-                      quantity: 1,
+                      quantity: 1
                     });
                     toast.success(`${localizedValue(item, 'name', locale)} ${t.menu.addedToCart}`);
                   }}
                   noItemsLabel={t.menu.noItems}
                   addLabel={t.menu.add}
-                  loadingLabel={st.loading}
                 />
               </div>
 
@@ -424,8 +345,18 @@ export default function SelfOrderPage() {
                       </Badge>
                     )}
                   </div>
-                  <div style={{ maxHeight: 'calc(100vh - 220px)' }} className='flex flex-col overflow-hidden'>
-                    <CartContent />
+                  <div
+                    style={{ maxHeight: 'calc(100vh - 220px)' }}
+                    className='flex flex-col overflow-hidden'
+                  >
+                    <CartContent
+                      st={st}
+                      t={t}
+                      locale={locale}
+                      cartTotal={cartTotal}
+                      mutation={mutation}
+                      handlePlaceOrder={handlePlaceOrder}
+                    />
                   </div>
                 </div>
               </aside>
@@ -475,15 +406,113 @@ export default function SelfOrderPage() {
 
 // ── Extracted menu grid to avoid duplication ──
 interface MenuGridProps {
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   items: any[];
   isLoading: boolean;
   locale: Locale;
   imageErrors: Set<number>;
   setImageErrors: React.Dispatch<React.SetStateAction<Set<number>>>;
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   onAdd: (item: any) => void;
   noItemsLabel: string;
   addLabel: string;
-  loadingLabel: string;
+  _loadingLabel: string;
+}
+
+interface CartContentProps {
+  st: Record<string, string>;
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+  t: Record<string, any>;
+  locale: Locale;
+  cartTotal: number;
+  mutation: ReturnType<typeof useOrdersCreateMutation>;
+  handlePlaceOrder: () => void;
+}
+
+function CartContent({ st, t, locale, cartTotal, mutation, handlePlaceOrder }: CartContentProps) {
+  const { items, updateQuantity, removeItem, updateNote } = useCartStore();
+
+  return (
+    <div className='flex h-full flex-col'>
+      {items.length === 0 ? (
+        <div className='flex flex-1 flex-col items-center justify-center gap-3 py-12 text-center text-muted-foreground'>
+          <Icons.cart className='size-10 opacity-30' />
+          <p className='text-sm font-medium'>{st.cartEmpty}</p>
+          <p className='text-xs'>{st.cartEmptyDesc}</p>
+        </div>
+      ) : (
+        <>
+          <ScrollArea className='flex-1'>
+            <div className='space-y-3 p-1'>
+              {items.map((item) => (
+                <div key={item.menuItemId} className='rounded-lg border bg-card p-3'>
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='min-w-0 flex-1'>
+                      <p className='truncate text-sm font-medium'>
+                        {locale === 'ku' ? item.menuItemNameKu : item.menuItemName}
+                      </p>
+                      <p className='text-xs text-muted-foreground'>
+                        {formatCurrency(item.price)} × {item.quantity}
+                      </p>
+                    </div>
+                    <div className='flex items-center gap-1 shrink-0'>
+                      <Button
+                        variant='outline'
+                        size='icon'
+                        className='h-6 w-6'
+                        onClick={() => updateQuantity(item.menuItemId, -1)}
+                      >
+                        <IconMinus className='size-3' />
+                      </Button>
+                      <span className='w-5 text-center text-sm'>{item.quantity}</span>
+                      <Button
+                        variant='outline'
+                        size='icon'
+                        className='h-6 w-6'
+                        onClick={() => updateQuantity(item.menuItemId, 1)}
+                      >
+                        <IconPlus className='size-3' />
+                      </Button>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='h-6 w-6 text-muted-foreground hover:text-destructive'
+                        onClick={() => removeItem(item.menuItemId)}
+                      >
+                        <IconTrash className='size-3' />
+                      </Button>
+                    </div>
+                  </div>
+                  <Input
+                    className='mt-2 h-7 text-xs'
+                    placeholder={(t.cart as Record<string, string>).addNote}
+                    value={item.note ?? ''}
+                    onChange={(e) => updateNote(item.menuItemId, e.target.value)}
+                  />
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+
+          <div className='border-t pt-4 space-y-3'>
+            <div className='flex items-center justify-between text-sm font-semibold'>
+              <span>{(t.cart as Record<string, string>).total}</span>
+              <span>{formatCurrency(cartTotal)}</span>
+            </div>
+            <Button
+              className='w-full'
+              size='lg'
+              disabled={items.length === 0 || mutation.isPending}
+              isLoading={mutation.isPending}
+              onClick={handlePlaceOrder}
+            >
+              {(t.cart as Record<string, string>).placeOrder}
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 function MenuGrid({
@@ -495,7 +524,7 @@ function MenuGrid({
   onAdd,
   noItemsLabel,
   addLabel,
-  loadingLabel,
+  _loadingLabel
 }: MenuGridProps) {
   if (isLoading) {
     return (
@@ -526,11 +555,13 @@ function MenuGrid({
                 <IconPhoto className='size-8' />
               </div>
             ) : (
-              <img
+              <Image
                 loading='lazy'
                 src={item.imageUrl}
                 alt={localizedValue(item, 'name', locale)}
-                className='h-full w-full object-cover'
+                fill
+                className='object-cover'
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 onError={() => setImageErrors((prev) => new Set(prev).add(item.id))}
               />
             )}
@@ -539,7 +570,9 @@ function MenuGrid({
             <h3 className='truncate text-sm font-semibold'>
               {localizedValue(item, 'name', locale)}
             </h3>
-            <p className='text-xs text-muted-foreground'>{localizedValue(item, 'categoryName', locale)}</p>
+            <p className='text-xs text-muted-foreground'>
+              {localizedValue(item, 'categoryName', locale)}
+            </p>
             {localizedValue(item, 'description', locale) && (
               <p className='mt-1 line-clamp-2 text-xs text-muted-foreground'>
                 {localizedValue(item, 'description', locale)}

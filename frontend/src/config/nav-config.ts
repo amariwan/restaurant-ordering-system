@@ -10,35 +10,35 @@ export const navGroups: NavGroup[] = [
         navKey: 'dashboard',
         url: '/dashboard',
         icon: 'dashboard',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Orders',
         navKey: 'orders',
         url: '/orders',
         icon: 'post',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Cart',
         navKey: 'cart',
         url: '/cart',
         icon: 'cart',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Menu',
         navKey: 'menu',
         url: '/menu',
         icon: 'pizza',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Tables',
         navKey: 'tables',
         url: '/admin/tables',
         icon: 'table',
-        isActive: false,
+        isActive: false
       }
     ]
   },
@@ -51,14 +51,14 @@ export const navGroups: NavGroup[] = [
         navKey: 'kitchenView',
         url: '/kitchen',
         icon: 'chefHat',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Manage Menu',
         navKey: 'manageMenu',
         url: '/admin/menu',
         icon: 'product',
-        isActive: false,
+        isActive: false
       }
     ]
   },
@@ -71,16 +71,15 @@ export const navGroups: NavGroup[] = [
         navKey: 'users',
         url: '/admin/users',
         icon: 'teams',
-        isActive: false,
+        isActive: false
       },
       {
         title: 'Reservations',
         navKey: 'reservations',
         url: '/reservations',
         icon: 'calendar',
-        isActive: false,
+        isActive: false
       }
     ]
   }
 ];
-

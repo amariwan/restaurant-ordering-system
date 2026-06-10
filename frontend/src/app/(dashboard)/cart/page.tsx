@@ -10,9 +10,9 @@ export default function CartRoutePage() {
       pageTitle='Cart'
       pageDescription='Review items in the current order and enter your table number.'
     >
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <IconShoppingCart className="w-6 h-6" />
+      <div className='space-y-6'>
+        <div className='flex items-center gap-3'>
+          <IconShoppingCart className='w-6 h-6' />
         </div>
         <CartPage />
       </div>

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, fireEvent } from '@testing-library/react';
 import { InteractiveGridPattern } from './interactive-grid';
 
 describe('InteractiveGridPattern', () => {
@@ -10,7 +10,9 @@ describe('InteractiveGridPattern', () => {
   });
 
   it('renders with custom dimensions', () => {
-    const { container } = render(<InteractiveGridPattern width={20} height={30} squares={[2, 2]} />);
+    const { container } = render(
+      <InteractiveGridPattern width={20} height={30} squares={[2, 2]} />
+    );
     const svg = container.querySelector('svg');
     expect(svg).toHaveAttribute('width', '40');
     expect(svg).toHaveAttribute('height', '60');

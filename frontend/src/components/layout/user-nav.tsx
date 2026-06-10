@@ -22,11 +22,11 @@ export function UserNav() {
   const router = useRouter();
 
   useEffect(() => {
-    setUser(getUser())
-  }, [])
+    setUser(getUser());
+  }, []);
 
   if (!user) {
-    return null
+    return null;
   }
 
   return (
@@ -40,16 +40,12 @@ export function UserNav() {
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
             <p className='text-sm leading-none font-medium'>{user.name || 'User'}</p>
-            <p className='text-muted-foreground text-xs leading-none'>
-              {user.email}
-            </p>
+            <p className='text-muted-foreground text-xs leading-none'>{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}>
-            Profile
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
@@ -63,5 +59,5 @@ export function UserNav() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

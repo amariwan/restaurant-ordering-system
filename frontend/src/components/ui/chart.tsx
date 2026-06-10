@@ -102,8 +102,9 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 type ChartPayloadItem = {
   dataKey?: string | number;
   name?: string;
-  value?: any;
+  value?: unknown;
   color?: string;
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
@@ -114,9 +115,19 @@ type ChartTooltipContentProps = {
   hideLabel?: boolean;
   hideIndicator?: boolean;
   label?: string | number;
-  labelFormatter?: (value: React.ReactNode, payload?: readonly ChartPayloadItem[]) => React.ReactNode;
+  labelFormatter?: (
+    value: React.ReactNode,
+    payload?: readonly ChartPayloadItem[]
+  ) => React.ReactNode;
   labelClassName?: string;
-  formatter?: (value: any, name: string, item: ChartPayloadItem, index: number, payload: any) => React.ReactNode;
+  formatter?: (
+    value: unknown,
+    name: string,
+    item: ChartPayloadItem,
+    index: number,
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    payload: any
+  ) => React.ReactNode;
   color?: string;
   nameKey?: string;
   labelKey?: string;
@@ -236,7 +247,11 @@ function ChartTooltipContent({
                     </div>
                     {item.value && (
                       <span className='text-foreground font-mono font-medium tabular-nums'>
-                        {typeof item.value === 'number' ? new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(item.value) : String(item.value)}
+                        {typeof item.value === 'number'
+                          ? new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(
+                              item.value
+                            )
+                          : String(item.value)}
                       </span>
                     )}
                   </div>
@@ -311,7 +326,8 @@ function ChartLegendContent({
 }
 
 // Helper to extract item config from a payload.
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
+function getPayloadConfigFromPayload(config: ChartConfig, payload: any, key: string) {
   if (typeof payload !== 'object' || payload === null) {
     return undefined;
   }

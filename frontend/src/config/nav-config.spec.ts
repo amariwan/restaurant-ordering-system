@@ -9,7 +9,7 @@ describe('nav-config', () => {
 
   it('has all expected nav items', () => {
     const items = navGroups[0].items;
-    const titles = items.map(i => i.title);
+    const titles = items.map((i) => i.title);
     expect(titles).toContain('Dashboard');
     expect(titles).toContain('Orders');
     expect(titles).toContain('Menu');
@@ -31,8 +31,8 @@ describe('nav-config', () => {
 
   it('has correct URLs', () => {
     const items = navGroups[0].items;
-    expect(items.find(i => i.title === 'Dashboard')!.url).toBe('/admin');
-    expect(items.find(i => i.title === 'Orders')!.url).toBe('/orders');
-    expect(items.find(i => i.title === 'Tables')!.url).toBe('/admin/tables');
+    expect(items.find((i) => i.title === 'Dashboard')!.url).toBe('/admin');
+    expect(items.find((i) => i.title === 'Orders')!.url).toBe('/orders');
+    expect(items.find((i) => i.title === 'Tables')!.url).toBe('/admin/tables');
   });
 });

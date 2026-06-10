@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/sonner';
 import {
@@ -29,7 +30,9 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
   const isEdit = !!item;
   const { data: categories } = useSuspenseQuery(menuCategoriesOptions);
   const { t, locale } = useI18n();
-  const [categoryId, setCategoryId] = useState<number | null>(item?.categoryId ?? (categories[0]?.id ?? null));
+  const [categoryId, setCategoryId] = useState<number | null>(
+    item?.categoryId ?? categories[0]?.id ?? null
+  );
   const [nameEn, setNameEn] = useState(item?.nameEn ?? '');
   const [nameKu, setNameKu] = useState(item?.nameKu ?? '');
   const [price, setPrice] = useState(item?.price ?? 0);
@@ -73,8 +76,8 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
       const res = await service.menuUploadImage(file);
       setImageUrl(res.url);
       toast.success(t.common.success);
-    } catch (err: any) {
-      toast.error(err?.message ?? t.common.failed);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setUploading(false);
     }
@@ -106,8 +109,8 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
       }
 
       onOpenChange(false);
-    } catch (err: any) {
-      toast.error(err?.message ?? t.common.failed);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -116,7 +119,9 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
       <SheetContent side='right'>
         <SheetHeader>
           <SheetTitle>{isEdit ? t.menu.editItem : t.menu.addItem}</SheetTitle>
-          <SheetDescription>{isEdit ? 'Update item details.' : 'Create a new menu item.'}</SheetDescription>
+          <SheetDescription>
+            {isEdit ? 'Update item details.' : 'Create a new menu item.'}
+          </SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className='flex flex-col gap-4 pt-2'>
@@ -136,18 +141,40 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.nameEn}</label>
-            <input value={nameEn} onChange={(e) => setNameEn(e.target.value)} className='w-full rounded-md border border-input px-3 py-2 bg-transparent' placeholder='e.g. Margherita Pizza' />
+            <label htmlFor='nameEn' className='mb-1 block text-sm font-medium'>
+              {t.menu.nameEn}
+            </label>
+            <input
+              id='nameEn'
+              aria-label={t.menu.nameEn}
+              value={nameEn}
+              onChange={(e) => setNameEn(e.target.value)}
+              className='w-full rounded-md border border-input px-3 py-2 bg-transparent'
+              placeholder='e.g. Margherita Pizza'
+            />
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.nameKu}</label>
-            <input value={nameKu} onChange={(e) => setNameKu(e.target.value)} className='w-full rounded-md border border-input px-3 py-2 bg-transparent' placeholder='بۆ نموونە پیتزای مارگەریتا' />
+            <label htmlFor='nameKu' className='mb-1 block text-sm font-medium'>
+              {t.menu.nameKu}
+            </label>
+            <input
+              id='nameKu'
+              aria-label={t.menu.nameKu}
+              value={nameKu}
+              onChange={(e) => setNameKu(e.target.value)}
+              className='w-full rounded-md border border-input px-3 py-2 bg-transparent'
+              placeholder='بۆ نموونە پیتزای مارگەریتا'
+            />
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.descriptionEn}</label>
+            <label htmlFor='descriptionEn' className='mb-1 block text-sm font-medium'>
+              {t.menu.descriptionEn}
+            </label>
             <textarea
+              id='descriptionEn'
+              aria-label={t.menu.descriptionEn}
               value={descriptionEn}
               onChange={(e) => setDescriptionEn(e.target.value)}
               rows={2}
@@ -157,8 +184,12 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.descriptionKu}</label>
+            <label htmlFor='descriptionKu' className='mb-1 block text-sm font-medium'>
+              {t.menu.descriptionKu}
+            </label>
             <textarea
+              id='descriptionKu'
+              aria-label={t.menu.descriptionKu}
               value={descriptionKu}
               onChange={(e) => setDescriptionKu(e.target.value)}
               rows={2}
@@ -168,21 +199,54 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.price}</label>
-            <input type='number' step='0.01' value={price} onChange={(e) => setPrice(Number(e.target.value))} className='w-full rounded-md border border-input px-3 py-2 bg-transparent' />
+            <label htmlFor='price' className='mb-1 block text-sm font-medium'>
+              {t.menu.price}
+            </label>
+            <input
+              id='price'
+              aria-label={t.menu.price}
+              type='number'
+              step='0.01'
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              className='w-full rounded-md border border-input px-3 py-2 bg-transparent'
+            />
           </div>
 
           <div className='flex items-center gap-3'>
-            <input id='available' type='checkbox' checked={available} onChange={(e) => setAvailable(e.target.checked)} />
-            <label htmlFor='available' className='text-sm'>{t.menu.available}</label>
+            <input
+              id='available'
+              aria-label={t.menu.available}
+              type='checkbox'
+              checked={available}
+              onChange={(e) => setAvailable(e.target.checked)}
+            />
+            <label htmlFor='available' className='text-sm'>
+              {t.menu.available}
+            </label>
           </div>
 
           <div>
-            <label className='mb-1 block text-sm font-medium'>{t.menu.image}</label>
-            <input type='file' accept='image/*' onChange={handleUpload} className='w-full' />
+            <label htmlFor='image' className='mb-1 block text-sm font-medium'>
+              {t.menu.image}
+            </label>
+            <input
+              id='image'
+              aria-label={t.menu.image}
+              type='file'
+              accept='image/*'
+              onChange={handleUpload}
+              className='w-full'
+            />
             {imageUrl && (
               <div className='mt-2'>
-                <img src={imageUrl} alt='preview' className='h-28 w-full object-cover rounded-md' />
+                <Image
+                  src={imageUrl}
+                  alt='preview'
+                  width={200}
+                  height={112}
+                  className='h-28 w-full object-cover rounded-md'
+                />
               </div>
             )}
           </div>
@@ -192,7 +256,10 @@ export default function MenuItemFormSheet({ item, open, onOpenChange }: Props) {
               <Button variant='outline' onClick={() => onOpenChange(false)} type='button'>
                 {t.common.cancel}
               </Button>
-              <Button type='submit' isLoading={createMutation.isPending || updateMutation.isPending || uploading}>
+              <Button
+                type='submit'
+                isLoading={createMutation.isPending || updateMutation.isPending || uploading}
+              >
                 {isEdit ? t.common.update : t.common.create}
               </Button>
             </div>

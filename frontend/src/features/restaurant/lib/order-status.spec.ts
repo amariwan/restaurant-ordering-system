@@ -5,7 +5,7 @@ import {
   statusVariant,
   nextStatuses,
   prevStatuses,
-  nextStatusLabel,
+  nextStatusLabel
 } from './order-status';
 
 describe('order-status', () => {

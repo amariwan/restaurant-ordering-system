@@ -10,9 +10,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
 jobs:
   backend:
-    name: Backend (.NET 10)
+    name: Backend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,14 +28,30 @@ jobs:
         with:
           global-json-file: backend/global.json
 
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('backend/**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - run: dotnet restore RestaurantApp.sln
       - run: dotnet build RestaurantApp.sln --no-restore -c Release
       - run: dotnet test RestaurantApp.Tests --no-restore --no-build -c Release
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-backend
+          path: backend/RestaurantApp.Tests/TestResults/
+          retention-days: 7
+
   frontend:
-    name: Frontend (Next.js 16)
+    name: Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,13 +64,31 @@ jobs:
         with:
           bun-version-file: frontend/package.json
 
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            frontend/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       - run: bun install --frozen-lockfile
 
-      - name: Lint
-        run: bun run lint:strict
+      - name: Cache Next.js
+        uses: actions/cache@v4
+        with:
+          path: frontend/.next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('frontend/bun.lock', 'frontend/src/**/*.{ts,tsx}') }}
+          restore-keys: |
+            ${{ runner.os }}-next-
 
       - name: Format check
         run: bun run format:check
+
+      - name: Lint
+        run: bun run lint:strict
 
       - name: Type check
         run: bun run typecheck
@@ -61,3 +98,124 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-frontend
+          path: frontend/coverage/
+          retention-days: 7
+
+  docker:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: restaurant-backend:ci
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: restaurant-frontend:ci
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: restaurant
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: backend/global.json
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: frontend/package.json
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            frontend/node_modules
+          key: ${{ runner.os }}-bun-e2e-${{ hashFiles('frontend/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-e2e-
+
+      - run: bun install --frozen-lockfile
+        working-directory: frontend
+
+      - name: Start backend
+        working-directory: backend
+        env:
+          DATABASE_URL: Host=localhost;Database=restaurant;Username=postgres;Password=secret
+          JWT_SECRET: dev-secret-minimum-32-characters-long!!
+          JWT_EXPIRY_HOURS: 8
+          CORS_ORIGINS: http://localhost:3000
+          ASPNETCORE_URLS: http://0.0.0.0:5000
+        run: |
+          dotnet run --project RestaurantApp.API &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5000/api/menu > /dev/null 2>&1 && echo "Backend ready" && break
+            sleep 2
+          done
+
+      - name: Build & start frontend
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:5000/api
+          NEXT_PUBLIC_SIGNALR_URL: http://localhost:5000/hubs
+        run: |
+          bun run build
+          bun run start &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000 > /dev/null 2>&1 && echo "Frontend ready" && break
+            sleep 2
+          done
+
+      - name: Run Playwright
+        run: bun run test:e2e
+        env:
+          CI: true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 14

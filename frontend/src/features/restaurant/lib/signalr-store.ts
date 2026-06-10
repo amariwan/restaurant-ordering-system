@@ -11,7 +11,7 @@ export function getOrderHub(): signalR.HubConnection {
     const url = SIGNALR_HUB_URL ?? '/hubs/orders';
     connection = new signalR.HubConnectionBuilder()
       .withUrl(url, {
-        accessTokenFactory: () => getToken() ?? '',
+        accessTokenFactory: () => getToken() ?? ''
       })
       .withAutomaticReconnect()
       .build();

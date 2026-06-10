@@ -1,27 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('@/features/restaurant/api/service', async (importOriginal) => {
-  const actual = await importOriginal() as Record<string, unknown>;
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     ordersGetById: vi.fn(),
     ordersUpdateStatus: vi.fn(),
     paymentsGetByOrder: vi.fn(),
-    paymentsCreate: vi.fn(),
+    paymentsCreate: vi.fn()
   };
 });
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
-  parseRole: vi.fn(),
+  parseRole: vi.fn()
 }));
 
 vi.mock('@/components/ui/local-date', () => ({
-  default: ({ value }: { value: string }) => <span>{value}</span>,
+  default: ({ value }: { value: string }) => <span>{value}</span>
 }));
 
 vi.mock('next/navigation', () => ({
   useParams: vi.fn(() => ({ id: '1' })),
-  useRouter: vi.fn(),
+  useRouter: vi.fn()
 }));
 
 import { render, screen } from '../../../../tests/support/render-with-provider';
@@ -38,16 +38,34 @@ function makeOrder(overrides = {}) {
     userId: 1,
     status: 'pending' as const,
     items: [
-      { id: 1, menuItemId: 1, menuItemName: 'Spring Rolls', menuItemNameKu: 'سپرینگ ڕۆڵ', price: 8.5, quantity: 2 },
-      { id: 2, menuItemId: 2, menuItemName: 'Steak', menuItemNameKu: 'ستیك', price: 24, quantity: 1 },
+      {
+        id: 1,
+        menuItemId: 1,
+        menuItemName: 'Spring Rolls',
+        menuItemNameKu: 'سپرینگ ڕۆڵ',
+        price: 8.5,
+        quantity: 2
+      },
+      {
+        id: 2,
+        menuItemId: 2,
+        menuItemName: 'Steak',
+        menuItemNameKu: 'ستیك',
+        price: 24,
+        quantity: 1
+      }
     ],
     createdAt: '2026-06-08T12:00:00Z',
-    ...overrides,
+    ...overrides
   };
 }
 
 function renderDetail() {
-  return render(<Suspense fallback={<div>Loading...</div>}><OrderDetail /></Suspense>);
+  return render(
+    <Suspense fallback={<div>Loading...</div>}>
+      <OrderDetail />
+    </Suspense>
+  );
 }
 
 describe('OrderDetail', () => {
@@ -79,7 +97,9 @@ describe('OrderDetail', () => {
   });
 
   it('shows mark ready for preparing orders', async () => {
-    (service.ordersGetById as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(makeOrder({ status: 'preparing' }));
+    (service.ordersGetById as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
+      makeOrder({ status: 'preparing' })
+    );
 
     renderDetail();
 
@@ -102,7 +122,7 @@ describe('OrderDetail', () => {
 
   it('shows fully paid message', async () => {
     (service.paymentsGetByOrder as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: 1, orderId: 1, amount: 41, method: 'cash', paidAt: '2026-06-08T12:05:00Z' },
+      { id: 1, orderId: 1, amount: 41, method: 'cash', paidAt: '2026-06-08T12:05:00Z' }
     ]);
 
     renderDetail();
@@ -112,7 +132,7 @@ describe('OrderDetail', () => {
 
   it('shows existing payments in table', async () => {
     (service.paymentsGetByOrder as unknown as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { id: 1, orderId: 1, amount: 20, method: 'cash', paidAt: '2026-06-08T12:05:00Z' },
+      { id: 1, orderId: 1, amount: 20, method: 'cash', paidAt: '2026-06-08T12:05:00Z' }
     ]);
 
     renderDetail();

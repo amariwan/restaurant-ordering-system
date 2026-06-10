@@ -4,37 +4,37 @@ import { getRouteMeta, ROUTES } from './routes';
 describe('routes config', () => {
   it('exports ROUTES array with expected entries', () => {
     expect(ROUTES.length).toBeGreaterThan(0);
-    expect(ROUTES.some(r => r.path === '/login')).toBe(true);
-    expect(ROUTES.some(r => r.path === '/orders')).toBe(true);
-    expect(ROUTES.some(r => r.path === '/')).toBe(true);
+    expect(ROUTES.some((r) => r.path === '/login')).toBe(true);
+    expect(ROUTES.some((r) => r.path === '/orders')).toBe(true);
+    expect(ROUTES.some((r) => r.path === '/')).toBe(true);
   });
 
   it('marks login as public', () => {
-    const authRoute = ROUTES.find(r => r.path === '/login');
+    const authRoute = ROUTES.find((r) => r.path === '/login');
     expect(authRoute?.isPublic).toBe(true);
     expect(authRoute?.layout).toBe('auth');
   });
 
   it('marks admin/users as admin-only', () => {
-    const usersRoute = ROUTES.find(r => r.path === '/admin/users');
+    const usersRoute = ROUTES.find((r) => r.path === '/admin/users');
     expect(usersRoute?.requiresAuth).toBe(true);
     expect(usersRoute?.requiredRoles).toContain('Admin');
   });
 
   it('marks cart as waiter/admin-only', () => {
-    const cartRoute = ROUTES.find(r => r.path === '/cart');
+    const cartRoute = ROUTES.find((r) => r.path === '/cart');
     expect(cartRoute?.requiredRoles).toContain('Waiter');
     expect(cartRoute?.requiredRoles).toContain('Admin');
   });
 
   it('marks kitchen as kitchen/admin-only', () => {
-    const kitchenRoute = ROUTES.find(r => r.path === '/kitchen');
+    const kitchenRoute = ROUTES.find((r) => r.path === '/kitchen');
     expect(kitchenRoute?.requiredRoles).toContain('Kitchen');
     expect(kitchenRoute?.requiredRoles).toContain('Admin');
   });
 
   it('marks admin/menu as admin-only', () => {
-    const manageRoute = ROUTES.find(r => r.path === '/admin/menu');
+    const manageRoute = ROUTES.find((r) => r.path === '/admin/menu');
     expect(manageRoute?.requiredRoles).toContain('Admin');
   });
 });

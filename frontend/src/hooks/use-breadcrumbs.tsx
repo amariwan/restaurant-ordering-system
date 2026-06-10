@@ -14,7 +14,7 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
   '/orders': [{ title: 'Orders', link: '/orders' }],
   '/menu': [{ title: 'Menu', link: '/menu' }],
   '/cart': [{ title: 'Cart', link: '/cart' }],
-  '/kitchen': [{ title: 'Kitchen', link: '/kitchen' }],
+  '/kitchen': [{ title: 'Kitchen', link: '/kitchen' }]
 };
 
 export function useBreadcrumbs() {

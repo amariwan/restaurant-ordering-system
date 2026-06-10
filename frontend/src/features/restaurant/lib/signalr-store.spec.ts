@@ -4,22 +4,28 @@ const mockBuild = vi.fn();
 
 vi.mock('@microsoft/signalr', () => {
   class MockHubConnectionBuilder {
-    withUrl() { return this; }
-    withAutomaticReconnect() { return this; }
-    build() { return mockBuild(); }
+    withUrl() {
+      return this;
+    }
+    withAutomaticReconnect() {
+      return this;
+    }
+    build() {
+      return mockBuild();
+    }
   }
   return {
     HubConnectionBuilder: MockHubConnectionBuilder,
-    HubConnectionState: { Disconnected: 0, Connected: 1, Reconnecting: 2 },
+    HubConnectionState: { Disconnected: 0, Connected: 1, Reconnecting: 2 }
   };
 });
 
 vi.mock('@/features/restaurant/lib/auth-store', () => ({
-  getToken: vi.fn(() => 'mock-token'),
+  getToken: vi.fn(() => 'mock-token')
 }));
 
 vi.mock('@/features/restaurant/api/service', () => ({
-  SIGNALR_HUB_URL: 'http://127.0.0.1:5000/hubs/orders',
+  SIGNALR_HUB_URL: 'http://127.0.0.1:5000/hubs/orders'
 }));
 
 import { getOrderHub, startOrderHub, stopOrderHub } from './signalr-store';
@@ -29,7 +35,7 @@ function makeMockHub(state = 0) {
     on: vi.fn(),
     start: vi.fn().mockResolvedValue(undefined),
     stop: vi.fn().mockResolvedValue(undefined),
-    state,
+    state
   };
 }
 

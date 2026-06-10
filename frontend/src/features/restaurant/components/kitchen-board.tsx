@@ -4,7 +4,14 @@ import React, { useEffect } from 'react';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell
+} from '@/components/ui/table';
 import { useToast } from '@/components/ui/sonner';
 import { IconClock, IconCircleCheck } from '@tabler/icons-react';
 import { ordersAllOptions, useOrdersUpdateStatusMutation, keys } from '../api/queries';
@@ -44,7 +51,9 @@ export default function KitchenBoard() {
     };
   }, [qc]);
 
-  const kitchenOrders = orders.items.filter((o) => o.status === 'pending' || o.status === 'preparing');
+  const kitchenOrders = orders.items.filter(
+    (o) => o.status === 'pending' || o.status === 'preparing'
+  );
 
   return (
     <div className='space-y-6'>
@@ -67,11 +76,20 @@ export default function KitchenBoard() {
               {kitchenOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>#{order.id}</TableCell>
-                  <TableCell>{t.orders.table} {order.tableNumber}</TableCell>
-                  <TableCell className='text-muted-foreground truncate max-w-48'>
-                    {order.items.map((i) => `${locale === 'ku' && i.menuItemNameKu ? i.menuItemNameKu : i.menuItemName} x${i.quantity}`).join(', ')}
+                  <TableCell>
+                    {t.orders.table} {order.tableNumber}
                   </TableCell>
-                  <TableCell className='text-xs text-muted-foreground'><LocalDate value={order.createdAt} /></TableCell>
+                  <TableCell className='text-muted-foreground truncate max-w-48'>
+                    {order.items
+                      .map(
+                        (i) =>
+                          `${locale === 'ku' && i.menuItemNameKu ? i.menuItemNameKu : i.menuItemName} x${i.quantity}`
+                      )
+                      .join(', ')}
+                  </TableCell>
+                  <TableCell className='text-xs text-muted-foreground'>
+                    <LocalDate value={order.createdAt} />
+                  </TableCell>
                   <TableCell>
                     <div className='flex gap-2'>
                       {order.status === 'pending' && (
@@ -80,7 +98,9 @@ export default function KitchenBoard() {
                           disabled={mutation.isPending}
                           onClick={() => {
                             mutation.mutate({ id: order.id, data: { status: 'preparing' } });
-                            toast.success(`${t.orders.orderNumber}${order.id} ${t.kitchen.markPreparing}`);
+                            toast.success(
+                              `${t.orders.orderNumber}${order.id} ${t.kitchen.markPreparing}`
+                            );
                           }}
                         >
                           <IconClock className='mr-1 w-4 h-4' /> {t.kitchen.markPreparing}
@@ -94,7 +114,9 @@ export default function KitchenBoard() {
                           disabled={mutation.isPending}
                           onClick={() => {
                             mutation.mutate({ id: order.id, data: { status: 'ready' } });
-                            toast.success(`${t.orders.orderNumber}${order.id} ${t.orders.status.ready}`);
+                            toast.success(
+                              `${t.orders.orderNumber}${order.id} ${t.orders.status.ready}`
+                            );
                           }}
                         >
                           <IconCircleCheck className='mr-1 w-4 h-4' /> {t.kitchen.markReady}

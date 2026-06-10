@@ -19,8 +19,12 @@ describe('useCartStore', () => {
   });
 
   it('addItem increments quantity for existing item', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
 
     const items = useCartStore.getState().items;
     expect(items).toHaveLength(1);
@@ -28,14 +32,24 @@ describe('useCartStore', () => {
   });
 
   it('addItem with custom quantity', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10, quantity: 3 });
+    useCartStore.getState().addItem({
+      menuItemId: 1,
+      menuItemName: 'Pizza',
+      menuItemNameKu: 'پیتزا',
+      price: 10,
+      quantity: 3
+    });
 
     expect(useCartStore.getState().items[0].quantity).toBe(3);
   });
 
   it('removeItem removes item', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
-    useCartStore.getState().addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
 
     useCartStore.getState().removeItem(1);
 
@@ -45,22 +59,30 @@ describe('useCartStore', () => {
   });
 
   it('updateQuantity increments', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
     useCartStore.getState().updateQuantity(1, 2);
 
     expect(useCartStore.getState().items[0].quantity).toBe(3);
   });
 
   it('updateQuantity decrements but min 1', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
     useCartStore.getState().updateQuantity(1, -5);
 
     expect(useCartStore.getState().items[0].quantity).toBe(1);
   });
 
   it('clear removes all items', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
-    useCartStore.getState().addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
 
     useCartStore.getState().clear();
 
@@ -68,21 +90,39 @@ describe('useCartStore', () => {
   });
 
   it('total calculates sum', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10, quantity: 2 });
-    useCartStore.getState().addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
+    useCartStore.getState().addItem({
+      menuItemId: 1,
+      menuItemName: 'Pizza',
+      menuItemNameKu: 'پیتزا',
+      price: 10,
+      quantity: 2
+    });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
 
     expect(useCartStore.getState().total()).toBe(28);
   });
 
   it('itemCount returns total quantity', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10, quantity: 2 });
-    useCartStore.getState().addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
+    useCartStore.getState().addItem({
+      menuItemId: 1,
+      menuItemName: 'Pizza',
+      menuItemNameKu: 'پیتزا',
+      price: 10,
+      quantity: 2
+    });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 2, menuItemName: 'Pasta', menuItemNameKu: 'پاستا', price: 8 });
 
     expect(useCartStore.getState().itemCount()).toBe(3);
   });
 
   it('price is stored as number', () => {
-    useCartStore.getState().addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10.5 });
+    useCartStore
+      .getState()
+      .addItem({ menuItemId: 1, menuItemName: 'Pizza', menuItemNameKu: 'پیتزا', price: 10.5 });
 
     const price = useCartStore.getState().items[0].price;
     expect(price).toBeTypeOf('number');

@@ -5,7 +5,7 @@ vi.mock('@/features/restaurant/api/service', () => ({
   apiGet: vi.fn(),
   apiPut: vi.fn(),
   apiDelete: vi.fn(),
-  apiPost: vi.fn(),
+  apiPost: vi.fn()
 }));
 
 import { apiGet, apiPut, apiDelete, apiPost } from '@/features/restaurant/api/service';
@@ -15,9 +15,12 @@ describe('getUsers', () => {
     (apiGet as ReturnType<typeof vi.fn>).mockResolvedValue({
       items: [
         { id: 1, name: 'Alice', email: 'alice@test.com', role: 'Waiter' },
-        { id: 2, name: 'Bob', email: 'bob@test.com', role: 'Kitchen' },
+        { id: 2, name: 'Bob', email: 'bob@test.com', role: 'Kitchen' }
       ],
-      totalCount: 2, page: 1, pageSize: 10, totalPages: 1,
+      totalCount: 2,
+      page: 1,
+      pageSize: 10,
+      totalPages: 1
     });
 
     const result = await getUsers({ page: 1, limit: 10 });
@@ -31,7 +34,11 @@ describe('getUsers', () => {
 
   it('computes offset correctly for page 2', async () => {
     (apiGet as ReturnType<typeof vi.fn>).mockResolvedValue({
-      items: [], totalCount: 0, page: 2, pageSize: 20, totalPages: 0,
+      items: [],
+      totalCount: 0,
+      page: 2,
+      pageSize: 20,
+      totalPages: 0
     });
 
     const result = await getUsers({ page: 2, limit: 20 });
@@ -42,7 +49,11 @@ describe('getUsers', () => {
 
   it('handles null filters gracefully', async () => {
     (apiGet as ReturnType<typeof vi.fn>).mockResolvedValue({
-      items: [], totalCount: 0, page: 1, pageSize: 10, totalPages: 0,
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalPages: 0
     });
 
     const result = await getUsers({});
@@ -53,7 +64,11 @@ describe('getUsers', () => {
 
   it('handles empty page filter with search', async () => {
     (apiGet as ReturnType<typeof vi.fn>).mockResolvedValue({
-      items: [], totalCount: 0, page: 1, pageSize: 10, totalPages: 0,
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalPages: 0
     });
 
     const result = await getUsers({ search: 'test' });
@@ -88,12 +103,17 @@ describe('createUser', () => {
   it('calls apiPost with registration data', async () => {
     (apiPost as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
-    await createUser({ name: 'New User', email: 'new@test.com', first_name: 'New', last_name: 'User' });
+    await createUser({
+      name: 'New User',
+      email: 'new@test.com',
+      first_name: 'New',
+      last_name: 'User'
+    });
 
     expect(apiPost).toHaveBeenCalledWith('/auth/register', {
       name: 'New User',
       email: 'new@test.com',
-      password: 'Password123!',
+      password: 'Password123!'
     });
   });
 
@@ -105,7 +125,7 @@ describe('createUser', () => {
     expect(apiPost).toHaveBeenCalledWith('/auth/register', {
       name: 'John Doe',
       email: 'john@test.com',
-      password: 'Password123!',
+      password: 'Password123!'
     });
   });
 
@@ -117,7 +137,7 @@ describe('createUser', () => {
     expect(apiPost).toHaveBeenCalledWith('/auth/register', {
       name: 'New User',
       email: 'anon@test.com',
-      password: 'Password123!',
+      password: 'Password123!'
     });
   });
 });

@@ -5,18 +5,18 @@ const mockAuth = vi.fn();
 const mockGetRouteMeta = vi.fn();
 
 vi.mock('@/lib/auth', () => ({
-  auth: mockAuth,
+  auth: mockAuth
 }));
 
 vi.mock('@/config/routes', () => ({
-  getRouteMeta: mockGetRouteMeta,
+  getRouteMeta: mockGetRouteMeta
 }));
 
 vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
   useRouter: vi.fn(),
   useSearchParams: vi.fn(),
-  usePathname: vi.fn(),
+  usePathname: vi.fn()
 }));
 
 const { requireAuth, requireRoles, requireRouteAccess } = await import('./guard');
@@ -121,7 +121,7 @@ describe('requireRouteAccess', () => {
   it('redirects when required roles mismatch', async () => {
     mockGetRouteMeta.mockReturnValue({
       requiresAuth: true,
-      requiredRoles: ['admin'],
+      requiredRoles: ['admin']
     });
     mockAuth.mockResolvedValue({ user: { id: 1, role: 'user' } });
 

@@ -27,13 +27,13 @@ export async function getUsers(filters: UserFilters): Promise<{
   const result = await apiGet<PaginatedResponse<User>>('/users', {
     search: filters.search,
     page: filters.page || 1,
-    pageSize: filters.limit || 10,
+    pageSize: filters.limit || 10
   });
   return {
     users: result.items,
     total_users: result.totalCount,
     offset: (result.page - 1) * result.pageSize,
-    limit: result.pageSize,
+    limit: result.pageSize
   };
 }
 
@@ -59,6 +59,6 @@ export async function createUser(data: CreateUserPayload): Promise<void> {
   await apiPost('/auth/register', {
     name: name || 'New User',
     email,
-    password,
+    password
   });
 }

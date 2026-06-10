@@ -6,8 +6,8 @@ function createTestQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: { retry: false, gcTime: 0 },
-      mutations: { retry: false },
-    },
+      mutations: { retry: false }
+    }
   });
 }
 
@@ -19,16 +19,12 @@ function render(ui: ReactElement, options?: CustomRenderOptions) {
   const queryClient = options?.queryClient ?? createTestQueryClient();
 
   function Wrapper({ children }: { children: React.ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    );
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   }
 
   return {
     ...rtlRender(ui, { wrapper: Wrapper, ...options }),
-    queryClient,
+    queryClient
   };
 }
 

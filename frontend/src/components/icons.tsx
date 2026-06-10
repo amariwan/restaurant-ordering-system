@@ -229,5 +229,5 @@ export const Icons = {
 
   // Restaurant
   cart: IconShoppingCart,
-  table: IconTable,
+  table: IconTable
 };

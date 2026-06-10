@@ -37,11 +37,11 @@ export const useCartStore = create<CartState>()(
                 i.menuItemId === item.menuItemId
                   ? { ...i, quantity: i.quantity + (item.quantity ?? 1) }
                   : i
-              ),
+              )
             };
           }
           return {
-            items: [...state.items, { ...item, quantity: item.quantity ?? 1 }],
+            items: [...state.items, { ...item, quantity: item.quantity ?? 1 }]
           };
         }),
 
@@ -51,19 +51,13 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (menuItemId, delta) =>
         set((state) => ({
           items: state.items.map((i) =>
-            i.menuItemId === menuItemId
-              ? { ...i, quantity: Math.max(1, i.quantity + delta) }
-              : i
-          ),
+            i.menuItemId === menuItemId ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i
+          )
         })),
 
       updateNote: (menuItemId, note) =>
         set((state) => ({
-          items: state.items.map((i) =>
-            i.menuItemId === menuItemId
-              ? { ...i, note }
-              : i
-          ),
+          items: state.items.map((i) => (i.menuItemId === menuItemId ? { ...i, note } : i))
         })),
 
       setTableId: (id) => set({ tableId: id }),
@@ -72,10 +66,10 @@ export const useCartStore = create<CartState>()(
 
       total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
 
-      itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
+      itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0)
     }),
     {
-      name: 'restaurant_cart',
+      name: 'restaurant_cart'
     }
   )
 );

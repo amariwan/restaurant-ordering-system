@@ -4,19 +4,24 @@ export type { OrderStatus };
 
 export const STATUS_FLOW: OrderStatus[] = ['pending', 'preparing', 'ready', 'served', 'cancelled'];
 
-export const STATUS_CONFIG: Record<OrderStatus, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+export const STATUS_CONFIG: Record<
+  OrderStatus,
+  { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }
+> = {
   pending: { label: 'Pending', variant: 'secondary' },
   preparing: { label: 'Preparing', variant: 'outline' },
   ready: { label: 'Ready', variant: 'secondary' },
   served: { label: 'Served', variant: 'default' },
-  cancelled: { label: 'Cancelled', variant: 'destructive' },
+  cancelled: { label: 'Cancelled', variant: 'destructive' }
 };
 
 export function statusLabel(status: OrderStatus): string {
   return STATUS_CONFIG[status]?.label ?? status;
 }
 
-export function statusVariant(status: OrderStatus): 'default' | 'secondary' | 'outline' | 'destructive' {
+export function statusVariant(
+  status: OrderStatus
+): 'default' | 'secondary' | 'outline' | 'destructive' {
   return STATUS_CONFIG[status]?.variant ?? 'default';
 }
 

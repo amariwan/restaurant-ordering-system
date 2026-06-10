@@ -4,6 +4,7 @@ import { afterEach, vi } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import React from 'react';
 
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 expect.extend(matchers as any);
 
 afterEach(() => {
@@ -17,24 +18,24 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
     prefetch: vi.fn(),
     query: {},
-    pathname: '/',
+    pathname: '/'
   }),
   useSearchParams: () => ({
     get: vi.fn(),
-    toString: vi.fn(),
+    toString: vi.fn()
   }),
-  usePathname: () => '/',
+  usePathname: () => '/'
 }));
 
 vi.mock('next/font/google', () => ({
-  Inter: () => ({ className: 'inter' }),
+  Inter: () => ({ className: 'inter' })
 }));
 
 // Mock Next.js Image component (doesn't work in jsdom)
 vi.mock('next/image', () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     return React.createElement('img', props);
-  },
+  }
 }));
 
 // Mock localStorage more robustly
@@ -42,22 +43,28 @@ const getLocalStorageMock = () => {
   let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
-    getStore: () => store,
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+    getStore: () => store
   };
 };
 
 Object.defineProperty(window, 'localStorage', {
   value: getLocalStorageMock(),
-  writable: true,
+  writable: true
 });
 
 // Mock matchMedia for radix-ui (used in dialogs/dropdowns)
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -65,8 +72,8 @@ Object.defineProperty(window, 'matchMedia', {
     removeListener: vi.fn(),
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+    dispatchEvent: vi.fn()
+  }))
 });
 
 // Mock IntersectionObserver
@@ -78,7 +85,7 @@ class MockIntersectionObserver {
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
   configurable: true,
-  value: MockIntersectionObserver,
+  value: MockIntersectionObserver
 });
 
 // Mock ResizeObserver
@@ -90,7 +97,7 @@ class MockResizeObserver {
 Object.defineProperty(window, 'ResizeObserver', {
   writable: true,
   configurable: true,
-  value: MockResizeObserver,
+  value: MockResizeObserver
 });
 
 // Suppress console errors during tests

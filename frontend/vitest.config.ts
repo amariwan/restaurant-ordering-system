@@ -12,9 +12,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: [
-        'src/**/*.{ts,tsx}',
-      ],
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
         '**/node_modules/**',
         '**/*.config.*',
@@ -25,19 +23,19 @@ export default defineConfig({
         'src/components/ui/**',
         'src/types/**',
         'src/styles/**',
-        'src/instrumentation*.ts',
+        'src/instrumentation*.ts'
       ],
       thresholds: {
         branches: 95,
         functions: 100,
         lines: 100,
-        statements: 100,
-      },
-    },
+        statements: 100
+      }
+    }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
-  },
+      '@': path.resolve(__dirname, 'src')
+    }
+  }
 });

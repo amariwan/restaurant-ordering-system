@@ -11,11 +11,14 @@ export default function TablesRoutePage() {
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(tablesAllOptions);
   return (
-    <PageContainer pageTitle='Tables' pageDescription='Manage restaurant table availability and assignments.'>
+    <PageContainer
+      pageTitle='Tables'
+      pageDescription='Manage restaurant table availability and assignments.'
+    >
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="space-y-6">
-          <div className="flex items-center gap-3">
-            <IconMapPin className="w-6 h-6" />
+        <div className='space-y-6'>
+          <div className='flex items-center gap-3'>
+            <IconMapPin className='w-6 h-6' />
           </div>
           <TablesPage />
         </div>

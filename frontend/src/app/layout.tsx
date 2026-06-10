@@ -19,7 +19,7 @@ const META_THEME_COLORS = {
 
 export const metadata: Metadata = {
   title: 'Restaurant Ordering System',
-  description: 'A restaurant ordering and operations dashboard for staff, kitchen, and management.',
+  description: 'A restaurant ordering and operations dashboard for staff, kitchen, and management.'
 };
 
 export const viewport: Viewport = {
@@ -38,10 +38,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     : DEFAULT_THEME;
 
   return (
-    <html lang="en" suppressHydrationWarning data-theme={themeToApply}>
+    <html lang='en' suppressHydrationWarning data-theme={themeToApply}>
       <head>
-        <Script src="/theme-init.js" strategy="beforeInteractive" />
-        <meta name="theme-color" content={META_THEME_COLORS.light} />
+        <Script src='/theme-init.js' strategy='beforeInteractive' />
+        <meta name='theme-color' content={META_THEME_COLORS.light} />
       </head>
       <body
         className={cn(
@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fontVariables
         )}
       >
-        <NextTopLoader color="var(--primary)" showSpinner={false} />
+        <NextTopLoader color='var(--primary)' showSpinner={false} />
         <NuqsAdapter>
           <ThemeProvider disableTransitionOnChange enableColorScheme>
             <Providers activeThemeValue={themeToApply}>

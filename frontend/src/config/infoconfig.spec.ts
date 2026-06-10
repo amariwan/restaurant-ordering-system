@@ -19,7 +19,7 @@ describe('productInfoContent', () => {
   });
 
   it('has all expected section titles', () => {
-    const titles = productInfoContent.sections.map(s => s.title);
+    const titles = productInfoContent.sections.map((s) => s.title);
     expect(titles).toContain('Overview');
     expect(titles).toContain('Adding Products');
     expect(titles).toContain('Editing Products');

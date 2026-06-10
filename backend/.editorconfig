@@ -1,0 +1,78 @@
+root = true
+
+[*.cs]
+# Indentation
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# End of line
+end_of_line = lf
+charset = utf-8
+
+# New line settings
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# No var — explicit types only
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = false:none
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = false:none
+csharp_style_expression_bodied_properties = true:none
+csharp_style_expression_bodied_indexers = true:none
+csharp_style_expression_bodied_accessors = true:none
+csharp_style_expression_bodied_lambdas = true:none
+csharp_style_expression_bodied_local_functions = false:none
+
+# Null checking
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:suggestion
+
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,internal,protected,static,readonly,override,sealed,abstract,virtual,async:suggestion
+
+#using directives
+dotnet_sort_system_first_directives = true
+dotnet_separate_import_directive_groups = true
+
+# Naming rules
+dotnet_naming_rule.private_fields_must_have_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_must_have_underscore.style = private_field_style
+dotnet_naming_rule.private_fields_must_have_underscore.severity = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+
+dotnet_naming_style.private_field_style.capitalization = camel_case
+dotnet_naming_style.private_field_style.required_prefix = _
+
+dotnet_naming_rule.public_members_must_be_pascal_case.symbols = public_members
+dotnet_naming_rule.public_members_must_be_pascal_case.style = pascal_case_style
+dotnet_naming_rule.public_members_must_be_pascal_case.severity = suggestion
+
+dotnet_naming_symbols.public_members.applicable_accessibilities = public, internal, protected
+dotnet_naming_symbols.public_members.applicable_kinds = method, property, event, delegate, class, struct, interface, enum, record
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+dotnet_naming_rule.interfaces_must_be_iprefixed.symbols = interface_types
+dotnet_naming_rule.interfaces_must_be_iprefixed.style = i_prefix_style
+dotnet_naming_rule.interfaces_must_be_iprefixed.severity = suggestion
+
+dotnet_naming_symbols.interface_types.applicable_kinds = interface
+
+dotnet_naming_style.i_prefix_style.capitalization = pascal_case
+dotnet_naming_style.i_prefix_style.required_prefix = I
+
+# Newline preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true

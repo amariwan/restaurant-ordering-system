@@ -10,7 +10,9 @@ describe('useControllableState', () => {
   });
 
   it('uses prop when provided', () => {
-    const { result } = renderHook(() => useControllableState({ prop: 'controlled', defaultProp: 'default' }));
+    const { result } = renderHook(() =>
+      useControllableState({ prop: 'controlled', defaultProp: 'default' })
+    );
     const [value] = result.current;
     expect(value).toBe('controlled');
   });
@@ -44,7 +46,7 @@ describe('useControllableState', () => {
 
   it('calls onChange when controlled setter provides different value', () => {
     const onChange = vi.fn();
-    const { result, rerender } = renderHook(
+    const { result, rerender: _rerender } = renderHook(
       ({ prop }) => useControllableState({ prop, onChange }),
       { initialProps: { prop: 'a' } }
     );

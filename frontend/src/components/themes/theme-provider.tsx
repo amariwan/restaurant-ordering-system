@@ -63,7 +63,8 @@ function applyColorScheme(resolved: ResolvedTheme) {
 function disableTransitions() {
   const css = document.createElement('style');
   css.id = 'theme-transition-disable';
-  css.textContent = '*,*::before,*::after{transition:none!important;animation-duration:0s!important}';
+  css.textContent =
+    '*,*::before,*::after{transition:none!important;animation-duration:0s!important}';
   document.head.appendChild(css);
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -76,25 +77,31 @@ function disableTransitions() {
 export default function ThemeProvider({
   children,
   disableTransitionOnChange = false,
-  enableColorScheme = true,
+  enableColorScheme = true
 }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>('system');
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>('light');
   const [mounted, setMounted] = useState(false);
 
-  const resolveAndApply = useCallback((t: Theme, disableTransition: boolean) => {
-    const resolved = t === 'system' ? getSystemTheme() : t;
-    if (disableTransition) disableTransitions();
-    applyThemeClass(resolved);
-    if (enableColorScheme) applyColorScheme(resolved);
-    return resolved;
-  }, [enableColorScheme]);
+  const resolveAndApply = useCallback(
+    (t: Theme, disableTransition: boolean) => {
+      const resolved = t === 'system' ? getSystemTheme() : t;
+      if (disableTransition) disableTransitions();
+      applyThemeClass(resolved);
+      if (enableColorScheme) applyColorScheme(resolved);
+      return resolved;
+    },
+    [enableColorScheme]
+  );
 
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t);
-    storeTheme(t);
-    resolveAndApply(t, disableTransitionOnChange);
-  }, [disableTransitionOnChange, resolveAndApply]);
+  const setTheme = useCallback(
+    (t: Theme) => {
+      setThemeState(t);
+      storeTheme(t);
+      resolveAndApply(t, disableTransitionOnChange);
+    },
+    [disableTransitionOnChange, resolveAndApply]
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -127,7 +134,7 @@ export default function ThemeProvider({
         resolvedTheme: mounted ? resolvedTheme : undefined,
         setTheme,
         themes: ['light', 'dark', 'system'],
-        systemTheme: mounted ? systemTheme : undefined,
+        systemTheme: mounted ? systemTheme : undefined
       }}
     >
       {children}

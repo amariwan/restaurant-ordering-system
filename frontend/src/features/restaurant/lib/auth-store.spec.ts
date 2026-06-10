@@ -1,14 +1,24 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 const mockStorage = {
-  _store: {} as Record<string, string>,
-  getItem(key: string) { return this._store[key] ?? null; },
-  setItem(key: string, value: string) { this._store[key] = value; },
-  removeItem(key: string) { delete this._store[key]; },
-  clear() { this._store = {}; },
+  store: {} as Record<string, string>,
+  getItem(key: string) {
+    return this.store[key] ?? null;
+  },
+  setItem(key: string, value: string) {
+    this.store[key] = value;
+  },
+  removeItem(key: string) {
+    delete this.store[key];
+  },
+  clear() {
+    this.store = {};
+  }
 };
 
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).window = { localStorage: mockStorage };
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).localStorage = mockStorage;
 
 import {
@@ -18,7 +28,7 @@ import {
   clearAuth,
   getToken,
   getUser,
-  parseRole,
+  parseRole
 } from './auth-store';
 import type { User } from '@/features/restaurant/api/types';
 
@@ -26,7 +36,7 @@ const mockUser: User = {
   id: 1,
   name: 'Test Waiter',
   email: 'waiter@test.com',
-  role: 'Waiter',
+  role: 'Waiter'
 };
 
 describe('auth-store', () => {
@@ -123,7 +133,9 @@ describe('auth-store', () => {
 
     it('reads from JWT token when no user', () => {
       const header = btoa('{"alg":"HS256"}');
-      const payload = btoa('{"http://schemas.microsoft.com/ws/2008/06/identity/claims/role":"Admin"}');
+      const payload = btoa(
+        '{"http://schemas.microsoft.com/ws/2008/06/identity/claims/role":"Admin"}'
+      );
       const token = `${header}.${payload}.signature`;
       mockStorage.setItem('restaurant_token', token);
 

@@ -15,7 +15,10 @@ export default async function KitchenPage() {
   await qc.prefetchQuery(ordersAllOptions());
 
   return (
-    <PageContainer pageTitle='Kitchen' pageDescription='Realtime kitchen board for pending and preparing orders.'>
+    <PageContainer
+      pageTitle='Kitchen'
+      pageDescription='Realtime kitchen board for pending and preparing orders.'
+    >
       <HydrationBoundary state={dehydrate(qc)}>
         <KitchenBoard />
       </HydrationBoundary>
