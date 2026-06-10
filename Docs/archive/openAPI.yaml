@@ -1,0 +1,722 @@
+openapi: 3.0.3
+info:
+  title: Restaurant Ordering System API
+  version: 1.0.0
+  description: API for managing restaurant orders, menu, tables, and payments
+
+servers:
+  - url: http://localhost:5000/api
+    description: Local Development
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Auth
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string }
+        role:
+          type: string
+          enum: [admin, waiter, kitchen]
+
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string }
+        user:
+          $ref: '#/components/schemas/User'
+
+    # User
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+
+    # Category
+    Category:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+
+    CategoryRequest:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+
+    # MenuItem
+    MenuItem:
+      type: object
+      properties:
+        id: { type: integer }
+        categoryId: { type: integer }
+        categoryName: { type: string }
+        name: { type: string }
+        price: { type: number, format: float }
+        available: { type: boolean }
+
+    MenuItemRequest:
+      type: object
+      required: [categoryId, name, price]
+      properties:
+        categoryId: { type: integer }
+        name: { type: string }
+        price: { type: number, format: float }
+        available: { type: boolean, default: true }
+
+    # Table
+    Table:
+      type: object
+      properties:
+        id: { type: integer }
+        number: { type: integer }
+        status:
+          type: string
+          enum: [free, occupied, reserved]
+
+    TableRequest:
+      type: object
+      required: [number]
+      properties:
+        number: { type: integer }
+        status:
+          type: string
+          enum: [free, occupied, reserved]
+          default: free
+
+    # Order
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        tableId: { type: integer }
+        tableNumber: { type: integer }
+        userId: { type: integer }
+        status:
+          type: string
+          enum: [pending, preparing, ready, served, cancelled]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        createdAt: { type: string, format: date-time }
+
+    OrderRequest:
+      type: object
+      required: [tableId]
+      properties:
+        tableId: { type: integer }
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemRequest'
+
+    OrderItem:
+      type: object
+      properties:
+        id: { type: integer }
+        menuItemId: { type: integer }
+        menuItemName: { type: string }
+        price: { type: number, format: float }
+        quantity: { type: integer }
+        note: { type: string }
+
+    OrderItemRequest:
+      type: object
+      required: [menuItemId, quantity]
+      properties:
+        menuItemId: { type: integer }
+        quantity: { type: integer }
+        note: { type: string }
+
+    OrderStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [pending, preparing, ready, served, cancelled]
+
+    # Payment
+    Payment:
+      type: object
+      properties:
+        id: { type: integer }
+        orderId: { type: integer }
+        amount: { type: number, format: float }
+        method:
+          type: string
+          enum: [cash, card]
+        paidAt: { type: string, format: date-time }
+
+    PaymentRequest:
+      type: object
+      required: [orderId, method]
+      properties:
+        orderId: { type: integer }
+        method:
+          type: string
+          enum: [cash, card]
+
+    # Error
+    ErrorResponse:
+      type: object
+      properties:
+        message: { type: string }
+        errors:
+          type: array
+          items: { type: string }
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ─── AUTH ───────────────────────────────────────────────
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login erfolgreich
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Ungültige Anmeldedaten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Neuen User registrieren (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validierungsfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ─── USERS ──────────────────────────────────────────────
+  /users:
+    get:
+      tags: [Users]
+      summary: Alle User abrufen (Admin only)
+      responses:
+        '200':
+          description: Liste aller User
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    put:
+      tags: [Users]
+      summary: User aktualisieren (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User nicht gefunden
+
+    delete:
+      tags: [Users]
+      summary: User löschen (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: User gelöscht
+        '404':
+          description: User nicht gefunden
+
+  # ─── CATEGORIES ─────────────────────────────────────────
+  /categories:
+    get:
+      tags: [Menu]
+      summary: Alle Kategorien abrufen
+      security: []
+      responses:
+        '200':
+          description: Liste der Kategorien
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+    post:
+      tags: [Menu]
+      summary: Kategorie erstellen (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '201':
+          description: Kategorie erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+  /categories/{id}:
+    put:
+      tags: [Menu]
+      summary: Kategorie aktualisieren (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '200':
+          description: Kategorie aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Kategorie nicht gefunden
+
+    delete:
+      tags: [Menu]
+      summary: Kategorie löschen (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Kategorie gelöscht
+        '404':
+          description: Kategorie nicht gefunden
+
+  # ─── MENU ITEMS ─────────────────────────────────────────
+  /menu-items:
+    get:
+      tags: [Menu]
+      summary: Alle Menü-Items abrufen
+      security: []
+      parameters:
+        - name: categoryId
+          in: query
+          schema: { type: integer }
+          description: Nach Kategorie filtern
+        - name: available
+          in: query
+          schema: { type: boolean }
+          description: Nur verfügbare Items
+      responses:
+        '200':
+          description: Liste der Menü-Items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItem'
+
+    post:
+      tags: [Menu]
+      summary: Menü-Item erstellen (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemRequest'
+      responses:
+        '201':
+          description: Item erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+
+  /menu-items/{id}:
+    get:
+      tags: [Menu]
+      summary: Einzelnes Menü-Item abrufen
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Menü-Item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        '404':
+          description: Item nicht gefunden
+
+    put:
+      tags: [Menu]
+      summary: Menü-Item aktualisieren (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemRequest'
+      responses:
+        '200':
+          description: Item aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        '404':
+          description: Item nicht gefunden
+
+    delete:
+      tags: [Menu]
+      summary: Menü-Item löschen (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Item gelöscht
+        '404':
+          description: Item nicht gefunden
+
+  # ─── TABLES ─────────────────────────────────────────────
+  /tables:
+    get:
+      tags: [Tables]
+      summary: Alle Tische abrufen
+      responses:
+        '200':
+          description: Liste der Tische
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+
+    post:
+      tags: [Tables]
+      summary: Tisch erstellen (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableRequest'
+      responses:
+        '201':
+          description: Tisch erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+
+  /tables/{id}:
+    put:
+      tags: [Tables]
+      summary: Tisch aktualisieren (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableRequest'
+      responses:
+        '200':
+          description: Tisch aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '404':
+          description: Tisch nicht gefunden
+
+    delete:
+      tags: [Tables]
+      summary: Tisch löschen (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Tisch gelöscht
+        '404':
+          description: Tisch nicht gefunden
+
+  # ─── ORDERS ─────────────────────────────────────────────
+  /orders:
+    get:
+      tags: [Orders]
+      summary: Alle Bestellungen abrufen
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, preparing, ready, served, cancelled]
+        - name: tableId
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Liste der Bestellungen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+    post:
+      tags: [Orders]
+      summary: Neue Bestellung erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Bestellung erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{id}:
+    get:
+      tags: [Orders]
+      summary: Einzelne Bestellung abrufen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Bestellung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Bestellung nicht gefunden
+
+    delete:
+      tags: [Orders]
+      summary: Bestellung stornieren
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Bestellung storniert
+        '404':
+          description: Bestellung nicht gefunden
+
+  /orders/{id}/status:
+    put:
+      tags: [Orders]
+      summary: Bestellstatus aktualisieren
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderStatusRequest'
+      responses:
+        '200':
+          description: Status aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Bestellung nicht gefunden
+
+  /orders/{id}/items:
+    post:
+      tags: [Orders]
+      summary: Item zur Bestellung hinzufügen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderItemRequest'
+      responses:
+        '201':
+          description: Item hinzugefügt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderItem'
+        '404':
+          description: Bestellung nicht gefunden
+
+  /orders/{id}/items/{itemId}:
+    delete:
+      tags: [Orders]
+      summary: Item aus Bestellung entfernen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Item entfernt
+        '404':
+          description: Bestellung oder Item nicht gefunden
+
+  # ─── PAYMENTS ───────────────────────────────────────────
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Zahlung erfassen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Zahlung erfasst
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bestellung bereits bezahlt oder nicht gefunden
+
+  /payments/{orderId}:
+    get:
+      tags: [Payments]
+      summary: Zahlung einer Bestellung abrufen
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Zahlung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          description: Zahlung nicht gefunden

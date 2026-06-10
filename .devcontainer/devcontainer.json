@@ -1,0 +1,58 @@
+{
+	"name": "Restaurant Ordering System",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "latest"
+		},
+		"ghcr.io/nikiforovall/devcontainer-features/dotnet-csharpier:1": {},
+		"ghcr.io/daniellindemann/dev-container-features/dotnet-usersecrets-persistence:0": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": ["ms-dotnettools.csdevkit", "ms-dotnettools.csharp", "bradlc.vscode-tailwindcss", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "humao.rest-client", "ckolkman.vscode-postgres", "ms-azuretools.vscode-docker", "editorconfig.editorconfig"]
+		}
+	},
+
+	"containerEnv": {
+		"DATABASE_URL": "Host=db;Database=restaurant;Username=postgres;Password=postgres",
+		"JWT_SECRET": "dev-secret-minimum-32-characters-long!!",
+		"JWT_EXPIRY_HOURS": "8",
+		"CORS_ORIGINS": "http://localhost:3000",
+		"SEED_DEFAULT_PASSWORD": "dev123!"
+	},
+
+	"forwardPorts": [5002, 5001, 3000, 5432],
+
+	"portsAttributes": {
+		"5002": {
+			"label": "Backend API",
+			"onAutoForward": "notify"
+		},
+		"5001": {
+			"label": "Backend HTTPS",
+			"protocol": "https"
+		},
+		"3000": {
+			"label": "Frontend",
+			"onAutoForward": "notify"
+		},
+		"5432": {
+			"label": "PostgreSQL",
+			"onAutoForward": "silent"
+		}
+	},
+
+"postCreateCommand": "bash .devcontainer/setup.sh",
+	"postStartCommand": "bash .devcontainer/start.sh",
+
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	},
+
+	"remoteUser": "vscode"
+}

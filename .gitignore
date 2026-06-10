@@ -1,0 +1,119 @@
+# Root .gitignore — kombiniert sinnvolle Regeln für Backend (ASP.NET) und Frontend (Next.js/Node)
+# Anpassungen: allgemeine Betriebssystem-, Editor-, Build- und Geheimnis-Dateien werden ignoriert.
+
+## macOS
+.DS_Store
+
+## System
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Node / JS
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+## bun / pnpm
+.bun/
+bun.lockb
+.pnpm-store/
+pnpm-debug.log*
+
+## Build / cache / output
+dist/
+build/
+out/
+**/.next/
+.next/
+.svelte-kit/
+.vite/
+.esbuild/
+.parcel-cache/
+.parcel-cache/
+.cache/
+.turbo/
+.vercel/
+
+## Test / coverage
+coverage/
+.nyc_output/
+test-results/
+
+## Logs
+logs/
+*.log
+
+## Runtime
+pids/
+*.pid
+*.seed
+
+## Environment / secrets
+.env
+.env.*
+!.env.example
+secrets.json
+docker.env
+
+## Editors / IDEs
+.vscode/
+.vscode/*
+.idea/
+*.suo
+*.user
+*.userosscache
+*.rsuser
+*.DotSettings.user
+
+## .NET / Visual Studio
+**/bin/
+**/obj/
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.nupkg
+artifacts/
+publish/
+
+## NuGet
+packages/
+*.nupkg
+
+## Docker local overrides
+docker-compose.override.yml
+docker-compose.*.local.yml
+
+## Runtime uploads / user-generated content
+**/uploads/
+backend/RestaurantApp.API/wwwroot/uploads/
+frontend/public/uploads/
+
+## Editor swap / backup
+*.swp
+*.swo
+*~
+
+## Merge conflict backups
+*.orig
+
+## Python
+__pycache__/
+*.pyc
+
+## Misc
+*.tsbuildinfo
+*.db
+*.sqlite
+*.sqlite3
+graphify-out
+skills*
+claude/
+claude.md
+agents*
+settings*

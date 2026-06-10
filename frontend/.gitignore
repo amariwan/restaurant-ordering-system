@@ -1,0 +1,69 @@
+## Frontend .gitignore — Next.js / Node
+
+# Node dependencies
+/node_modules
+**/node_modules/
+.pnp
+.pnp.js
+
+# Yarn/PNPM/Bun caches
+.yarn/
+!.yarn/releases
+!.yarn/plugins
+!.yarn/versions
+.pnpm-store/
+pnpm-debug.log*
+.bun/
+bun.lockb
+
+# Testing / coverage
+/coverage
+.nyc_output/
+test-results/
+
+# Next.js build output
+/.next/
+/out/
+/build/
+/dist/
+
+# Bundler / cache
+/.parcel-cache/
+.vite
+/.cache/
+.turbo/
+.vercel/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment files (ignore secrets, keep example files)
+.env
+.env.*
+!.env.example
+
+# Typescript build info
+*.tsbuildinfo
+
+# IDEs
+.idea/
+.vscode/
+
+# Misc
+.DS_Store
+*.pem
+*.key
+*.crt
+
+# Sentry / build helper
+.env.sentry-build-plugin
+
+# Cursor / memory bank (project-specific generated files)
+.cursorrules
+/memory-bank
+
+# Runtime uploaded assets
+/public/uploads/
+/uploads/

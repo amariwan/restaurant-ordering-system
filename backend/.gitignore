@@ -1,0 +1,40 @@
+# Backend .gitignore — ASP.NET Core / Visual Studio
+
+## Build outputs
+/bin/
+/obj/
+**/bin/
+**/obj/
+
+## Visual Studio / Rider
+.vs/
+*.suo
+*.user
+*.userosscache
+*.rsuser
+*.DotSettings.user
+
+## Logs
+*.log
+logs/
+artifacts/
+
+## NuGet
+packages/
+*.nupkg
+
+## Publish output
+publish/
+
+## Local config / secrets (do not commit production secrets)
+appsettings.Development.json
+secrets.json
+.env
+.env.*
+
+## Database files
+*.mdf
+*.ldf
+*.db
+
+## Do NOT ignore EF Migrations — those should be versioned in source control

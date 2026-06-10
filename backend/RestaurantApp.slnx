@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <SolutionName>RestaurantApp</SolutionName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="RestaurantApp.API\RestaurantApp.API.csproj" />
+    <ProjectReference Include="RestaurantApp.Core\RestaurantApp.Core.csproj" />
+    <ProjectReference Include="RestaurantApp.Infrastructure\RestaurantApp.Infrastructure.csproj" />
+    <ProjectReference Include="RestaurantApp.Tests\RestaurantApp.Tests.csproj" />
+  </ItemGroup>
+</Project>
