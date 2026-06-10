@@ -8,7 +8,7 @@ public static class CsrfTokenGenerator
 
     public static string Generate(int length = DefaultLength)
     {
-        var buf = new byte[length];
+        byte[] buf = new byte[length];
         RandomNumberGenerator.Fill(buf);
         return Convert.ToBase64String(buf).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }

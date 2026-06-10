@@ -7,16 +7,16 @@ public static class OrderStatusExtensions
 {
     private static readonly Dictionary<OrderStatus, List<OrderStatus>> AllowedTransitions = new()
     {
-        [OrderStatus.Pending]   = [OrderStatus.Preparing, OrderStatus.Cancelled],
+        [OrderStatus.Pending] = [OrderStatus.Preparing, OrderStatus.Cancelled],
         [OrderStatus.Preparing] = [OrderStatus.Ready, OrderStatus.Cancelled],
-        [OrderStatus.Ready]     = [OrderStatus.Served, OrderStatus.Cancelled],
-        [OrderStatus.Served]    = [],
+        [OrderStatus.Ready] = [OrderStatus.Served, OrderStatus.Cancelled],
+        [OrderStatus.Served] = [],
         [OrderStatus.Cancelled] = [],
     };
 
     public static bool CanTransitionTo(this OrderStatus current, OrderStatus next)
     {
-        return AllowedTransitions.TryGetValue(current, out var allowed) && allowed.Contains(next);
+        return AllowedTransitions.TryGetValue(current, out List<OrderStatus>? allowed) && allowed.Contains(next);
     }
 
     public static void EnsureTransitionAllowed(this OrderStatus current, OrderStatus next)

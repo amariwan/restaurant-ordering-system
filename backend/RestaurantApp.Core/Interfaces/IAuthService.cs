@@ -1,6 +1,7 @@
+using System.Security.Claims;
+
 using RestaurantApp.Core.DTOs.Auth;
 using RestaurantApp.Core.DTOs.Users;
-using System.Security.Claims;
 
 namespace RestaurantApp.Core.Interfaces;
 

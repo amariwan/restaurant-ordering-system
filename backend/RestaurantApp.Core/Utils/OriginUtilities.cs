@@ -11,12 +11,12 @@ public static class OriginUtilities
         if (string.IsNullOrEmpty(referer))
             return false;
 
-        if (!Uri.TryCreate(referer, UriKind.Absolute, out var requestUri))
+        if (!Uri.TryCreate(referer, UriKind.Absolute, out Uri? requestUri))
             return false;
 
-        foreach (var origin in allowedOrigins)
+        foreach (string origin in allowedOrigins)
         {
-            if (!Uri.TryCreate(origin, UriKind.Absolute, out var originUri))
+            if (!Uri.TryCreate(origin, UriKind.Absolute, out Uri? originUri))
                 continue;
 
             if (string.Equals(originUri.Scheme, requestUri.Scheme, StringComparison.OrdinalIgnoreCase) &&
@@ -26,16 +26,16 @@ public static class OriginUtilities
         }
 
         // Also check host-only matches for origins without port/scheme
-        var expandedOrigins = allowedOrigins.SelectMany(o => new[]
+        IEnumerable<string> expandedOrigins = allowedOrigins.SelectMany(o => new[]
         {
             o,
             o.Replace("localhost", "127.0.0.1", StringComparison.OrdinalIgnoreCase),
             o.Replace("localhost", "0.0.0.0", StringComparison.OrdinalIgnoreCase)
         }).Distinct(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var o in expandedOrigins)
+        foreach (string? o in expandedOrigins)
         {
-            if (!Uri.TryCreate(o, UriKind.Absolute, out var au))
+            if (!Uri.TryCreate(o, UriKind.Absolute, out Uri? au))
                 continue;
             if (string.Equals(au.Host, requestUri.Host, StringComparison.OrdinalIgnoreCase))
                 return true;

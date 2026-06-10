@@ -1,5 +1,6 @@
-using RestaurantApp.Core.DTOs.Users;
 using System.Text.Json.Serialization;
+
+using RestaurantApp.Core.DTOs.Users;
 
 namespace RestaurantApp.Core.DTOs.Auth;
 

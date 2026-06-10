@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+
 using RestaurantApp.Core.Exceptions;
 
 namespace Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public static class DbContextExtensions
         params object[] keyValues)
         where TEntity : class
     {
-        var entity = await dbSet.FindAsync(keyValues);
+        TEntity? entity = await dbSet.FindAsync(keyValues);
         return entity ?? throw new NotFoundException($"{typeof(TEntity).Name} not found for keys [{string.Join(", ", keyValues)}]");
     }
 
@@ -25,7 +26,7 @@ public static class DbContextExtensions
         Expression<Func<TEntity, bool>> predicate)
         where TEntity : class
     {
-        var entity = await dbSet.FirstOrDefaultAsync(predicate);
+        TEntity? entity = await dbSet.FirstOrDefaultAsync(predicate);
         return entity ?? throw new NotFoundException($"{typeof(TEntity).Name} not found");
     }
 
