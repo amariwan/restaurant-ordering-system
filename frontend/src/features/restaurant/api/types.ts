@@ -150,6 +150,28 @@ export interface AddOrderItemPayload {
   note?: string;
 }
 
+export interface Receipt {
+  id: number;
+  receiptNumber: string;
+  orderId: number;
+  tableNumber: number;
+  totalAmount: number;
+  paidAmount: number;
+  taxAmount: number;
+  tipAmount: number;
+  paymentMethods: string;
+  generatedAt: string;
+  items: ReceiptItem[];
+}
+
+export interface ReceiptItem {
+  name: string;
+  nameKu: string;
+  quantity: number;
+  price: number;
+  total: number;
+}
+
 export interface CreatePaymentPayload {
   amount: number;
   method: PaymentMethod;

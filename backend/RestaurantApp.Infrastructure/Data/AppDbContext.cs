@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,6 +47,21 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Payment>()
             .Property(p => p.Amount)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Receipt>(rb =>
+        {
+            rb.Property(r => r.ReceiptNumber).IsRequired().HasMaxLength(32);
+            rb.Property(r => r.TotalAmount).HasPrecision(18, 2);
+            rb.Property(r => r.PaidAmount).HasPrecision(18, 2);
+            rb.Property(r => r.TaxAmount).HasPrecision(18, 2);
+            rb.Property(r => r.TipAmount).HasPrecision(18, 2);
+            rb.Property(r => r.PaymentMethods).HasMaxLength(100);
+
+            rb.HasOne(r => r.Order)
+                .WithMany()
+                .HasForeignKey(r => r.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         modelBuilder.Entity<MenuItem>()
             .Property(m => m.Price)

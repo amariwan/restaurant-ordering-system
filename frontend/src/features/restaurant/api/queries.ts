@@ -43,6 +43,11 @@ export const keys = {
     all: [...ROOT_KEY, 'payments'] as const,
     byOrder: (orderId: number) => [...ROOT_KEY, 'payments', orderId] as const
   },
+  receipts: {
+    all: [...ROOT_KEY, 'receipts'] as const,
+    byId: (id: number) => [...ROOT_KEY, 'receipts', id] as const,
+    byOrder: (orderId: number) => [...ROOT_KEY, 'receipts', 'by-order', orderId] as const
+  },
   users: {
     all: [...ROOT_KEY, 'users'] as const
   },
@@ -87,6 +92,12 @@ export const paymentsByOrderOptions = (orderId: number) =>
   queryOptions({
     queryKey: keys.payments.byOrder(orderId),
     queryFn: () => service.paymentsGetByOrder(orderId)
+  });
+
+export const receiptByOrderOptions = (orderId: number) =>
+  queryOptions({
+    queryKey: keys.receipts.byOrder(orderId),
+    queryFn: () => service.receiptsGetByOrder(orderId)
   });
 
 export const usersAllOptions = queryOptions({
@@ -281,6 +292,17 @@ export function usePaymentsCreateMutation() {
       qc.invalidateQueries({ queryKey: keys.payments.byOrder(orderId) });
       qc.invalidateQueries({ queryKey: keys.orders.detail(orderId) });
       qc.invalidateQueries({ queryKey: keys.orders.all });
+    }
+  });
+}
+
+export function useReceiptsGenerateMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: number) => service.receiptsGenerate(orderId),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: keys.receipts.byOrder(data.orderId) });
+      qc.setQueryData(keys.receipts.byId(data.id), data);
     }
   });
 }

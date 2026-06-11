@@ -91,7 +91,9 @@ import {
   IconCrown,
   IconX,
   IconShoppingCart,
-  IconTable
+  IconTable,
+  IconReceipt,
+  IconPrinter
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
@@ -229,5 +231,7 @@ export const Icons = {
 
   // Restaurant
   cart: IconShoppingCart,
-  table: IconTable
+  table: IconTable,
+  receipt: IconReceipt,
+  printer: IconPrinter
 };

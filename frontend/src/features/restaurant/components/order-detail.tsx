@@ -34,6 +34,7 @@ import {
   paymentsByOrderOptions,
   usePaymentsCreateMutation,
   useOrdersRemoveItemMutation,
+  useReceiptsGenerateMutation,
   keys
 } from '@/features/restaurant/api/queries';
 import { parseRole } from '@/features/restaurant/lib/auth-store';
@@ -41,6 +42,7 @@ import { formatCurrency } from '@/lib/format';
 import { statusVariant, STATUS_FLOW } from '@/features/restaurant/lib/order-status';
 import { getOrderHub, startOrderHub, OrderStatus } from '@/features/restaurant/lib/signalr-store';
 import { useI18n } from '@/lib/i18n/context';
+import { ReceiptView } from '@/features/restaurant/components/receipt-view';
 
 export function OrderDetail() {
   const params = useParams();
@@ -51,11 +53,26 @@ export function OrderDetail() {
   const updateMutation = useOrdersUpdateStatusMutation();
   const payMutation = usePaymentsCreateMutation();
   const removeItemMutation = useOrdersRemoveItemMutation();
+  const generateReceiptMutation = useReceiptsGenerateMutation();
   const toast = useToast();
   const role = parseRole();
   const { t, locale } = useI18n();
   const [payAmount, setPayAmount] = useState('');
   const [payMethod, setPayMethod] = useState<'cash' | 'card'>('cash');
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptData, setReceiptData] = useState<{
+    id: number;
+    receiptNumber: string;
+    orderId: number;
+    tableNumber: number;
+    totalAmount: number;
+    paidAmount: number;
+    taxAmount: number;
+    tipAmount: number;
+    paymentMethods: string;
+    generatedAt: string;
+    items: Array<{ name: string; nameKu: string; quantity: number; price: number; total: number }>;
+  } | null>(null);
 
   useEffect(() => {
     if (!role) return;
@@ -378,8 +395,40 @@ export function OrderDetail() {
               <Icons.circleCheck className='w-4 h-4 text-green-600' /> {t.orders.fullyPaid}
             </div>
           )}
+
+          {(remaining <= 0.01 || payments.length > 0) && (
+            <>
+              <Separator />
+              <Button
+                size='sm'
+                variant='outline'
+                disabled={generateReceiptMutation.isPending}
+                onClick={async () => {
+                  try {
+                    const receipt = await generateReceiptMutation.mutateAsync(orderId);
+                    setReceiptData(receipt);
+                    setShowReceipt(true);
+                    toast.success(t.receipt.generated);
+                  } catch {
+                    toast.error(t.receipt.generateFailed);
+                  }
+                }}
+                className='w-full'
+              >
+                <Icons.receipt className='w-4 h-4 mr-2' />
+                {generateReceiptMutation.isPending ? t.common.loading : t.receipt.generateReceipt}
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
+
+      {showReceipt && receiptData && (
+        <ReceiptView
+          receipt={receiptData}
+          onClose={() => setShowReceipt(false)}
+        />
+      )}
     </div>
   );
 }

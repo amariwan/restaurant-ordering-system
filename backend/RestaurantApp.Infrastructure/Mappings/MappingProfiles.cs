@@ -37,5 +37,6 @@ public class MappingProfiles : Profile
         CreateMap<Reservation, ReservationDto>()
             .ForMember(d => d.TableNumber, opt => opt.MapFrom(s => s.Table != null ? s.Table.Number : 0))
             .ForMember(d => d.StaffName, opt => opt.MapFrom(s => s.User != null ? s.User.Name : null));
+
     }
 }

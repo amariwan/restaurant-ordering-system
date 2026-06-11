@@ -5,6 +5,7 @@ import type {
   Table,
   Order,
   Payment,
+  Receipt,
   AuthResponse,
   MenuFilters,
   OrdersFilters,
@@ -394,6 +395,20 @@ export async function reservationsUpdateStatus(
 
 export async function reservationsDelete(id: number): Promise<void> {
   return apiDelete<void>(`/reservations/${id}`);
+}
+
+// --- Receipts ---
+
+export async function receiptsGenerate(orderId: number): Promise<Receipt> {
+  return apiPost<Receipt>(`/receipts${buildQuery({ orderId })}`);
+}
+
+export async function receiptsGetById(id: number): Promise<Receipt> {
+  return apiGet<Receipt>(`/receipts/${id}`);
+}
+
+export async function receiptsGetByOrder(orderId: number): Promise<Receipt> {
+  return apiGet<Receipt>(`/receipts/by-order${buildQuery({ orderId })}`);
 }
 
 // --- SignalR ---

@@ -473,6 +473,19 @@ export const en = {
       'Restaurant data entered into the system is stored and managed by the backend service. Users should avoid entering sensitive personal or payment information beyond what is necessary for restaurant operations.',
     updateText:
       'We may update these terms periodically. Continued use of the application after changes are posted constitutes acceptance of those terms.'
+  },
+  receipt: {
+    title: 'Receipt',
+    receiptNumber: 'Receipt No.',
+    generateReceipt: 'Generate Receipt',
+    print: 'Print',
+    paid: 'Paid',
+    tax: 'Tax',
+    tip: 'Tip',
+    paymentMethods: 'Payment Method(s)',
+    thankYou: 'Thank you for your visit!',
+    generated: 'Receipt generated successfully.',
+    generateFailed: 'Failed to generate receipt.'
   }
 };
 

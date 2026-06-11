@@ -461,6 +461,19 @@ export const ku = {
     loading: 'مێنو بارکردن...',
     tableUnavailable: 'ئەم مێزە داواکارییەکی چالاکی هەیە. تکایە مێزێکی دیکە هەڵبژێرە.'
   },
+  receipt: {
+    title: 'وەسڵ (ڕیسیت)',
+    receiptNumber: 'ژمارەی وەسڵ',
+    generateReceipt: 'دروستکردنی وەسڵ',
+    print: 'چاپکردن',
+    paid: 'پارەدراو',
+    tax: 'باج',
+    tip: 'بەخشین',
+    paymentMethods: 'ڕێگای پارەدان',
+    thankYou: 'سوپاس بۆ سەردانەکەت!',
+    generated: 'وەسڵەکە بە سەرکەوتوویی دروستکرا.',
+    generateFailed: 'دروستکردنی وەسڵەکە سەرکەوتوو نەبوو.'
+  },
   staticTerms: {
     introTitle: 'سەرەتایەک',
     introDesc:
