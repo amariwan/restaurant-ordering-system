@@ -13,4 +13,5 @@ public class MenuItemDto
     public string? DescriptionEn { get; set; }
     public string? DescriptionKu { get; set; }
     public string? ImageUrl { get; set; }
+    public int SortOrder { get; set; }
 }

@@ -1,15 +1,13 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using RestaurantApp.Core.DTOs.Auth;
 using RestaurantApp.Core.Entities;
 using RestaurantApp.Core.Enums;
 using RestaurantApp.Core.Exceptions;
 using RestaurantApp.Infrastructure.Data;
 using RestaurantApp.Infrastructure.Services;
-using AutoMapper;
-using RestaurantApp.Infrastructure.Mappings;
+using RestaurantApp.Tests.TestHelpers;
 using Xunit;
 
 namespace RestaurantApp.Tests.Unit;
@@ -107,7 +105,7 @@ public class AuthServiceTests
         var config = CreateConfig();
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
-        var request = new LoginRequest { Email = "admin@test.com", Password = "$2a$12$abc123" };
+        var request = new LoginRequest { Email = "admin@test.com", Password = "TestPass123!" };
         var result = await svc.LoginAsync(request);
 
         result.Should().NotBeNull();
@@ -157,31 +155,16 @@ public class AuthServiceTests
     public async Task RefreshTokenAsync_ThrowsForbiddenException_WhenTokenExpired()
     {
         using var db = CreateContext();
-        var user = new User
-        {
-            Id = 1,
-            Name = "Test",
-            Email = "test@test.com",
-            PasswordHash = "$2a$12$abc123",
-            Role = UserRole.Admin
-        };
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-
-        var config = CreateConfig("REFRESH_TOKEN_EXPIRY_DAYS", "1");
+        var config = CreateConfig();
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
-        var refresh = await svc.CreateAndStoreRefreshTokenForTestAsync(user);
+        var result = await svc.RegisterAsync(new RegisterRequest { Name = "Test", Email = "test@test.com", Password = "Password123!" });
 
-        // Manually expire the token by setting RevokedAt to now (simulating expiration)
-        var refreshTokenEntity = await db.RefreshTokens.FirstOrDefaultAsync(r => r.UserId == user.Id);
-        if (refreshTokenEntity != null)
-        {
-            refreshTokenEntity.ExpiresAt = DateTime.UtcNow.AddHours(-1);
-            await db.SaveChangesAsync();
-        }
+        var refreshTokenEntity = await db.RefreshTokens.FirstAsync();
+        refreshTokenEntity.ExpiresAt = DateTime.UtcNow.AddHours(-1);
+        await db.SaveChangesAsync();
 
-        await AsyncTest.Act(() => svc.RefreshTokenAsync(refresh.Token!))
+        await AsyncTest.Act(() => svc.RefreshTokenAsync(result.RefreshToken!))
             .Should().ThrowAsync<ForbiddenException>();
     }
 
@@ -189,16 +172,14 @@ public class AuthServiceTests
     public async Task RevokeRefreshTokenAsync_RevokesExistingToken()
     {
         using var db = CreateContext();
-        await TestHelpers.TestDbContextFactory.SeedSampleData(db);
         var config = CreateConfig();
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
-        var refresh = await svc.CreateAndStoreRefreshTokenForTestAsync(
-            await db.Users.FirstAsync(u => u.Email == "admin@test.com"));
+        var result = await svc.RegisterAsync(new RegisterRequest { Name = "Test", Email = "test@test.com", Password = "Password123!" });
 
-        await svc.RevokeRefreshTokenAsync(refresh.Token!);
+        await svc.RevokeRefreshTokenAsync(result.RefreshToken!);
 
-        var revokedToken = await db.RefreshTokens.FirstOrDefaultAsync(r => r.UserId == 1);
+        var revokedToken = await db.RefreshTokens.FirstOrDefaultAsync(r => r.RevokedAt != null);
         revokedToken.Should().NotBeNull();
         revokedToken!.RevokedAt.Should().NotBeNull();
     }
@@ -276,7 +257,7 @@ public class AuthServiceTests
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
         // Admin was created with lowercase admin@test.com
-        var request = new LoginRequest { Email = "ADMIN@TEST.COM", Password = "$2a$12$abc123" };
+        var request = new LoginRequest { Email = "ADMIN@TEST.COM", Password = "TestPass123!" };
 
         await AsyncTest.Act(() => svc.LoginAsync(request))
             .Should().NotThrowAsync();
@@ -286,20 +267,15 @@ public class AuthServiceTests
     public async Task RefreshTokenAsync_CreatesNewRefreshToken()
     {
         using var db = CreateContext();
-        await TestHelpers.TestDbContextFactory.SeedSampleData(db);
         var config = CreateConfig();
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
-        var adminUser = await db.Users.FirstAsync(u => u.Email == "admin@test.com");
-        var refresh = await svc.CreateAndStoreRefreshTokenForTestAsync(adminUser);
+        var result = await svc.RegisterAsync(new RegisterRequest { Name = "Test", Email = "test@test.com", Password = "Password123!" });
 
-        var initialCount = await db.RefreshTokens.CountAsync(r => r.UserId == adminUser.Id);
+        await svc.RefreshTokenAsync(result.RefreshToken!);
 
-        await svc.RefreshTokenAsync(refresh.Token!);
-
-        var newCount = await db.RefreshTokens.CountAsync(r => r.UserId == adminUser.Id);
-        // Should be at least 2 (original + new) minus any revoked
-        newCount.Should().BeGreaterThanOrEqualTo(1);
+        var count = await db.RefreshTokens.CountAsync();
+        count.Should().BeGreaterThanOrEqualTo(1);
     }
 
     [Fact]
@@ -310,7 +286,7 @@ public class AuthServiceTests
         var config = CreateConfig();
         var svc = new AuthService(db, config, TestDbContextFactory.CreateMapper());
 
-        var request = new LoginRequest { Email = "  admin@test.com  ", Password = "$2a$12$abc123" };
+        var request = new LoginRequest { Email = "  admin@test.com  ", Password = "TestPass123!" };
 
         await AsyncTest.Act(() => svc.LoginAsync(request))
             .Should().NotThrowAsync();

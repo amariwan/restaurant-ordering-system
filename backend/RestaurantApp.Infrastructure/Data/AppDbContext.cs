@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using RestaurantApp.Core.Common;
 using RestaurantApp.Core.Entities;
+using RestaurantSetting = RestaurantApp.Core.Entities.RestaurantSetting;
 
 namespace RestaurantApp.Infrastructure.Data;
 
@@ -17,6 +19,19 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<Receipt> Receipts => Set<Receipt>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<RestaurantSetting> RestaurantSettings => Set<RestaurantSetting>();
+    public DbSet<Wall> Walls => Set<Wall>();
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+        {
+            if (entry.State == EntityState.Modified)
+                entry.Entity.UpdatedAt = now;
+        }
+        return base.SaveChangesAsync(cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -108,5 +123,19 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<RestaurantSetting>()
+            .HasIndex(s => s.Key)
+            .IsUnique();
+
+        modelBuilder.Entity<Wall>(w =>
+        {
+            w.HasKey(e => e.Id);
+            w.Property(e => e.StartX).IsRequired();
+            w.Property(e => e.StartY).IsRequired();
+            w.Property(e => e.EndX).IsRequired();
+            w.Property(e => e.EndY).IsRequired();
+            w.HasIndex(e => e.Floor);
+        });
     }
 }

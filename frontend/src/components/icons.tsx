@@ -28,6 +28,7 @@ import {
   IconClock,
   IconCode,
   IconCommand,
+  IconCopy,
   IconCreditCard,
   IconDeviceLaptop,
   IconDots,
@@ -54,6 +55,7 @@ import {
   IconLock,
   IconLogin,
   IconLogout,
+  IconMaximize,
   IconMessage,
   IconMinus,
   IconMoon,
@@ -65,6 +67,8 @@ import {
   IconPizza,
   IconPlus,
   IconProps,
+  IconRectangle,
+  IconRectangleVertical,
   IconRosetteDiscountCheck,
   IconSearch,
   IconSelector,
@@ -73,6 +77,7 @@ import {
   IconShare,
   IconSlash,
   IconSparkles,
+  IconSquare,
   IconStack2,
   IconStar,
   IconSun,
@@ -168,6 +173,7 @@ export const Icons = {
 
   // Actions
   add: IconPlus,
+  copy: IconCopy,
   edit: IconEdit,
   upload: IconUpload,
   share: IconShare,
@@ -181,6 +187,10 @@ export const Icons = {
   plusCircle: IconCirclePlus,
   xCircle: IconCircleX,
   minus: IconMinus,
+  maximize: IconMaximize,
+  square: IconSquare,
+  rectangle: IconRectangle,
+  rectangleVertical: IconRectangleVertical,
 
   // Theme
   sun: IconSun,

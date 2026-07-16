@@ -10,8 +10,19 @@ const baseConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.slingacademy.com',
         port: ''
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '5002'
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5002'
       }
-    ]
+    ],
+    dangerouslyAllowLocalIP: true
   },
   transpilePackages: ['geist'],
   compiler: {

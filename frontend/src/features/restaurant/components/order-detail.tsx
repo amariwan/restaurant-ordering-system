@@ -107,59 +107,58 @@ export function OrderDetail() {
       </Link>
 
       {/* Header */}
-      <Card>
+      <Card className='border-0 ring-1 ring-border shadow-sm'>
         <CardContent className='pt-6'>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
-            <div>
-              <div className='flex items-center gap-3 mb-2'>
-                <h1 className='text-2xl font-semibold'>
-                  {t.orders.orderNumber}
-                  {order.id}
+            <div className='space-y-2'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-2xl font-bold tracking-tight'>
+                  {t.orders.orderNumber}{order.id}
                 </h1>
-                <Badge variant={statusVariant(order.status) ?? 'default'}>
+                <Badge variant={statusVariant(order.status) ?? 'default'} className='capitalize shadow-xs'>
                   {t.orders.status[order.status]}
                 </Badge>
               </div>
               <div className='flex items-center gap-4 text-sm text-muted-foreground'>
-                <span className='flex items-center gap-1'>
-                  <Icons.table className='w-4 h-4' /> {t.orders.table} {order.tableNumber}
+                <span className='inline-flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md'>
+                  <Icons.table className='w-3.5 h-3.5' /> {t.orders.table} {order.tableNumber}
                 </span>
-                <span className='flex items-center gap-1'>
-                  <Icons.clock className='w-4 h-4' /> <LocalDate value={order.createdAt} />
+                <span className='inline-flex items-center gap-1.5'>
+                  <Icons.clock className='w-3.5 h-3.5' /> <LocalDate value={order.createdAt} />
                 </span>
               </div>
             </div>
-            <div className='text-right'>
-              <div className='text-sm text-muted-foreground'>{t.orders.remaining}</div>
-              <div className='text-2xl font-bold'>{formatCurrency(remaining)}</div>
+            <div className='text-right bg-muted/30 rounded-xl px-5 py-3 ring-1 ring-border/50'>
+              <div className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>{t.orders.remaining}</div>
+              <div className='text-2xl font-bold tracking-tight tabular-nums'>{formatCurrency(remaining)}</div>
             </div>
           </div>
 
           {/* Progress steps */}
-          <div className='mt-6 flex gap-0'>
+          <div className='mt-8 flex gap-0'>
             {STATUS_FLOW.map((s, i) => (
               <div key={s} className='flex-1 flex items-center'>
                 <div className='flex flex-col items-center'>
                   <div
-                    className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                    className={`h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                       i < statusIdx
-                        ? 'bg-primary text-primary-foreground'
+                        ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/30'
                         : i === statusIdx
-                          ? 'bg-primary/20 text-primary ring-2 ring-primary'
+                          ? 'bg-primary/15 text-primary ring-2 ring-primary/40 shadow-xs'
                           : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {i < statusIdx ? <Icons.circleCheck className='w-4 h-4' /> : i + 1}
                   </div>
                   <span
-                    className={`text-[10px] mt-1 ${i <= statusIdx ? 'text-foreground' : 'text-muted-foreground'}`}
+                    className={`text-[11px] mt-1.5 font-medium ${i <= statusIdx ? 'text-foreground' : 'text-muted-foreground'}`}
                   >
                     {t.orders.status[s]}
                   </span>
                 </div>
                 {i < STATUS_FLOW.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mt-4 ${i < statusIdx ? 'bg-primary' : 'bg-muted'}`}
+                    className={`flex-1 h-0.5 mt-4 mx-1 rounded-full ${i < statusIdx ? 'bg-primary' : 'bg-muted'}`}
                   />
                 )}
               </div>
@@ -231,20 +230,23 @@ export function OrderDetail() {
       </div>
 
       {/* Items */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Icons.post className='w-5 h-5' /> {t.orders.items}
+      <Card className='border-0 ring-1 ring-border shadow-sm overflow-hidden'>
+        <CardHeader className='border-b border-border/50 bg-muted/20'>
+          <CardTitle className='flex items-center gap-2 text-base'>
+            <div className='rounded-lg bg-primary/10 p-1.5'>
+              <Icons.post className='w-4 h-4 text-primary' />
+            </div>
+            {t.orders.items}
           </CardTitle>
         </CardHeader>
         <CardContent className='p-0'>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>{t.orders.items}</TableHead>
-                <TableHead className='w-24 text-center'>{t.cart.qty}</TableHead>
-                <TableHead className='w-28 text-right'>{t.menu.price}</TableHead>
-                <TableHead className='w-32 text-right'>{t.cart.subtotal}</TableHead>
+              <TableRow className='bg-muted/30'>
+                <TableHead className='font-semibold text-foreground/70'>{t.orders.items}</TableHead>
+                <TableHead className='w-24 text-center font-semibold text-foreground/70'>{t.cart.qty}</TableHead>
+                <TableHead className='w-28 text-right font-semibold text-foreground/70'>{t.menu.price}</TableHead>
+                <TableHead className='w-32 text-right font-semibold text-foreground/70'>{t.cart.subtotal}</TableHead>
                 {(role === 'Waiter' || role === 'Admin') &&
                   order.status !== 'served' &&
                   order.status !== 'cancelled' && <TableHead className='w-16' />}
@@ -252,18 +254,18 @@ export function OrderDetail() {
             </TableHeader>
             <TableBody>
               {order.items.map((item) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.id} className='border-b border-border/30'>
                   <TableCell className='font-medium'>
-                    {locale === 'ku' && item.menuItemNameKu
-                      ? item.menuItemNameKu
-                      : item.menuItemName}
-                    {item.note && (
-                      <p className='text-xs text-muted-foreground mt-0.5'>{item.note}</p>
-                    )}
+                    <div className='flex flex-col'>
+                      <span>{locale === 'ku' && item.menuItemNameKu ? item.menuItemNameKu : item.menuItemName}</span>
+                      {item.note && (
+                        <span className='text-xs text-muted-foreground/70 italic mt-0.5'>{item.note}</span>
+                      )}
+                    </div>
                   </TableCell>
-                  <TableCell className='text-center'>{item.quantity}</TableCell>
-                  <TableCell className='text-right'>{formatCurrency(item.price)}</TableCell>
-                  <TableCell className='text-right font-medium'>
+                  <TableCell className='text-center tabular-nums'>{item.quantity}</TableCell>
+                  <TableCell className='text-right tabular-nums'>{formatCurrency(item.price)}</TableCell>
+                  <TableCell className='text-right font-semibold tabular-nums'>
                     {formatCurrency(item.price * item.quantity)}
                   </TableCell>
                   {(role === 'Waiter' || role === 'Admin') &&
@@ -273,7 +275,7 @@ export function OrderDetail() {
                         <Button
                           size='icon'
                           variant='ghost'
-                          className='h-7 w-7 text-muted-foreground hover:text-destructive'
+                          className='h-8 w-8 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10'
                           disabled={removeItemMutation.isPending}
                           onClick={() => {
                             removeItemMutation.mutate(
@@ -285,7 +287,7 @@ export function OrderDetail() {
                             );
                           }}
                         >
-                          <Icons.trash className='w-4 h-4' />
+                          <Icons.trash className='w-3.5 h-3.5' />
                         </Button>
                       </TableCell>
                     )}
@@ -293,106 +295,121 @@ export function OrderDetail() {
               ))}
             </TableBody>
           </Table>
-          <div className='flex justify-end p-4 bg-muted/50'>
-            <div className='text-lg font-semibold'>
-              {t.orders.total}: {formatCurrency(total)}
+          <div className='flex justify-end px-6 py-4 bg-gradient-to-r from-transparent via-muted/30 to-muted/50'>
+            <div className='flex items-center gap-3'>
+              <span className='text-sm font-medium text-muted-foreground'>{t.orders.total}:</span>
+              <span className='text-xl font-bold tracking-tight tabular-nums'>{formatCurrency(total)}</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Payments */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Icons.creditCard className='w-5 h-5' /> {t.orders.payment}
-            <span className='text-sm font-normal text-muted-foreground'>
-              ({formatCurrency(paidTotal)} / {formatCurrency(total)})
+      <Card className='border-0 ring-1 ring-border shadow-sm'>
+        <CardHeader className='border-b border-border/50 bg-muted/20'>
+          <CardTitle className='flex items-center gap-2 text-base'>
+            <div className='rounded-lg bg-green-100 p-1.5'>
+              <Icons.creditCard className='w-4 h-4 text-green-600' />
+            </div>
+            {t.orders.payment}
+            <span className='text-sm font-normal text-muted-foreground/70 ml-1'>
+              {formatCurrency(paidTotal)} / {formatCurrency(total)}
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-4'>
+        <CardContent className='space-y-4 pt-5'>
           {payments.length > 0 && (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t.orders.amount}</TableHead>
-                  <TableHead>{t.orders.method}</TableHead>
-                  <TableHead>{t.orders.date}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {payments.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell className='font-medium'>{formatCurrency(p.amount)}</TableCell>
-                    <TableCell className='capitalize'>
-                      {p.method === 'cash' ? t.orders.cash : t.orders.card}
-                    </TableCell>
-                    <TableCell className='text-muted-foreground'>
-                      <LocalDate value={p.paidAt} />
-                    </TableCell>
+            <div className='rounded-lg border border-border/50 overflow-hidden'>
+              <Table>
+                <TableHeader>
+                  <TableRow className='bg-muted/20'>
+                    <TableHead className='font-semibold text-foreground/70'>{t.orders.amount}</TableHead>
+                    <TableHead className='font-semibold text-foreground/70'>{t.orders.method}</TableHead>
+                    <TableHead className='font-semibold text-foreground/70'>{t.orders.date}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {payments.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell className='font-medium tabular-nums'>{formatCurrency(p.amount)}</TableCell>
+                      <TableCell className='capitalize'>
+                        <span className='inline-flex items-center gap-1.5 bg-muted/50 px-2 py-0.5 rounded-md text-xs font-medium'>
+                          {p.method === 'cash' ? t.orders.cash : t.orders.card}
+                        </span>
+                      </TableCell>
+                      <TableCell className='text-muted-foreground'>
+                        <LocalDate value={p.paidAt} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
 
           {remaining > 0.01 && order.status !== 'cancelled' && order.status !== 'served' && (
             <>
               <Separator />
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!payAmount) return;
-                  payMutation.mutate(
-                    { orderId, data: { amount: parseFloat(payAmount), method: payMethod } },
-                    {
-                      onSuccess: () => {
-                        setPayAmount('');
-                        toast.success(t.orders.paymentRecorded);
-                      },
-                      onError: () => toast.error(t.orders.paymentFailed)
-                    }
-                  );
-                }}
-                className='flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4'
-              >
-                <div className='flex-1'>
-                  <label className='text-sm font-medium'>{t.orders.amount}</label>
-                  <Input
-                    type='number'
-                    step='0.01'
-                    value={payAmount}
-                    onChange={(e) => setPayAmount(e.target.value)}
-                    required
-                    placeholder={`Max ${formatCurrency(remaining)}`}
-                  />
+              <div className='rounded-lg bg-muted/20 p-4 ring-1 ring-border/50'>
+                <div className='flex items-center justify-between mb-3'>
+                  <span className='text-sm font-semibold'>{t.orders.addPayment}</span>
+                  <span className='text-sm text-muted-foreground tabular-nums'>{t.orders.remaining}: {formatCurrency(remaining)}</span>
                 </div>
-                <div className='w-full sm:w-40'>
-                  <label className='text-sm font-medium'>{t.orders.method}</label>
-                  <Select
-                    value={payMethod}
-                    onValueChange={(v) => setPayMethod(v as 'cash' | 'card')}
-                  >
-                    <SelectTrigger className='mt-1'>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='cash'>{t.orders.cash}</SelectItem>
-                      <SelectItem value='card'>{t.orders.card}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button type='submit' disabled={payMutation.isPending} className='w-full sm:w-auto'>
-                  {t.orders.addPayment}
-                </Button>
-              </form>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!payAmount) return;
+                    payMutation.mutate(
+                      { orderId, data: { amount: parseFloat(payAmount), method: payMethod } },
+                      {
+                        onSuccess: () => {
+                          setPayAmount('');
+                          toast.success(t.orders.paymentRecorded);
+                        },
+                        onError: () => toast.error(t.orders.paymentFailed)
+                      }
+                    );
+                  }}
+                  className='flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-3'
+                >
+                  <div className='flex-1'>
+                    <Input
+                      type='number'
+                      step='0.01'
+                      value={payAmount}
+                      onChange={(e) => setPayAmount(e.target.value)}
+                      required
+                      placeholder={`Max ${formatCurrency(remaining)}`}
+                    />
+                  </div>
+                  <div className='w-full sm:w-36'>
+                    <Select
+                      value={payMethod}
+                      onValueChange={(v) => setPayMethod(v as 'cash' | 'card')}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='cash'>{t.orders.cash}</SelectItem>
+                        <SelectItem value='card'>{t.orders.card}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button type='submit' disabled={payMutation.isPending} className='w-full sm:w-auto'>
+                    {t.orders.addPayment}
+                  </Button>
+                </form>
+              </div>
             </>
           )}
 
           {remaining <= 0.01 && (
-            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-              <Icons.circleCheck className='w-4 h-4 text-green-600' /> {t.orders.fullyPaid}
+            <div className='flex items-center gap-2 text-sm py-2'>
+              <div className='rounded-full bg-green-100 p-1'>
+                <Icons.circleCheck className='w-3.5 h-3.5 text-green-600' />
+              </div>
+              <span className='font-medium text-green-700'>{t.orders.fullyPaid}</span>
             </div>
           )}
 

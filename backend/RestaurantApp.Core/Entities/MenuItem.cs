@@ -12,6 +12,7 @@ public class MenuItem : BaseEntity, IAuditableEntity
     public string? DescriptionEn { get; set; }
     public string? DescriptionKu { get; set; }
     public string? ImageUrl { get; set; }
+    public int SortOrder { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }

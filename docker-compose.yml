@@ -15,13 +15,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5002:5000"
     depends_on:
       - postgres
     environment:
       DATABASE_URL: Host=postgres;Database=restaurant;Username=postgres;Password=secret
+      ASPNETCORE_URLS: http://+:5000
       JWT_SECRET: dev-secret-minimum-32-characters-long!!
       JWT_EXPIRY_HOURS: 8
+      SEED_DEFAULT_PASSWORD: admin123
       CORS_ORIGINS: http://localhost:3000
       # If you run docker-compose, MinIO will be available as a service below.
       # These can be overridden in an env file or when running docker-compose.

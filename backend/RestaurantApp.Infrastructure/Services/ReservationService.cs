@@ -135,23 +135,14 @@ public class ReservationService : IReservationService
             if (!reservation.TableId.HasValue)
                 throw new BadRequestException("Cannot confirm a reservation without an assigned table");
 
-            var table = await _db.Tables.FindAsync(reservation.TableId.Value);
-            if (table != null)
-            {
-                table.Status = TableStatus.Reserved;
-            }
+            if (reservation.Table != null)
+                reservation.Table.Status = TableStatus.Reserved;
         }
 
         if (status == ReservationStatus.Completed || status == ReservationStatus.Cancelled)
         {
-            if (reservation.TableId.HasValue)
-            {
-                var table = await _db.Tables.FindAsync(reservation.TableId.Value);
-                if (table != null && table.Status == TableStatus.Reserved)
-                {
-                    table.Status = TableStatus.Free;
-                }
-            }
+            if (reservation.Table != null && reservation.Table.Status == TableStatus.Reserved)
+                reservation.Table.Status = TableStatus.Free;
         }
 
         reservation.Status = status;
@@ -162,8 +153,13 @@ public class ReservationService : IReservationService
 
     public async Task DeleteAsync(int id)
     {
-        var reservation = await _db.Reservations.FindAsync(id)
+        var reservation = await _db.Reservations
+            .Include(r => r.Table)
+            .FirstOrDefaultAsync(r => r.Id == id)
             ?? throw new NotFoundException($"Reservation {id} not found");
+
+        if (reservation.Status == ReservationStatus.Confirmed && reservation.Table != null)
+            reservation.Table.Status = TableStatus.Free;
 
         _db.Reservations.Remove(reservation);
         await _db.SaveChangesAsync();

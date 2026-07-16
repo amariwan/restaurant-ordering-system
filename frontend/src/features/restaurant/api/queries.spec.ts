@@ -102,7 +102,7 @@ describe('menuItemsOptions', () => {
 
 describe('tablesAllOptions', () => {
   it('returns query options for all tables', () => {
-    const options = tablesAllOptions;
+    const options = tablesAllOptions();
     expect(options.queryKey).toEqual(['restaurant', 'tables']);
     expect(typeof options.queryFn).toBe('function');
   });

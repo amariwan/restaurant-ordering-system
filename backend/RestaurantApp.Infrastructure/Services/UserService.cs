@@ -58,7 +58,7 @@ public class UserService : IUserService
         user.Email = email;
 
         if (!Enum.TryParse<UserRole>(role, true, out var userRole))
-            throw new ConflictException($"Invalid role: {role}");
+            throw new BadRequestException($"Invalid role: {role}");
 
         user.Role = userRole;
         await _db.SaveChangesAsync();

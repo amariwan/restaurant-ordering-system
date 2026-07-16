@@ -72,48 +72,54 @@ export function MenuListing({
         ))}
       </aside>
 
-      <section className='flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+      <section className='flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
         {filtered.map((item) => (
-          <Card key={item.id} className='overflow-hidden hover:shadow-md transition-shadow'>
+          <Card key={item.id} className='group/card overflow-hidden border-0 ring-1 ring-border shadow-sm hover:shadow-lg transition-all duration-300'>
             <CardHeader className='p-0'>
-              <div className='relative overflow-hidden h-40 bg-muted'>
+              <div className='relative overflow-hidden h-44 bg-muted'>
                 {imageError.has(item.id) || !item.imageUrl ? (
-                  <div className='flex h-full w-full items-center justify-center text-muted-foreground'>
-                    <IconPhoto className='w-8 h-8' />
+                  <div className='flex h-full w-full items-center justify-center text-muted-foreground/40'>
+                    <IconPhoto className='w-10 h-10' />
                   </div>
                 ) : (
                   <Image
                     fill
                     src={item.imageUrl}
                     alt={localizedValue(item, 'name', locale)}
-                    className='object-cover'
+                    className='object-cover transition-transform duration-500 group-hover/card:scale-110'
                     sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                     onError={() => setImageError((prev) => new Set(prev).add(item.id))}
                   />
                 )}
+                <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent' />
+                <div className='absolute top-3 right-3'>
+                  <Badge variant={item.available ? 'default' : 'secondary'} className='shadow-xs backdrop-blur-sm'>
+                    {item.available ? t.common.available : t.common.unavailable}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
-            <CardContent className='space-y-3'>
+            <CardContent className='space-y-3 pt-4'>
               <div>
-                <h3 className='text-base font-medium'>{localizedValue(item, 'name', locale)}</h3>
-                <div className='text-sm text-muted-foreground'>
-                  {localizedValue(item, 'categoryName', locale)}
+                <div className='flex items-start justify-between gap-2'>
+                  <h3 className='text-base font-semibold tracking-tight'>{localizedValue(item, 'name', locale)}</h3>
+                  <div className='text-base font-bold text-primary shrink-0 tabular-nums'>{formatCurrency(item.price)}</div>
+                </div>
+                <div className='inline-flex items-center gap-1 mt-1'>
+                  <span className='text-xs font-medium text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-full'>
+                    {localizedValue(item, 'categoryName', locale)}
+                  </span>
                 </div>
                 {localizedValue(item, 'description', locale) && (
-                  <p className='text-xs text-muted-foreground mt-1'>
+                  <p className='text-sm text-muted-foreground mt-2 leading-relaxed line-clamp-2'>
                     {localizedValue(item, 'description', locale)}
                   </p>
                 )}
               </div>
-              <div className='flex items-center justify-between'>
-                <Badge variant={item.available ? 'default' : 'secondary'}>
-                  {item.available ? t.common.available : t.common.unavailable}
-                </Badge>
-                <div className='font-semibold'>{formatCurrency(item.price)}</div>
-              </div>
-              <div className='flex justify-end'>
+              <div className='pt-1'>
                 <Button
                   size='sm'
+                  className='w-full'
                   disabled={!item.available || addToOrder.isPending}
                   isLoading={addToOrder.isPending}
                   onClick={() => {
@@ -143,7 +149,7 @@ export function MenuListing({
                     }
                   }}
                 >
-                  <IconPlus className='mr-1 w-4 h-4' />
+                  <IconPlus className='mr-1.5 w-4 h-4' />
                   {orderId ? t.menu.addToOrder : t.menu.add}
                 </Button>
               </div>

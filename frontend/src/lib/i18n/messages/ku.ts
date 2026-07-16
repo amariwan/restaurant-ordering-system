@@ -52,7 +52,8 @@ export const ku = {
     manageMenu: 'بەڕێوەبردنی مێنو',
     operations: 'کارەکان',
     administration: 'بەڕێوەبەرایەتی',
-    kitchenView: 'بینینی چێشتخانە'
+    kitchenView: 'بینینی چێشتخانە',
+    board: 'بۆرد'
   },
   landing: {
     title: 'ڕێستۆرانت',
@@ -244,12 +245,39 @@ export const ku = {
       occupied: 'داگیرکراو',
       reserved: 'یەدەگکراو'
     },
+    editTable: 'دەستکاریکردنی مێز',
+    area: 'ناوچە',
+    shape: 'شێوە',
+    width: 'پانی',
+    height: 'بەرزی',
+    rotation: 'خولانەوە',
+    description: 'وەسف',
+    tableType: 'جۆری مێز',
+    color: 'ڕەنگ',
+    type: {
+      regular: 'ئاسایی',
+      vip: 'VIP',
+      private: 'تایبەت',
+      bar: 'بار',
+      outdoor: 'دەرەوە'
+    },
+    shapes: {
+      circle: 'خڕ',
+      rectangle: 'لاکێشە',
+      square: 'چوارگۆشە',
+      oval: 'بیبیشکێکی'
+    },
     confirmDelete: 'دڵنیایت دەتەوێت ئەم مێزە بسڕیتەوە؟',
+    deleteWarning: 'ئەم کردارە ناتوانرێت پووچەڵ بکرێتەوە. مێزەکە بە شێوەیی هەمیشەیی دەسڕدرێتەوە.',
     noTables: 'هیچ مێزێک نەدۆزرایەوە.',
     invalidNumber: 'تکایە ژمارەیەکی دروستی مێز بنووسە.',
     createSuccess: 'مێزەکە دروستکرا.',
     statusUpdated: 'دۆخی مێزەکە نوێکرایەوە.',
-    deleteSuccess: 'مێزەکە سڕایەوە.'
+    deleteSuccess: 'مێزەکە سڕایەوە.',
+    rotationHint: 'خولانەوە بە پلە (0-360)',
+    dimensions: 'ڕەهەندەکان',
+    descriptionPlaceholder: 'تێبینی دەربارەی ئەم مێزە...',
+    tableTypeLabel: 'جۆر'
   },
   users: {
     title: 'بەکارهێنەرەکان',

@@ -30,7 +30,7 @@ export default async function DashboardPage() {
     await Promise.all([
       qc.prefetchQuery(ordersAllOptions()),
       qc.prefetchQuery(menuItemsOptions()),
-      qc.prefetchQuery(tablesAllOptions),
+      qc.prefetchQuery(tablesAllOptions()),
       qc.prefetchQuery(usersAllOptions)
     ]);
     return (
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
   }
 
   // Waiter (default for authenticated staff)
-  await Promise.all([qc.prefetchQuery(ordersAllOptions()), qc.prefetchQuery(tablesAllOptions)]);
+  await Promise.all([qc.prefetchQuery(ordersAllOptions()), qc.prefetchQuery(tablesAllOptions())]);
   return (
     <PageContainer pageTitle='Dashboard' pageDescription='Your active orders and table overview.'>
       <HydrationBoundary state={dehydrate(qc)}>

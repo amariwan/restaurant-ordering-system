@@ -14,7 +14,7 @@ namespace RestaurantApp.Tests.Unit;
 
 public class OrderServiceEdgeCasesTests
 {
-    private static readonly IMapper _mapper = TestDbContextFactory.CreateMapper();
+    private static readonly IMapper _mapper = TestHelpers.TestDbContextFactory.CreateMapper();
 
     private sealed class NullOrderNotifier : IOrderNotifier
     {
@@ -118,10 +118,10 @@ public class OrderServiceEdgeCasesTests
     {
         using var db = CreateContext("delete_removes_order");
 
-        var category = new Category { Name = "Test" };
+        var category = new Category { NameEn = "Test", NameKu = "تێست" };
         db.Categories.Add(category);
 
-        var menuItem = new MenuItem { Name = "Item", Price = 5m, Category = category };
+        var menuItem = new MenuItem { NameEn = "Item", NameKu = "بەند", Price = 5m, Available = true, Category = category };
         db.MenuItems.Add(menuItem);
 
         var table = new Table { Number = 10, Status = TableStatus.Occupied };

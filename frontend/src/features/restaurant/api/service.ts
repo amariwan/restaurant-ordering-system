@@ -26,7 +26,11 @@ import type {
   UpdateReservationPayload,
   UpdateReservationStatusPayload,
   ReservationFilters,
-  ChangePasswordPayload
+  ChangePasswordPayload,
+  ReorderItemRequest,
+  Wall,
+  CreateWallPayload,
+  TablePositionUpdate,
 } from './types';
 import { getToken as getStoredToken } from '../lib/auth-store';
 
@@ -133,13 +137,28 @@ async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> 
 
   const url = BASE ? `${BASE}${path}` : path;
   const fetchOptions: RequestInit = { ...options, headers };
+
+  // Timeout to prevent hanging requests (60s for FormData/file uploads, 15s otherwise)
+  if (typeof window !== 'undefined' && !fetchOptions.signal) {
+    const timeoutMs = isFormData ? 60_000 : 15_000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    fetchOptions.signal = controller.signal;
+    const res = await fetch(url, fetchOptions);
+    clearTimeout(timeoutId);
+    return processResponse(res);
+  }
+
   // Ensure browser requests include credentials so HttpOnly refresh cookies are stored
   if (typeof window !== 'undefined') {
     fetchOptions.credentials = 'include';
   }
 
   const res = await fetch(url, fetchOptions);
+  return processResponse(res);
+}
 
+async function processResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     let message = 'Unknown error';
     try {
@@ -180,6 +199,10 @@ async function apiPost<T>(path: string, data?: unknown): Promise<T> {
 
 async function apiPut<T>(path: string, data?: unknown): Promise<T> {
   return fetchApi<T>(path, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+async function apiPatch<T>(path: string, data?: unknown): Promise<T> {
+  return fetchApi<T>(path, { method: 'PATCH', body: JSON.stringify(data) });
 }
 
 async function apiDelete<T>(path: string): Promise<T> {
@@ -257,10 +280,18 @@ export async function menuUploadImage(file: File): Promise<{ url: string }> {
   return apiPost<{ url: string }>('/menu/upload-image', fd);
 }
 
+export async function menuReorderCategories(data: ReorderItemRequest[]): Promise<void> {
+  return apiPatch<void>('/menu/categories/reorder', data);
+}
+
+export async function menuReorderItems(data: ReorderItemRequest[]): Promise<void> {
+  return apiPatch<void>('/menu/items/reorder', data);
+}
+
 // --- Tables ---
 
-export async function tablesGetAll(): Promise<Table[]> {
-  return apiGet<Table[]>('/tables');
+export async function tablesGetAll(floor?: number): Promise<Table[]> {
+  return apiGet<Table[]>('/tables', { floor });
 }
 
 export async function tablesCreate(data: CreateTablePayload): Promise<Table> {
@@ -273,6 +304,46 @@ export async function tablesUpdate(id: number, data: UpdateTablePayload): Promis
 
 export async function tablesDelete(id: number): Promise<void> {
   return apiDelete<void>(`/tables/${id}`);
+}
+
+export async function tablesUploadImage(file: File): Promise<{ url: string }> {
+  const fd = new FormData();
+  fd.append('file', file);
+  return apiPost<{ url: string }>('/tables/upload-image', fd);
+}
+
+export async function tablesBulkDelete(ids: number[]): Promise<void> {
+  return apiPost<void>('/tables/bulk-delete', ids);
+}
+
+export async function tablesBulkUpdate(ids: number[], data: UpdateTablePayload): Promise<Table[]> {
+  return apiPut<Table[]>('/tables/bulk-update', { ids, data });
+}
+
+export async function tablesBulkMove(positions: TablePositionUpdate[]): Promise<Table[]> {
+  return apiPut<Table[]>('/tables/bulk-move', positions);
+}
+
+// --- Walls ---
+
+export async function wallsGetByFloor(floor: number): Promise<Wall[]> {
+  return apiGet<Wall[]>('/walls', { floor });
+}
+
+export async function wallsCreate(data: CreateWallPayload): Promise<Wall> {
+  return apiPost<Wall>('/walls', data);
+}
+
+export async function wallsUpdate(id: number, data: CreateWallPayload): Promise<Wall> {
+  return apiPut<Wall>(`/walls/${id}`, data);
+}
+
+export async function wallsDelete(id: number): Promise<void> {
+  return apiDelete<void>(`/walls/${id}`);
+}
+
+export async function wallsBulkDelete(ids: number[]): Promise<void> {
+  return apiPost<void>('/walls/bulk-delete', ids);
 }
 
 // --- Orders ---
@@ -411,6 +482,22 @@ export async function receiptsGetByOrder(orderId: number): Promise<Receipt> {
   return apiGet<Receipt>(`/receipts/by-order${buildQuery({ orderId })}`);
 }
 
+// --- Settings ---
+
+export async function getMapBackground(floor = 1): Promise<{ url: string | null }> {
+  return apiGet<{ url: string | null }>('/settings/map-background', { floor });
+}
+
+export async function uploadMapBackground(file: File, floor = 1): Promise<{ url: string }> {
+  const fd = new FormData();
+  fd.append('file', file);
+  return apiPost<{ url: string }>(`/settings/map-background?floor=${floor}`, fd);
+}
+
+export async function deleteMapBackground(floor = 1): Promise<void> {
+  return apiDelete<void>(`/settings/map-background?floor=${floor}`);
+}
+
 // --- SignalR ---
 
 export const SIGNALR_HUB_URL = normalizeUrl(SIGNALR_URL) + '/hubs/orders';
@@ -420,4 +507,4 @@ export const SIGNALR_HUB_URL = normalizeUrl(SIGNALR_URL) + '/hubs/orders';
 export const CART_STORAGE_KEY = 'restaurant_cart';
 
 // Export helpers for reuse (used by tests + other features like users)
-export { apiGet, apiPost, apiPut, apiDelete, buildQuery, getAuthHeader };
+export { apiGet, apiPost, apiPut, apiPatch, apiDelete, buildQuery, getAuthHeader };

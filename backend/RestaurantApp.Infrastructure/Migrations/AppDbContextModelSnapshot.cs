@@ -17,7 +17,7 @@ namespace RestaurantApp.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -89,6 +89,9 @@ namespace RestaurantApp.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -344,6 +347,30 @@ namespace RestaurantApp.Infrastructure.Migrations
                     b.ToTable("Reservations");
                 });
 
+            modelBuilder.Entity("RestaurantApp.Core.Entities.RestaurantSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantSettings");
+                });
+
             modelBuilder.Entity("RestaurantApp.Core.Entities.Table", b =>
                 {
                     b.Property<int>("Id")
@@ -358,17 +385,53 @@ namespace RestaurantApp.Infrastructure.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Floor")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Number")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("PosX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PosY")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Rotation")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Shape")
                         .HasColumnType("integer");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -413,6 +476,48 @@ namespace RestaurantApp.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RestaurantApp.Core.Entities.Wall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("EndX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("EndY")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Floor")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("StartX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StartY")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Thickness")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Floor");
+
+                    b.ToTable("Walls");
                 });
 
             modelBuilder.Entity("RestaurantApp.Core.Entities.MenuItem", b =>

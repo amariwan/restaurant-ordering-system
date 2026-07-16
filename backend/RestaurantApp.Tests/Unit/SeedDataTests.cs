@@ -173,7 +173,7 @@ public class SeedDataTests : IDisposable
     }
 
     [Fact]
-    public async Task EnsureSeedDataAsync_CreatesMenuItemsWithImageUrls()
+    public async Task EnsureSeedDataAsync_MenuItemsHaveNoImageUrls()
     {
         Environment.SetEnvironmentVariable("SEED_DEFAULT_PASSWORD", "TestPassword123!");
         using var db = CreateContext("seed_images");
@@ -181,6 +181,7 @@ public class SeedDataTests : IDisposable
         await SeedData.EnsureSeedDataAsync(db);
 
         var items = await db.MenuItems.ToListAsync();
-        items.Should().AllSatisfy(m => m.ImageUrl.Should().NotBeNullOrEmpty());
+        items.Should().HaveCount(5);
+        items.Should().AllSatisfy(m => m.ImageUrl.Should().BeNull());
     }
 }

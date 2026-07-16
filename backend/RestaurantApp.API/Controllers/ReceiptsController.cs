@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestaurantApp.Core.Constants;
 using RestaurantApp.Core.Interfaces;
 
 namespace RestaurantApp.API.Controllers;
@@ -16,7 +17,7 @@ public class ReceiptsController : ControllerBase
     }
 
     [HttpPost]
-    [AllowAnonymous]
+    [Authorize(Roles = RoleConstants.AdminWaiter)]
     public async Task<IActionResult> Generate([FromQuery] int orderId)
     {
         var receipt = await _receiptService.GenerateReceiptAsync(orderId);
@@ -24,7 +25,7 @@ public class ReceiptsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [AllowAnonymous]
+    [Authorize(Roles = RoleConstants.AdminWaiter)]
     public async Task<IActionResult> GetById(int id)
     {
         var receipt = await _receiptService.GetByIdAsync(id);
@@ -32,7 +33,7 @@ public class ReceiptsController : ControllerBase
     }
 
     [HttpGet("by-order")]
-    [AllowAnonymous]
+    [Authorize(Roles = RoleConstants.AdminWaiter)]
     public async Task<IActionResult> GetByOrderId([FromQuery] int orderId)
     {
         var receipt = await _receiptService.GetByOrderIdAsync(orderId);

@@ -52,7 +52,8 @@ export const en = {
     manageMenu: 'Manage Menu',
     operations: 'Operations',
     administration: 'Administration',
-    kitchenView: 'Kitchen View'
+    kitchenView: 'Kitchen View',
+    board: 'Board'
   },
   landing: {
     title: 'Restaurant',
@@ -240,12 +241,39 @@ export const en = {
       occupied: 'Occupied',
       reserved: 'Reserved'
     },
+    editTable: 'Edit Table',
+    area: 'Area',
+    shape: 'Shape',
+    width: 'Width',
+    height: 'Height',
+    rotation: 'Rotation',
+    description: 'Description',
+    tableType: 'Table Type',
+    color: 'Color',
+    type: {
+      regular: 'Regular',
+      vip: 'VIP',
+      private: 'Private',
+      bar: 'Bar',
+      outdoor: 'Outdoor'
+    },
+    shapes: {
+      circle: 'Circle',
+      rectangle: 'Rectangle',
+      square: 'Square',
+      oval: 'Oval'
+    },
     confirmDelete: 'Are you sure you want to delete this table?',
+    deleteWarning: 'This action cannot be undone. The table will be permanently removed.',
     noTables: 'No tables found.',
     invalidNumber: 'Please enter a valid table number.',
     createSuccess: 'Table created.',
     statusUpdated: 'Table status updated.',
-    deleteSuccess: 'Table deleted.'
+    deleteSuccess: 'Table deleted.',
+    rotationHint: 'Rotation in degrees (0-360)',
+    dimensions: 'Dimensions',
+    descriptionPlaceholder: 'Notes about this table...',
+    tableTypeLabel: 'Type'
   },
   users: {
     title: 'Users',

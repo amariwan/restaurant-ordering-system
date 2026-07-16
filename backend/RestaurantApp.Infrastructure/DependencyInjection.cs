@@ -35,6 +35,8 @@ public static class DependencyInjection
         services.AddScoped<IReceiptService, ReceiptService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IReservationService, ReservationService>();
+        services.AddScoped<IRestaurantSettingService, RestaurantSettingService>();
+        services.AddScoped<IWallService, WallService>();
 
         // SignalR notifier
         services.AddSingleton<IOrderNotifier, OrderNotifier>();

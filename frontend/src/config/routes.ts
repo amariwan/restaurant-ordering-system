@@ -36,6 +36,12 @@ export const ROUTES: RouteMeta[] = [
   },
   { path: '/cart', isPublic: true, layout: 'public' },
   {
+    path: '/orders/board',
+    requiresAuth: true,
+    requiredRoles: ['Kitchen', 'Waiter', 'Admin'],
+    layout: 'dashboard'
+  },
+  {
     path: '/orders',
     requiresAuth: true,
     requiredRoles: ['Kitchen', 'Waiter', 'Admin'],

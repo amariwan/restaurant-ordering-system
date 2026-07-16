@@ -96,6 +96,9 @@ public class OrderService : IOrderService
         if (activeCount > 0)
             throw new ConflictException($"Table {request.TableId} already has an active order");
 
+        if (table.Status == TableStatus.Reserved)
+            throw new ConflictException($"Table {request.TableId} is currently reserved");
+
         var order = new Order
         {
             TableId = request.TableId,
@@ -111,6 +114,9 @@ public class OrderService : IOrderService
 
             var menuItem = await _db.MenuItems.FindAsync(itemReq.MenuItemId)
                 ?? throw new NotFoundException($"MenuItem {itemReq.MenuItemId} not found");
+
+            if (!menuItem.Available)
+                throw new BadRequestException($"MenuItem {itemReq.MenuItemId} is not available");
 
             order.Items.Add(new OrderItem
             {
@@ -174,7 +180,13 @@ public class OrderService : IOrderService
 
         await _db.SaveChangesAsync();
 
-        var dto = await GetByIdAsync(id);
+        // Load order items + payments for the DTO without a full re-query
+        await _db.Entry(order).Collection(o => o.Items).Query()
+            .Include(oi => oi.MenuItem).LoadAsync();
+        await _db.Entry(order).Collection(o => o.Payments).LoadAsync();
+
+        order.PaymentStatus = ComputePaymentStatus(order);
+        var dto = _mapper.Map<OrderDto>(order);
         await _notifier.NotifyOrderStatusChanged(order.Id, status);
 
         return dto;
@@ -195,6 +207,9 @@ public class OrderService : IOrderService
 
         var menuItem = await _db.MenuItems.FindAsync(request.MenuItemId)
             ?? throw new NotFoundException($"MenuItem {request.MenuItemId} not found");
+
+        if (!menuItem.Available)
+            throw new BadRequestException($"MenuItem {request.MenuItemId} is not available");
 
         var item = new OrderItem
         {

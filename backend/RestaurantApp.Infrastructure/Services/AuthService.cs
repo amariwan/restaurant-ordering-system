@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -44,15 +43,6 @@ public class AuthService : IAuthService
     {
         if (await _db.Users.AnyAsync(u => u.Email == request.Email))
             throw new ConflictException($"Email {request.Email} is already in use");
-
-        // Email format validation
-        var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        if (!Regex.IsMatch(request.Email, emailRegex))
-            throw new BadRequestException("Invalid email format");
-
-        // Password policy
-        if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
-            throw new ForbiddenException("Password must be at least 8 characters long");
 
         var email = request.Email.Trim().ToLowerInvariant();
 

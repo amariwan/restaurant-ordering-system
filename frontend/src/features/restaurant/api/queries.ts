@@ -15,7 +15,10 @@ import type {
   CreateReservationPayload,
   UpdateReservationPayload,
   UpdateReservationStatusPayload,
-  ReservationFilters
+  ReservationFilters,
+  ReorderItemRequest,
+  CreateWallPayload,
+  TablePositionUpdate,
 } from './types';
 import * as service from './service';
 
@@ -32,7 +35,8 @@ export const keys = {
   },
   tables: {
     all: [...ROOT_KEY, 'tables'] as const,
-    byId: (id: number) => [...ROOT_KEY, 'tables', id] as const
+    byId: (id: number) => [...ROOT_KEY, 'tables', id] as const,
+    byFloor: (floor: number) => [...ROOT_KEY, 'tables', 'floor', floor] as const,
   },
   orders: {
     all: [...ROOT_KEY, 'orders'] as const,
@@ -55,6 +59,15 @@ export const keys = {
     all: [...ROOT_KEY, 'reservations'] as const,
     list: (filters?: ReservationFilters) => [...ROOT_KEY, 'reservations', 'list', filters] as const,
     detail: (id: number) => [...ROOT_KEY, 'reservations', 'detail', id] as const
+  },
+  settings: {
+    all: [...ROOT_KEY, 'settings'] as const,
+    mapBackground: [...ROOT_KEY, 'settings', 'mapBackground'] as const,
+    mapBackgroundByFloor: (floor: number) => [...ROOT_KEY, 'settings', 'mapBackground', floor] as const,
+  },
+  walls: {
+    all: [...ROOT_KEY, 'walls'] as const,
+    byFloor: (floor: number) => [...ROOT_KEY, 'walls', floor] as const,
   }
 } as const;
 
@@ -71,9 +84,9 @@ export const menuItemsOptions = (filters?: { categoryId?: number; available?: bo
     queryFn: () => service.menuGetItems(filters)
   });
 
-export const tablesAllOptions = queryOptions({
-  queryKey: keys.tables.all,
-  queryFn: service.tablesGetAll
+export const tablesAllOptions = (floor?: number) => queryOptions({
+  queryKey: floor ? keys.tables.byFloor(floor) : keys.tables.all,
+  queryFn: () => service.tablesGetAll(floor),
 });
 
 export const ordersAllOptions = (filters?: OrdersFilters) =>
@@ -153,6 +166,37 @@ export function useReservationsDeleteMutation() {
   });
 }
 
+// --- Settings ---
+
+export const mapBackgroundOptions = (floor = 1) => queryOptions({
+  queryKey: keys.settings.mapBackgroundByFloor(floor),
+  queryFn: () => service.getMapBackground(floor),
+  staleTime: Infinity,
+  retry: false,
+});
+
+export const wallsOptions = (floor: number) => queryOptions({
+  queryKey: keys.walls.byFloor(floor),
+  queryFn: () => service.wallsGetByFloor(floor),
+  staleTime: 30000,
+});
+
+export function useUploadMapBackgroundMutation(floor = 1) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => service.uploadMapBackground(file, floor),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.settings.mapBackgroundByFloor(floor) })
+  });
+}
+
+export function useDeleteMapBackgroundMutation(floor = 1) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => service.deleteMapBackground(floor),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.settings.mapBackgroundByFloor(floor) })
+  });
+}
+
 // --- Mutations ---
 
 export function useMenuCreateCategoryMutation() {
@@ -210,6 +254,22 @@ export function useMenuDeleteItemMutation() {
   });
 }
 
+export function useMenuReorderCategoriesMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ReorderItemRequest[]) => service.menuReorderCategories(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.menu.categories })
+  });
+}
+
+export function useMenuReorderItemsMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ReorderItemRequest[]) => service.menuReorderItems(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.menu.items })
+  });
+}
+
 export function useTablesCreateMutation() {
   const qc = useQueryClient();
   return useMutation({
@@ -227,11 +287,78 @@ export function useTablesUpdateMutation() {
   });
 }
 
+export function useTablesUploadImageMutation() {
+  return useMutation({
+    mutationFn: (file: File) => service.tablesUploadImage(file),
+  });
+}
+
 export function useTablesDeleteMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => service.tablesDelete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.tables.all })
+  });
+}
+
+export function useTablesBulkDeleteMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: number[]) => service.tablesBulkDelete(ids),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.tables.all })
+  });
+}
+
+export function useTablesBulkUpdateMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ ids, data }: { ids: number[]; data: UpdateTablePayload }) =>
+      service.tablesBulkUpdate(ids, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.tables.all })
+  });
+}
+
+export function useTablesBulkMoveMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (positions: TablePositionUpdate[]) =>
+      service.tablesBulkMove(positions),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.tables.all })
+  });
+}
+
+// --- Wall Mutations ---
+
+export function useWallsCreateMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateWallPayload) => service.wallsCreate(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.walls.all })
+  });
+}
+
+export function useWallsUpdateMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: CreateWallPayload }) =>
+      service.wallsUpdate(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.walls.all })
+  });
+}
+
+export function useWallsDeleteMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => service.wallsDelete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.walls.all })
+  });
+}
+
+export function useWallsBulkDeleteMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: number[]) => service.wallsBulkDelete(ids),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.walls.all })
   });
 }
 

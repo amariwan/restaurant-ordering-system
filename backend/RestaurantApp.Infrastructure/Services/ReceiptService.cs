@@ -92,7 +92,8 @@ public class ReceiptService : IReceiptService
         var receipt = await _db.Receipts
             .Include(r => r.Order).ThenInclude(o => o.Items).ThenInclude(i => i.MenuItem)
             .Include(r => r.Order).ThenInclude(o => o.Table)
-            .FirstAsync(r => r.OrderId == orderId);
+            .FirstOrDefaultAsync(r => r.OrderId == orderId)
+            ?? throw new NotFoundException($"Receipt for order {orderId} not found");
 
         return BuildReceiptDto(receipt);
     }

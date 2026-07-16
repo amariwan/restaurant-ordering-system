@@ -12,9 +12,9 @@ using Xunit;
 
 namespace RestaurantApp.Tests.Unit;
 
-    private static readonly IMapper _mapper = TestDbContextFactory.CreateMapper();
 public class UserServiceTests
 {
+    private static readonly IMapper _mapper = TestHelpers.TestDbContextFactory.CreateMapper();
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -32,7 +32,7 @@ public class UserServiceTests
 
         var result = await svc.GetAllAsync();
 
-        result.Should().HaveCount(2); // admin@test.com and waiter@test.com from seed data
+        result.Items.Should().HaveCount(2); // admin@test.com and waiter@test.com from seed data
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class UserServiceTests
 
         var result = await svc.GetAllAsync();
 
-        result.Should().BeEmpty();
+        result.Items.Should().BeEmpty();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class UserServiceTests
 
         var result = await svc.GetAllAsync();
 
-        var admin = result.First(u => u.Email == "admin@test.com");
+        var admin = result.Items.First(u => u.Email == "admin@test.com");
         admin.Name.Should().Be("Admin");
         admin.Email.Should().Be("admin@test.com");
         admin.Role.Should().Be(UserRole.Admin);
@@ -119,7 +119,7 @@ public class UserServiceTests
         var svc = new UserService(db, _mapper);
 
         await AsyncTest.Act(() => svc.UpdateAsync(1, "Name", "newemail@test.com", "InvalidRole"))
-            .Should().ThrowAsync<ConflictException>();
+            .Should().ThrowAsync<BadRequestException>();
     }
 
     [Fact]

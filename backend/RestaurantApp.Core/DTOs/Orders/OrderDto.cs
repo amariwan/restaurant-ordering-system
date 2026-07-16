@@ -15,4 +15,5 @@ public class OrderDto
     public PaymentStatus PaymentStatus { get; set; }
     public required IEnumerable<OrderItemDto> Items { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

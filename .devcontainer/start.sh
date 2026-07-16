@@ -13,7 +13,8 @@ mkdir -p "$LOG_DIR"
 
 # ── 1. Restore + Migrations ────────────────────────────────────────────────────
 echo "=== [1/3] Restore + Migrations ==="
-dotnet restore backend/RestaurantApp.sln 2>&1 | tee -a "$LOG_DIR/migrations.log"
+dotnet nuget locals all --clear 2>/dev/null
+dotnet restore backend/RestaurantApp.API/RestaurantApp.API.csproj --no-cache 2>&1 | tee -a "$LOG_DIR/migrations.log"
 dotnet ef database update \
   --project  backend/RestaurantApp.Infrastructure \
   --startup-project backend/RestaurantApp.API \

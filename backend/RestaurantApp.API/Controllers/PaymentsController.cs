@@ -18,7 +18,7 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpPost]
-    [AllowAnonymous]
+    [Authorize(Roles = RoleConstants.AdminWaiter)]
     public async Task<IActionResult> Create([FromQuery] int orderId, [FromBody] PaymentRequest request)
     {
         var payment = await _paymentService.CreateAsync(orderId, request);
@@ -26,7 +26,7 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpGet("{orderId}")]
-    [AllowAnonymous]
+    [Authorize(Roles = RoleConstants.AdminWaiter)]
     public async Task<IActionResult> GetByOrderId(int orderId)
     {
         var payments = await _paymentService.GetAllByOrderIdAsync(orderId);

@@ -16,7 +16,10 @@ public class OrderNotifier : IOrderNotifier
 
     public Task NotifyNewOrder(OrderDto order)
     {
-        return _hub.Clients.Group("kitchen").SendAsync("NewOrder", order);
+        return Task.WhenAll(
+            _hub.Clients.Group("kitchen").SendAsync("NewOrder", order),
+            _hub.Clients.Group("waiter").SendAsync("NewOrder", order)
+        );
     }
 
     public Task NotifyOrderStatusChanged(int orderId, OrderStatus status)

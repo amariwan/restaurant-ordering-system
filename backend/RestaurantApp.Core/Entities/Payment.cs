@@ -8,7 +8,7 @@ public class Payment : BaseEntity, IAuditableEntity
     public int OrderId { get; set; }
     public decimal Amount { get; set; }
     public PaymentMethod Method { get; set; }
-    public PaymentStatus Status { get; set; } = PaymentStatus.Unpaid;
+    public PaymentStatus Status { get; set; } = PaymentStatus.Paid;
     public DateTime PaidAt { get; set; } = DateTime.UtcNow;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

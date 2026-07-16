@@ -13,7 +13,7 @@ import Link from 'next/link';
 export default function WaiterDashboard() {
   const { t } = useI18n();
   const { data: orders } = useSuspenseQuery(ordersAllOptions());
-  const { data: tables } = useSuspenseQuery(tablesAllOptions);
+  const { data: tables } = useSuspenseQuery(tablesAllOptions());
 
   const today = new Date().toDateString();
   const todayOrders = orders.items.filter((o) => new Date(o.createdAt).toDateString() === today);
@@ -29,68 +29,76 @@ export default function WaiterDashboard() {
 
   return (
     <div className='space-y-6'>
-      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
-        <Card>
+      <div className='grid grid-cols-2 gap-5 md:grid-cols-4'>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
           <CardContent className='pt-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-muted-foreground'>{t.admin.todaySummary}</p>
-                <p className='text-3xl font-bold mt-1'>{todayOrders.length}</p>
+            <div className='flex items-start justify-between'>
+              <div className='space-y-1'>
+                <p className='text-xs font-medium text-muted-foreground/70 uppercase tracking-wide'>{t.admin.todaySummary}</p>
+                <p className='text-3xl font-bold tracking-tight tabular-nums'>{todayOrders.length}</p>
               </div>
-              <Icons.post className='size-8 text-primary' />
+              <div className='rounded-xl bg-primary/10 p-3 ring-1 ring-primary/10'>
+                <Icons.post className='size-5 text-primary' />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
           <CardContent className='pt-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-muted-foreground'>
+            <div className='flex items-start justify-between'>
+              <div className='space-y-1'>
+                <p className='text-xs font-medium text-muted-foreground/70 uppercase tracking-wide'>
                   {t.orders.status.pending} / {t.orders.status.preparing}
                 </p>
-                <p className='text-3xl font-bold mt-1'>{active}</p>
+                <p className='text-3xl font-bold tracking-tight tabular-nums'>{active}</p>
               </div>
-              <Icons.clock className='size-8 text-yellow-500' />
+              <div className='rounded-xl bg-yellow-100 p-3 ring-1 ring-yellow-200'>
+                <Icons.clock className='size-5 text-yellow-600' />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
           <CardContent className='pt-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-muted-foreground'>{t.orders.status.ready}</p>
-                <p className='text-3xl font-bold mt-1'>{ready}</p>
+            <div className='flex items-start justify-between'>
+              <div className='space-y-1'>
+                <p className='text-xs font-medium text-muted-foreground/70 uppercase tracking-wide'>{t.orders.status.ready}</p>
+                <p className='text-3xl font-bold tracking-tight tabular-nums'>{ready}</p>
               </div>
-              <Icons.check className='size-8 text-green-500' />
+              <div className='rounded-xl bg-green-100 p-3 ring-1 ring-green-200'>
+                <Icons.check className='size-5 text-green-600' />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
           <CardContent className='pt-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-muted-foreground'>{t.admin.activeTables}</p>
-                <p className='text-3xl font-bold mt-1'>
-                  {occupied} / {tables.length}
+            <div className='flex items-start justify-between'>
+              <div className='space-y-1'>
+                <p className='text-xs font-medium text-muted-foreground/70 uppercase tracking-wide'>{t.admin.activeTables}</p>
+                <p className='text-3xl font-bold tracking-tight tabular-nums'>
+                  {occupied} <span className='text-lg font-normal text-muted-foreground'>/ {tables.length}</span>
                 </p>
               </div>
-              <Icons.table className='size-8 text-primary' />
+              <div className='rounded-xl bg-primary/10 p-3 ring-1 ring-primary/10'>
+                <Icons.table className='size-5 text-primary' />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className='flex gap-3'>
-        <Button asChild>
+        <Button asChild className='shadow-sm'>
           <Link href='/menu'>
             <Icons.pizza className='me-2 size-4' />
             {t.orders.createOrder}
           </Link>
         </Button>
-        <Button variant='outline' asChild>
+        <Button variant='outline' asChild className='shadow-xs'>
           <Link href='/orders'>
             <Icons.post className='me-2 size-4' />
             {t.orders.title}
@@ -98,37 +106,38 @@ export default function WaiterDashboard() {
         </Button>
       </div>
 
-      <Card>
+      <Card className='border-0 ring-1 ring-border shadow-sm'>
         <CardHeader>
-          <CardTitle>{t.admin.recentActivity}</CardTitle>
+          <CardTitle className='text-base'>{t.admin.recentActivity}</CardTitle>
           <CardDescription>{t.admin.recentOrdersDesc}</CardDescription>
         </CardHeader>
-        <CardContent className='space-y-1 text-sm'>
+        <CardContent className='space-y-0.5 text-sm'>
           {recent.length === 0 && (
-            <p className='text-muted-foreground py-4 text-center'>{t.orders.noOrders}</p>
+            <p className='text-muted-foreground py-8 text-center'>{t.orders.noOrders}</p>
           )}
           {recent.map((o) => (
             <Link
               key={o.id}
               href={`/orders/${o.id}`}
-              className='flex items-center justify-between gap-2 py-2 border-b last:border-b-0 hover:bg-muted/50 -mx-2 px-2 rounded transition-colors'
+              className='flex items-center justify-between gap-2 py-2.5 border-b border-border/50 last:border-b-0 hover:bg-muted/60 -mx-2 px-2 rounded-lg transition-colors'
             >
-              <div>
-                <span className='font-medium'>
-                  {t.orders.orderNumber}
-                  {o.id}
+              <div className='flex items-center gap-2 min-w-0'>
+                <span className='font-medium truncate'>
+                  #{o.id}
                 </span>
-                <span className='text-muted-foreground ml-2'>
+                <span className='text-muted-foreground shrink-0'>
                   {t.orders.table} {o.tableNumber}
                 </span>
               </div>
-              <Badge variant={STATUS_CONFIG[o.status]?.variant ?? 'secondary'}>
+              <Badge variant={STATUS_CONFIG[o.status]?.variant ?? 'secondary'} className='shrink-0 capitalize'>
                 {t.orders.status[o.status]}
               </Badge>
             </Link>
           ))}
         </CardContent>
       </Card>
+
+
     </div>
   );
 }

@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using RestaurantApp.Core.DTOs.Tables;
 using RestaurantApp.Core.Entities;
 using RestaurantApp.Core.Enums;
 using RestaurantApp.Tests.TestHelpers;
@@ -84,7 +85,7 @@ public class TablesControllerTests : IClassFixture<TestWebApplicationFactory>
         var token = _factory.GenerateJwtToken("admin@test.com", UserRole.Admin);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var payload = new { status = "Occupied" };
+        var payload = new { number = 1, status = "Occupied" };
         var response = await _client.PutJson("/api/tables/1", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -96,7 +97,7 @@ public class TablesControllerTests : IClassFixture<TestWebApplicationFactory>
         var token = _factory.GenerateJwtToken("admin@test.com", UserRole.Admin);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var payload = new { status = "Invalid" };
+        var payload = new { number = 1, status = "Invalid" };
         var response = await _client.PutJson("/api/tables/1", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -108,7 +109,7 @@ public class TablesControllerTests : IClassFixture<TestWebApplicationFactory>
         var token = _factory.GenerateJwtToken("admin@test.com", UserRole.Admin);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var payload = new { status = "Free" };
+        var payload = new { number = 1, status = "Free" };
         var response = await _client.PutJson("/api/tables/99999", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -143,19 +144,3 @@ public class TablesControllerTests : IClassFixture<TestWebApplicationFactory>
     #endregion
 }
 
-internal static class HttpClientExtensions
-{
-    public static async Task<HttpResponseMessage> PostJson<T>(this HttpClient client, string url, T data)
-    {
-        var json = System.Text.Json.JsonSerializer.Serialize(data);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        return await client.PostAsync(url, content);
-    }
-
-    public static async Task<HttpResponseMessage> PutJson<T>(this HttpClient client, string url, T data)
-    {
-        var json = System.Text.Json.JsonSerializer.Serialize(data);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        return await client.PutAsync(url, content);
-    }
-}

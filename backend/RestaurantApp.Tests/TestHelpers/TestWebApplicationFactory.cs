@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantApp.Core.Entities;
@@ -23,14 +25,29 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        // Ensure JWT_SECRET matches GenerateJwtToken so integration tests can validate tokens
+        builder.ConfigureAppConfiguration(config =>
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["JWT_SECRET"] = new string('a', 40),
+                ["JWT_EXPIRY_HOURS"] = "8",
+                ["CORS_ORIGINS"] = "http://localhost:3000"
+            }));
+
         builder.ConfigureServices(services =>
         {
-            // Remove existing DbContext registration
+            // EF Core 10: remove IDbContextOptionsConfiguration<AppDbContext> (holds Npgsql config)
+            // and DbContextOptions<AppDbContext> before re-registering with InMemory provider
+            var efConfigDescriptors = services
+                .Where(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<AppDbContext>))
+                .ToList();
+            foreach (var d in efConfigDescriptors) services.Remove(d);
+
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
             if (descriptor != null) services.Remove(descriptor);
 
-            // Register InMemory database with a unique name per test
+            // Register InMemory database with a unique name per factory instance
             var dbName = Guid.NewGuid().ToString("N");
             services.AddDbContext<AppDbContext>(opts =>
                 opts.UseInMemoryDatabase($"test_{dbName}"));
@@ -59,9 +76,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
     }
 
     /// <summary>Generates a valid JWT token for authentication in tests.</summary>
-    public string GenerateJwtToken(string email, UserRole role, List<string>? additionalClaims = null)
+    public string GenerateJwtToken(string email, UserRole role, int userId = 1, IEnumerable<System.Security.Claims.Claim>? additionalClaims = null)
     {
-        var secretKey = "a".Repeat(40); // Min 32 chars as required
+        var secretKey = new string('a', 40); // must match JWT_SECRET configured above
         var keyBytes = Encoding.UTF8.GetBytes(secretKey);
         var securityKey = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -70,7 +87,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
         {
             new(ClaimTypes.Email, email),
             new(ClaimTypes.Role, role.ToString()),
-            new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
+            new(ClaimTypes.NameIdentifier, userId.ToString())
         };
 
         if (additionalClaims != null)
@@ -92,7 +109,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
         await TestDbContextFactory.SeedSampleData(CreateDbContext());
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_scope != null)
         {
@@ -101,6 +118,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
             await db.DisposeAsync();
             _scope.Dispose();
         }
+        await base.DisposeAsync();
     }
 
     private class NoopOrderNotifier : IOrderNotifier
@@ -118,10 +136,11 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
             Directory.CreateDirectory(_tempDir);
         }
 
-        public async Task<string> UploadAsync(byte[] data, string fileName, string contentType)
+        public async Task<string> UploadFileAsync(Stream stream, string fileName, string contentType)
         {
             var path = Path.Combine(_tempDir, fileName);
-            await File.WriteAllBytesAsync(path, data);
+            using var fs = File.Create(path);
+            await stream.CopyToAsync(fs);
             return $"https://storage.test/images/{fileName}";
         }
 
@@ -135,9 +154,3 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncD
     }
 }
 
-// Helper extension for string repeat (since StringExtensions doesn't exist)
-internal static class StringExtensions
-{
-    public static string Repeat(this string s, int count)
-        => new(s[0], count); // Will fail if empty; tests won't pass empty strings
-}

@@ -28,6 +28,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = RoleConstants.AdminWaiterKitchen)]
     public async Task<IActionResult> GetById(int id)
     {
         var order = await _orderService.GetByIdAsync(id);

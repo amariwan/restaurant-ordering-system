@@ -74,9 +74,12 @@ export function OrdersListing() {
 
   return (
     <div className='space-y-4'>
-      <div className='flex items-center justify-end'>
+      <div className='flex items-center justify-between'>
+        <p className='text-sm text-muted-foreground'>
+          {filtered.length} of {orders.items.length} orders
+        </p>
         <Select value={filter} onValueChange={(v) => setFilter(v as OrderStatusType | 'all')}>
-          <SelectTrigger className='w-44'>
+          <SelectTrigger className='w-40'>
             <SelectValue placeholder={t.common.all} />
           </SelectTrigger>
           <SelectContent>
@@ -90,42 +93,46 @@ export function OrdersListing() {
         </Select>
       </div>
 
-      <Card>
+      <Card className='border-0 ring-1 ring-border shadow-sm overflow-hidden'>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>{t.orders.orderNumber}</TableHead>
-              <TableHead>{t.orders.table}</TableHead>
-              <TableHead>{t.common.status}</TableHead>
-              <TableHead>{t.orders.items}</TableHead>
-              <TableHead className='text-right'>{t.orders.total}</TableHead>
-              <TableHead>{t.orders.date}</TableHead>
-              <TableHead>{t.common.actions}</TableHead>
+            <TableRow className='bg-muted/30'>
+              <TableHead className='font-semibold text-foreground/70'>{t.orders.orderNumber}</TableHead>
+              <TableHead className='font-semibold text-foreground/70'>{t.orders.table}</TableHead>
+              <TableHead className='font-semibold text-foreground/70'>{t.common.status}</TableHead>
+              <TableHead className='font-semibold text-foreground/70'>{t.orders.items}</TableHead>
+              <TableHead className='text-right font-semibold text-foreground/70'>{t.orders.total}</TableHead>
+              <TableHead className='font-semibold text-foreground/70'>{t.orders.date}</TableHead>
+              <TableHead className='font-semibold text-foreground/70'>{t.common.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow key={order.id} className='border-b border-border/30'>
                 <TableCell>
                   <span className='font-medium'>#{order.id}</span>
                 </TableCell>
                 <TableCell>
-                  {t.orders.table} {order.tableNumber}
+                  <span className='inline-flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md text-xs font-medium'>
+                    <Icons.table className='size-3.5' /> {t.orders.table} {order.tableNumber}
+                  </span>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_CONFIG[order.status]?.variant ?? 'default'}>
+                  <Badge variant={STATUS_CONFIG[order.status]?.variant ?? 'default'} className='capitalize shadow-xs'>
                     {t.orders.status[order.status]}
                   </Badge>
                 </TableCell>
-                <TableCell className='text-muted-foreground truncate max-w-48'>
-                  {order.items
-                    .map(
-                      (i) =>
-                        `${locale === 'ku' && i.menuItemNameKu ? i.menuItemNameKu : i.menuItemName} x${i.quantity}`
-                    )
-                    .join(', ')}
+                <TableCell className='text-muted-foreground max-w-48 text-sm'>
+                  <span className='line-clamp-2'>
+                    {order.items
+                      .map(
+                        (i) =>
+                          `${locale === 'ku' && i.menuItemNameKu ? i.menuItemNameKu : i.menuItemName} x${i.quantity}`
+                      )
+                      .join(', ')}
+                  </span>
                 </TableCell>
-                <TableCell className='text-right font-medium'>
+                <TableCell className='text-right font-semibold tabular-nums'>
                   {formatCurrency(order.items.reduce((s, i) => s + i.price * i.quantity, 0))}
                 </TableCell>
                 <TableCell className='text-xs text-muted-foreground'>
@@ -135,7 +142,7 @@ export function OrdersListing() {
                   <div className='flex items-center gap-2'>
                     <Link href={`/orders/${order.id}`}>
                       <Button size='icon' variant='ghost' className='h-8 w-8'>
-                        <Icons.externalLink className='w-4 h-4' />
+                        <Icons.externalLink className='size-4' />
                       </Button>
                     </Link>
                     {role === 'Kitchen' && (
@@ -143,15 +150,16 @@ export function OrdersListing() {
                         {order.status === 'pending' && (
                           <Button
                             size='sm'
+                            className='shadow-xs'
                             disabled={mutation.isPending}
                             onClick={() => {
                               mutation.mutate({ id: order.id, data: { status: 'preparing' } });
                               toast.success(
-                                `${t.orders.orderNumber}${order.id} — ${t.orders.status.preparing}`
+                                `${t.orders.orderNumber} ${order.id} — ${t.orders.status.preparing}`
                               );
                             }}
                           >
-                            <Icons.clock className='mr-1 w-4 h-4' />
+                            <Icons.clock className='mr-1 size-4' />
                             {t.orders.startPreparing}
                           </Button>
                         )}
@@ -159,19 +167,37 @@ export function OrdersListing() {
                           <Button
                             size='sm'
                             variant='secondary'
+                            className='shadow-xs'
                             disabled={mutation.isPending}
                             onClick={() => {
                               mutation.mutate({ id: order.id, data: { status: 'ready' } });
                               toast.success(
-                                `${t.orders.orderNumber}${order.id} — ${t.orders.status.ready}`
+                                `${t.orders.orderNumber} ${order.id} — ${t.orders.status.ready}`
                               );
                             }}
                           >
-                            <Icons.circleCheck className='mr-1 w-4 h-4' />
+                            <Icons.check className='mr-1 size-4' />
                             {t.orders.markReady}
                           </Button>
                         )}
                       </>
+                    )}
+                    {(role === 'Waiter' || role === 'Admin') && order.status === 'ready' && (
+                      <Button
+                        size='sm'
+                        variant='default'
+                        className='shadow-xs'
+                        disabled={mutation.isPending}
+                        onClick={() => {
+                          mutation.mutate({ id: order.id, data: { status: 'served' } });
+                          toast.success(
+                            `${t.orders.orderNumber} ${order.id} — ${t.orders.status.served}`
+                          );
+                        }}
+                      >
+                        <Icons.check className='mr-1 size-4' />
+                        {t.orders.markServed}
+                      </Button>
                     )}
                     {(role === 'Waiter' || role === 'Admin') &&
                       order.status !== 'cancelled' &&
@@ -179,15 +205,16 @@ export function OrdersListing() {
                         <Button
                           size='sm'
                           variant='destructive'
+                          className='shadow-xs'
                           disabled={mutation.isPending}
                           onClick={() => {
                             mutation.mutate({ id: order.id, data: { status: 'cancelled' } });
                             toast.error(
-                              `${t.orders.orderNumber}${order.id} — ${t.orders.status.cancelled}`
+                              `${t.orders.orderNumber} ${order.id} — ${t.orders.status.cancelled}`
                             );
                           }}
                         >
-                          <Icons.circleX className='mr-1 w-4 h-4' />
+                          <Icons.circleX className='mr-1 size-4' />
                           {t.common.cancel}
                         </Button>
                       )}
@@ -197,8 +224,18 @@ export function OrdersListing() {
             ))}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className='text-center py-8 text-muted-foreground'>
-                  {t.orders.noOrders}
+                <TableCell colSpan={7} className='text-center py-16 text-muted-foreground'>
+                  <div className='flex flex-col items-center gap-3'>
+                    <div className='flex size-12 items-center justify-center rounded-full bg-muted/50'>
+                      <Icons.post className='size-6 opacity-40' />
+                    </div>
+                    <span className='font-medium text-sm'>{t.orders.noOrders}</span>
+                    <span className='text-xs text-muted-foreground/60'>
+                      {filter === 'all'
+                        ? 'No orders have been created yet.'
+                        : `No orders with status "${filter}" found.`}
+                    </span>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

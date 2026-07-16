@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 using RestaurantApp.API.Middleware;
 using RestaurantApp.Core.Exceptions;
 
@@ -9,17 +11,13 @@ public class ExceptionMiddlewareTests
     private readonly HttpContext _fakeContext;
     private readonly ExceptionMiddleware _middleware;
 
+    private static readonly NullLogger<ExceptionMiddleware> _logger = NullLogger<ExceptionMiddleware>.Instance;
+
     public ExceptionMiddlewareTests()
     {
-        var featureCollection = new Microsoft.Extensions.Primitives.StringValuesDictionary();
         var httpContext = new DefaultHttpContext();
-
         _fakeContext = httpContext;
-        _middleware = new ExceptionMiddleware(httpContext =>
-        {
-            // Succeed - no exception
-            return Task.CompletedTask;
-        });
+        _middleware = new ExceptionMiddleware(_ => Task.CompletedTask, _logger);
     }
 
     [Fact]
@@ -40,7 +38,7 @@ public class ExceptionMiddlewareTests
         var middleware = new ExceptionMiddleware(ctx =>
         {
             throw new NotFoundException("Item nicht gefunden");
-        });
+        }, _logger);
 
         // Act
         await middleware.InvokeAsync(_fakeContext);
@@ -56,7 +54,7 @@ public class ExceptionMiddlewareTests
         var middleware = new ExceptionMiddleware(ctx =>
         {
             throw new BadRequestException("Ungültige Eingabe");
-        });
+        }, _logger);
 
         // Act
         await middleware.InvokeAsync(_fakeContext);
@@ -71,7 +69,7 @@ public class ExceptionMiddlewareTests
         var middleware = new ExceptionMiddleware(ctx =>
         {
             throw new ForbiddenException("Zugriff verweigert");
-        });
+        }, _logger);
 
         await middleware.InvokeAsync(_fakeContext);
 
@@ -84,7 +82,7 @@ public class ExceptionMiddlewareTests
         var middleware = new ExceptionMiddleware(ctx =>
         {
             throw new ConflictException("Konflikt aufgetreten");
-        });
+        }, _logger);
 
         await middleware.InvokeAsync(_fakeContext);
 
@@ -94,20 +92,11 @@ public class ExceptionMiddlewareTests
     [Fact]
     public async Task Invoke_WithGenericException_Returns500()
     {
-        var middleware = new ExceptionMiddleware(ctx =>
-        {
-            throw new InvalidOperationException("Unerwarteter Fehler");
-        });
-
-        await _middleware.InvokeAsync(_fakeContext);
-        
-        // Note: We need to test the original instance behavior
-        // Let's create a fresh one that throws
         var contextForTest = new DefaultHttpContext();
         var middleware2 = new ExceptionMiddleware(ctx =>
         {
             throw new InvalidOperationException("Unerwarteter Fehler");
-        });
+        }, _logger);
 
         await middleware2.InvokeAsync(contextForTest);
 
@@ -118,15 +107,19 @@ public class ExceptionMiddlewareTests
     public async Task Invoke_WithGenericException_IncludesErrorMessage()
     {
         var context = new DefaultHttpContext();
+        var bodyStream = new System.IO.MemoryStream();
+        context.Response.Body = bodyStream;
+
         var middleware = new ExceptionMiddleware(ctx =>
         {
             throw new InvalidOperationException("Something broke");
-        });
+        }, _logger);
 
         await middleware.InvokeAsync(context);
 
-        var responseBody = await new System.IO.StreamReader(context.Response.Body).ReadToEndAsync();
-        responseBody.Should().Contain("interner Fehler")
-            .Or.Contain("error"); // Accept either German or English message
+        bodyStream.Seek(0, System.IO.SeekOrigin.Begin);
+        var responseBody = await new System.IO.StreamReader(bodyStream).ReadToEndAsync();
+        (responseBody.Contains("interner Fehler", StringComparison.OrdinalIgnoreCase) ||
+         responseBody.Contains("error", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
     }
 }

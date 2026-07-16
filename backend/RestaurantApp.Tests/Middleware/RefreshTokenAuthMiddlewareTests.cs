@@ -1,5 +1,9 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using RestaurantApp.API.Middleware;
+using RestaurantApp.Core.Interfaces;
 using System.Security.Claims;
 
 namespace RestaurantApp.Tests.Middleware;
@@ -7,92 +11,64 @@ namespace RestaurantApp.Tests.Middleware;
 public class RefreshTokenAuthMiddlewareTests
 {
     private readonly HttpContext _fakeContext;
-    private readonly RequestDelegate _next = ctx => Task.CompletedTask;
+    private readonly Mock<IAuthService> _authServiceMock = new();
+    private static readonly NullLogger<RefreshTokenAuthMiddleware> _logger = NullLogger<RefreshTokenAuthMiddleware>.Instance;
 
     public RefreshTokenAuthMiddlewareTests()
     {
-        var httpContext = new DefaultHttpContext();
-        _fakeContext = httpContext;
+        _fakeContext = new DefaultHttpContext();
     }
 
     [Fact]
-    public async Task Invoke_WithRefreshToken_CookiesSetAndNextCalled()
+    public async Task Invoke_SkipsAuthPaths_CallsNextDirectly()
     {
-        // Arrange: simulate unauthenticated request to /api/auth/refresh path
         _fakeContext.Request.Path = "/api/auth/refresh";
         _fakeContext.User = new ClaimsPrincipal(new ClaimsIdentity());
 
-        var middleware = new RefreshTokenAuthMiddleware(_next);
         bool nextCalled = false;
-        var middlewareWithCheck = new MiddlewareWithCheck(_next, () => nextCalled = true);
-        
-        await middlewareWithCheck.InvokeAsync(_fakeContext);
+        var middleware = new RefreshTokenAuthMiddleware(_ => { nextCalled = true; return Task.CompletedTask; }, _logger);
 
-        // Assert: cookies should be set (csrf cookie)
-        _fakeContext.Response.Headers.ContainsKey("Set-Cookie").Should().BeTrue();
+        await middleware.InvokeAsync(_fakeContext, _authServiceMock.Object);
+
+        nextCalled.Should().BeTrue();
+        _authServiceMock.Verify(a => a.RefreshTokenAsync(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
-    public async Task Invoke_WithoutRefreshToken_CookiesNotSet()
+    public async Task Invoke_WithoutRefreshCookie_DoesNotCallAuthService()
     {
-        // Arrange
-        _fakeContext.Request.Path = "/api/auth/login";
+        _fakeContext.Request.Path = "/api/orders";
         _fakeContext.User = new ClaimsPrincipal(new ClaimsIdentity());
 
-        var middleware = new RefreshTokenAuthMiddleware(_next);
-        await middleware.InvokeAsync(_fakeContext);
+        var middleware = new RefreshTokenAuthMiddleware(_ => Task.CompletedTask, _logger);
 
-        // Assert: no cookies for login path
+        await middleware.InvokeAsync(_fakeContext, _authServiceMock.Object);
+
+        _authServiceMock.Verify(a => a.RefreshTokenAsync(It.IsAny<string>()), Times.Never);
         _fakeContext.Response.Headers["Set-Cookie"].Count.Should().Be(0);
     }
 
     [Fact]
-    public async Task Invoke_WithRefreshToken_SetsCsrfCookie()
+    public async Task Invoke_WithAuthorizationHeader_SkipsRefreshLogic()
     {
-        // Arrange
-        _fakeContext.Request.Path = "/api/auth/refresh";
-        _fakeContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+        _fakeContext.Request.Path = "/api/orders";
+        _fakeContext.Request.Headers.Authorization = "Bearer existing_token";
 
-        var middleware = new RefreshTokenAuthMiddleware(_next);
-        await middleware.InvokeAsync(_fakeContext);
+        var middleware = new RefreshTokenAuthMiddleware(_ => Task.CompletedTask, _logger);
 
-        // Assert: Set-Cookie header exists with csrf cookie
-        var cookies = _fakeContext.Response.Headers["Set-Cookie"].ToList();
-        cookies.Should().Contain(c => c.StartsWith("__csrf", StringComparison.Ordinal));
+        await middleware.InvokeAsync(_fakeContext, _authServiceMock.Object);
+
+        _authServiceMock.Verify(a => a.RefreshTokenAsync(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public async Task Invoke_CallsNextDelegate()
     {
-        // Arrange
         bool called = false;
-        var middleware = new RefreshTokenAuthMiddleware(_ => { called = true; return Task.CompletedTask; });
+        var middleware = new RefreshTokenAuthMiddleware(_ => { called = true; return Task.CompletedTask; }, _logger);
 
-        await middleware.InvokeAsync(_fakeContext);
+        await middleware.InvokeAsync(_fakeContext, _authServiceMock.Object);
 
         called.Should().BeTrue();
-    }
-}
-
-// Helper class that captures whether next was called
-internal class MiddlewareWithCheck : IEndpointFilterInvocationDelegate
-{
-    private readonly RequestDelegate _inner;
-    private readonly Action _onNextCalled;
-
-    public MiddlewareWithCheck(RequestDelegate inner, Action onNextCalled)
-    {
-        _inner = inner;
-        _onNextCalled = onNextCalled;
-    }
-
-    public async Task InvokeAsync(HttpContext context, EndpointFilterInvocationDelegate next)
-    {
-        var middleware = new RefreshTokenAuthMiddleware(ctx =>
-        {
-            _onNextCalled();
-            return Task.CompletedTask;
-        });
-        await middleware.InvokeAsync(context);
     }
 }

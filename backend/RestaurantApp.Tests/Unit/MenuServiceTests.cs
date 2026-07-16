@@ -12,9 +12,9 @@ using Xunit;
 
 namespace RestaurantApp.Tests.Unit;
 
-    private static readonly IMapper _mapper = TestDbContextFactory.CreateMapper();
 public class MenuServiceTests
 {
+    private static readonly IMapper _mapper = TestHelpers.TestDbContextFactory.CreateMapper();
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -192,7 +192,7 @@ public class MenuServiceTests
 
         var result = await svc.GetMenuItemsAsync();
 
-        result.Should().HaveCount(3);
+        result.Items.Should().HaveCount(3);
     }
 
     [Fact]
@@ -204,8 +204,8 @@ public class MenuServiceTests
 
         var result = await svc.GetMenuItemsAsync(categoryId: 1);
 
-        result.Should().HaveCount(1);
-        result.First().CategoryId.Should().Be(1);
+        result.Items.Should().HaveCount(1);
+        result.Items.First().CategoryId.Should().Be(1);
     }
 
     [Fact]
@@ -216,10 +216,10 @@ public class MenuServiceTests
         var svc = new MenuService(db, _mapper);
 
         var available = await svc.GetMenuItemsAsync(available: true);
-        available.Should().HaveCount(2);
+        available.Items.Should().HaveCount(2);
 
         var unavailable = await svc.GetMenuItemsAsync(available: false);
-        unavailable.Should().HaveCount(1);
+        unavailable.Items.Should().HaveCount(1);
     }
 
     [Fact]

@@ -36,7 +36,7 @@ public class TablesControllerSupplementaryTests : IClassFixture<TestWebApplicati
     [Fact]
     public async Task UpdateTable_WithoutAuth_Returns401()
     {
-        var payload = new { status = "Free" };
+        var payload = new { number = 1, status = "Free" };
         var response = await _client.PutJson("/api/tables/1", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -66,7 +66,7 @@ public class TablesControllerSupplementaryTests : IClassFixture<TestWebApplicati
         var token = _factory.GenerateJwtToken("waiter@test.com", UserRole.Waiter);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var payload = new { status = "Free" };
+        var payload = new { number = 1, status = "Free" };
         var response = await _client.PutJson("/api/tables/1", payload);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);

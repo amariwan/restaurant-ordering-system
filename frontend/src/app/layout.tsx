@@ -40,7 +40,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en' suppressHydrationWarning data-theme={themeToApply}>
       <head>
-        <Script src='/theme-init.js' strategy='beforeInteractive' />
         <meta name='theme-color' content={META_THEME_COLORS.light} />
       </head>
       <body

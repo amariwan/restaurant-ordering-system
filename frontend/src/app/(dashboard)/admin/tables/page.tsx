@@ -1,27 +1,19 @@
-'use client';
-
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient } from '@/lib/query-client';
 import { tablesAllOptions } from '@/features/restaurant/api/queries';
 import { TablesPage } from '@/features/restaurant/components/tables-page';
-import { IconMapPin } from '@tabler/icons-react';
 import PageContainer from '@/components/layout/page-container';
 
-export default function TablesRoutePage() {
+export default async function TablesRoutePage() {
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(tablesAllOptions);
+  void queryClient.prefetchQuery(tablesAllOptions());
   return (
     <PageContainer
       pageTitle='Tables'
-      pageDescription='Manage restaurant table availability and assignments.'
+      pageDescription='Visual floor plan with drag-to-position, table management, and availability tracking.'
     >
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className='space-y-6'>
-          <div className='flex items-center gap-3'>
-            <IconMapPin className='w-6 h-6' />
-          </div>
-          <TablesPage />
-        </div>
+        <TablesPage />
       </HydrationBoundary>
     </PageContainer>
   );

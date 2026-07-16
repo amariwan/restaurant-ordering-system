@@ -24,7 +24,8 @@ fi
 
 # ── 2. Backend: restore + build ───────────────────────────────────────────────
 echo "=== [2/4] Backend restore + build ==="
-dotnet restore backend/RestaurantApp.sln
+dotnet nuget locals all --clear 2>/dev/null
+dotnet restore backend/RestaurantApp.API/RestaurantApp.API.csproj --no-cache
 dotnet build  backend/RestaurantApp.sln --no-restore --no-incremental -c Debug -q
 
 # ── 3. Frontend: install deps ─────────────────────────────────────────────────

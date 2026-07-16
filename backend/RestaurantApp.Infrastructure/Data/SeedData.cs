@@ -35,25 +35,38 @@ public static class SeedData
         );
 
         // Create categories explicitly (IDs assigned by DB)
-        var starters = new Category { NameEn = "Starters", NameKu = "پێشەکی" };
-        var mains = new Category { NameEn = "Mains", NameKu = "سەرەکی" };
-        var desserts = new Category { NameEn = "Desserts", NameKu = "شیرینی" };
-        var drinks = new Category { NameEn = "Drinks", NameKu = "ڤێرەکان" };
+        var starters = new Category { NameEn = "Starters", NameKu = "پێشەکی", SortOrder = 1 };
+        var mains = new Category { NameEn = "Mains", NameKu = "سەرەکی", SortOrder = 2 };
+        var desserts = new Category { NameEn = "Desserts", NameKu = "شیرینی", SortOrder = 3 };
+        var drinks = new Category { NameEn = "Drinks", NameKu = "ڤێرەکان", SortOrder = 4 };
 
         db.Categories.AddRange(starters, mains, desserts, drinks);
         await db.SaveChangesAsync();
 
         // Now categories have IDs — use them for menu items
         db.MenuItems.AddRange(
-            new MenuItem { Category = starters, NameEn = "Bruschetta", NameKu = "بروسکێتا", Price = 6.50m, Available = true, ImageUrl = "/Images/mixxed.jpeg" },
-            new MenuItem { Category = mains, NameEn = "Margherita Pizza", NameKu = "پیتزای مارجەریتا", Price = 12.00m, Available = true, ImageUrl = "/Images/P ZA.png" },
-            new MenuItem { Category = mains, NameEn = "Grilled Salmon", NameKu = "سەلەمۆنی برژاو", Price = 18.50m, Available = true, ImageUrl = "/Images/Chicken-caesar-salad-in-bowl.webp" },
-            new MenuItem { Category = desserts, NameEn = "Tiramisu", NameKu = "تیرامیسو", Price = 7.00m, Available = true, ImageUrl = "/Images/waffles.jpg" },
-            new MenuItem { Category = drinks, NameEn = "Espresso", NameKu = "ئێسپریسۆ", Price = 2.50m, Available = true, ImageUrl = "/icons/lemon-tea.png" }
+            new MenuItem { Category = starters, NameEn = "Bruschetta", NameKu = "بروسکێتا", Price = 6.50m, Available = true, SortOrder = 1 },
+            new MenuItem { Category = mains, NameEn = "Margherita Pizza", NameKu = "پیتزای مارجەریتا", Price = 12.00m, Available = true, SortOrder = 1 },
+            new MenuItem { Category = mains, NameEn = "Grilled Salmon", NameKu = "سەلەمۆنی برژاو", Price = 18.50m, Available = true, SortOrder = 2 },
+            new MenuItem { Category = desserts, NameEn = "Tiramisu", NameKu = "تیرامیسو", Price = 7.00m, Available = true, SortOrder = 1 },
+            new MenuItem { Category = drinks, NameEn = "Espresso", NameKu = "ئێسپریسۆ", Price = 2.50m, Available = true, SortOrder = 1 }
         );
 
-        for (int i = 1; i <= 10; i++)
-            db.Tables.Add(new Table { Number = i, Status = TableStatus.Free });
+        var tableLayout = new (int num, double x, double y, int cap, string area, int w, int h, TableShape shape, TableType type)[]
+        {
+            (1, 0.10, 0.13, 4, "Main Hall", 72, 72, TableShape.Circle, TableType.Regular),
+            (2, 0.35, 0.13, 4, "Main Hall", 72, 72, TableShape.Circle, TableType.Regular),
+            (3, 0.60, 0.13, 6, "Main Hall", 88, 88, TableShape.Circle, TableType.Regular),
+            (4, 0.10, 0.47, 4, "Main Hall", 72, 72, TableShape.Square, TableType.Regular),
+            (5, 0.35, 0.47, 2, "Main Hall", 72, 72, TableShape.Circle, TableType.Bar),
+            (6, 0.60, 0.47, 4, "Main Hall", 96, 64, TableShape.Rectangle, TableType.Regular),
+            (7, 0.10, 0.83, 4, "Terrace", 72, 72, TableShape.Circle, TableType.Outdoor),
+            (8, 0.35, 0.83, 6, "Terrace", 96, 64, TableShape.Rectangle, TableType.Outdoor),
+            (9, 0.60, 0.83, 8, "Terrace", 96, 64, TableShape.Rectangle, TableType.VIP),
+            (10, 0.85, 0.83, 4, "Terrace", 72, 72, TableShape.Oval, TableType.Outdoor),
+        };
+        foreach (var (num, x, y, cap, area, w, h, shape, type) in tableLayout)
+            db.Tables.Add(new Table { Number = num, PosX = x, PosY = y, Capacity = cap, Area = area, Width = w, Height = h, Shape = shape, Type = type, Status = TableStatus.Free });
 
         await db.SaveChangesAsync();
     }

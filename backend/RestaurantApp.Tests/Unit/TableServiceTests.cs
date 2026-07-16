@@ -12,9 +12,9 @@ using Xunit;
 
 namespace RestaurantApp.Tests.Unit;
 
-    private static readonly IMapper _mapper = TestDbContextFactory.CreateMapper();
 public class TableServiceTests
 {
+    private static readonly IMapper _mapper = TestHelpers.TestDbContextFactory.CreateMapper();
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -147,9 +147,9 @@ public class TableServiceTests
         db.Tables.Add(freeTable);
         await db.SaveChangesAsync();
 
-        await svc.DeleteAsync(50);
+        await svc.DeleteAsync(freeTable.Id);
 
-        var count = await db.Tables.CountAsync(t => t.Id == 50);
+        var count = await db.Tables.CountAsync(t => t.Id == freeTable.Id);
         count.Should().Be(0);
     }
 
@@ -189,5 +189,27 @@ public class TableServiceTests
         table1.Id.Should().Be(1);
         table1.Number.Should().Be(1);
         table1.Status.Should().Be(TableStatus.Free);
+        table1.Capacity.Should().Be(4);
+        table1.PosX.Should().Be(0.10);
+        table1.PosY.Should().Be(0.10);
+        table1.Area.Should().Be("Main Hall");
+    }
+
+    [Fact]
+    public async Task GetAllAsync_DtoHasNewFieldsWithDefaults()
+    {
+        using var db = CreateContext();
+        await TestHelpers.TestDbContextFactory.SeedSampleData(db);
+        var svc = new TableService(db, _mapper);
+
+        var result = await svc.GetAllAsync();
+
+        var table1 = result.First(t => t.Number == 1);
+        table1.Shape.Should().Be("Circle");
+        table1.Width.Should().Be(72);
+        table1.Height.Should().Be(72);
+        table1.Rotation.Should().Be(0);
+        table1.Type.Should().Be("Regular");
+        table1.IsActive.Should().BeTrue();
     }
 }

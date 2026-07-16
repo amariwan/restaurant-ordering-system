@@ -15,4 +15,7 @@ public interface IMenuService
     Task<MenuItemDto> CreateMenuItemAsync(MenuItemRequest request);
     Task<MenuItemDto> UpdateMenuItemAsync(int id, MenuItemRequest request);
     Task DeleteMenuItemAsync(int id);
+
+    Task ReorderCategoriesAsync(List<ReorderItemRequest> items);
+    Task ReorderMenuItemsAsync(List<ReorderItemRequest> items);
 }

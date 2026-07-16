@@ -67,49 +67,60 @@ export default function ProfileViewPage() {
 
   return (
     <PageContainer pageTitle={t.profile.title} pageDescription={t.common.description}>
-      <div className='space-y-6'>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between'>
-            <div>
-              <CardTitle>{t.profileView.accountInfo}</CardTitle>
-              <CardDescription>{t.profileView.accountDesc}</CardDescription>
+      <div className='space-y-6 max-w-2xl'>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
+          <CardHeader className='flex flex-row items-center justify-between border-b border-border/50 bg-muted/20'>
+            <div className='flex items-center gap-3'>
+              <div className='rounded-full bg-primary/10 p-2.5'>
+                <Icons.user className='w-5 h-5 text-primary' />
+              </div>
+              <div>
+                <CardTitle className='text-base'>{t.profileView.accountInfo}</CardTitle>
+                <CardDescription>{t.profileView.accountDesc}</CardDescription>
+              </div>
             </div>
             {!editing && (
-              <Button variant='outline' size='sm' onClick={startEditing}>
-                <Icons.edit className='mr-2 h-4 w-4' />
+              <Button variant='outline' size='sm' onClick={startEditing} className='shadow-xs'>
+                <Icons.edit className='mr-1.5 h-3.5 w-3.5' />
                 Edit
               </Button>
             )}
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label>Name</Label>
-              <Input
-                value={editing ? name : user.name || ''}
-                onChange={(e) => setName(e.target.value)}
-                readOnly={!editing}
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label>Email</Label>
-              <Input
-                value={editing ? email : user.email || ''}
-                onChange={(e) => setEmail(e.target.value)}
-                readOnly={!editing}
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label>Role</Label>
-              <Input value={user.role || 'user'} readOnly />
+          <CardContent className='space-y-5 pt-5'>
+            <div className='grid gap-5 sm:grid-cols-2'>
+              <div className='space-y-2'>
+                <Label className='text-xs font-semibold text-foreground/70 uppercase tracking-wide'>Name</Label>
+                <Input
+                  value={editing ? name : user.name || ''}
+                  onChange={(e) => setName(e.target.value)}
+                  readOnly={!editing}
+                  className={!editing ? 'bg-muted/30 ring-1 ring-border/50' : ''}
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label className='text-xs font-semibold text-foreground/70 uppercase tracking-wide'>Email</Label>
+                <Input
+                  value={editing ? email : user.email || ''}
+                  onChange={(e) => setEmail(e.target.value)}
+                  readOnly={!editing}
+                  className={!editing ? 'bg-muted/30 ring-1 ring-border/50' : ''}
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label className='text-xs font-semibold text-foreground/70 uppercase tracking-wide'>Role</Label>
+                <div className='flex h-9 w-full items-center rounded-lg bg-muted/30 px-3 ring-1 ring-border/50 text-sm font-medium capitalize'>
+                  {user.role || 'user'}
+                </div>
+              </div>
             </div>
             {editing && (
-              <div className='flex gap-2 pt-2'>
-                <Button onClick={save} isLoading={saving}>
-                  <Icons.check className='mr-2 h-4 w-4' />
+              <div className='flex gap-3 pt-2 border-t border-border/50'>
+                <Button onClick={save} isLoading={saving} size='sm'>
+                  <Icons.check className='mr-1.5 h-4 w-4' />
                   Save
                 </Button>
-                <Button variant='outline' onClick={cancelEditing} disabled={saving}>
-                  <Icons.close className='mr-2 h-4 w-4' />
+                <Button variant='outline' size='sm' onClick={cancelEditing} disabled={saving}>
+                  <Icons.close className='mr-1.5 h-4 w-4' />
                   Cancel
                 </Button>
               </div>
@@ -117,44 +128,56 @@ export default function ProfileViewPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t.profileView.changePasswordCard}</CardTitle>
-            <CardDescription>{t.profileView.pwDesc}</CardDescription>
+        <Card className='border-0 ring-1 ring-border shadow-sm'>
+          <CardHeader className='border-b border-border/50 bg-muted/20'>
+            <div className='flex items-center gap-3'>
+              <div className='rounded-full bg-amber-100 p-2.5'>
+                <Icons.lock className='w-5 h-5 text-amber-600' />
+              </div>
+              <div>
+                <CardTitle className='text-base'>{t.profileView.changePasswordCard}</CardTitle>
+                <CardDescription>{t.profileView.pwDesc}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label>Current Password</Label>
-              <Input
-                type='password'
-                value={pwCurrent}
-                onChange={(e) => setPwCurrent(e.target.value)}
-              />
+          <CardContent className='space-y-5 pt-5'>
+            <div className='grid gap-5 sm:grid-cols-2'>
+              <div className='space-y-2'>
+                <Label className='text-xs font-semibold text-foreground/70 uppercase tracking-wide'>Current Password</Label>
+                <Input
+                  type='password'
+                  value={pwCurrent}
+                  onChange={(e) => setPwCurrent(e.target.value)}
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label className='text-xs font-semibold text-foreground/70 uppercase tracking-wide'>New Password</Label>
+                <Input type='password' value={pwNew} onChange={(e) => setPwNew(e.target.value)} />
+              </div>
             </div>
-            <div className='space-y-2'>
-              <Label>New Password</Label>
-              <Input type='password' value={pwNew} onChange={(e) => setPwNew(e.target.value)} />
+            <div className='flex justify-end pt-2 border-t border-border/50'>
+              <Button
+                size='sm'
+                isLoading={pwSaving}
+                disabled={!pwCurrent || !pwNew}
+                onClick={async () => {
+                  setPwSaving(true);
+                  try {
+                    await authChangePassword({ currentPassword: pwCurrent, newPassword: pwNew });
+                    toast.success(t.profile.passwordChanged);
+                    setPwCurrent('');
+                    setPwNew('');
+                  } catch (err: unknown) {
+                    toast.error(err instanceof Error ? err.message : t.common.error);
+                  } finally {
+                    setPwSaving(false);
+                  }
+                }}
+              >
+                <Icons.lock className='mr-1.5 h-4 w-4' />
+                Update Password
+              </Button>
             </div>
-            <Button
-              isLoading={pwSaving}
-              disabled={!pwCurrent || !pwNew}
-              onClick={async () => {
-                setPwSaving(true);
-                try {
-                  await authChangePassword({ currentPassword: pwCurrent, newPassword: pwNew });
-                  toast.success(t.profile.passwordChanged);
-                  setPwCurrent('');
-                  setPwNew('');
-                } catch (err: unknown) {
-                  toast.error(err instanceof Error ? err.message : t.common.error);
-                } finally {
-                  setPwSaving(false);
-                }
-              }}
-            >
-              <Icons.lock className='mr-2 h-4 w-4' />
-              Update Password
-            </Button>
           </CardContent>
         </Card>
       </div>

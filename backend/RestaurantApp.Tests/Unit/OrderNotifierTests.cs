@@ -27,7 +27,7 @@ public class OrderNotifierTests
     public async Task NotifyNewOrder_SendsToKitchenGroup()
     {
         _clientsMock.Setup(c => c.Group("kitchen")).Returns(_clientProxyMock.Object);
-        var dto = new OrderDto { Id = 1 };
+        var dto = new OrderDto { Id = 1, Items = [] };
 
         await _notifier.NotifyNewOrder(dto);
 
@@ -58,7 +58,7 @@ public class OrderNotifierTests
     {
         _clientsMock.Setup(c => c.Group("kitchen")).Returns(_clientProxyMock.Object);
 
-        await _notifier.NotifyNewOrder(new OrderDto());
+        await _notifier.NotifyNewOrder(new OrderDto { Items = [] });
 
         _clientProxyMock.Verify(
             p => p.SendAsync("NewOrder", It.IsAny<OrderDto>(), default),

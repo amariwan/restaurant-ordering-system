@@ -1,6 +1,7 @@
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nProvider } from '@/lib/i18n/context';
 
 function createTestQueryClient() {
   return new QueryClient({
@@ -19,7 +20,11 @@ function render(ui: ReactElement, options?: CustomRenderOptions) {
   const queryClient = options?.queryClient ?? createTestQueryClient();
 
   function Wrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+    return (
+      <I18nProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </I18nProvider>
+    );
   }
 
   return {

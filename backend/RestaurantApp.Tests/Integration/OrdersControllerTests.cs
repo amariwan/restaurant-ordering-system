@@ -304,20 +304,3 @@ public class OrdersControllerTests : IClassFixture<TestWebApplicationFactory>
     #endregion
 }
 
-// Extension methods for HTTP helpers
-internal static class HttpClientExtensions
-{
-    public static async Task<HttpResponseMessage> PostJson<T>(this HttpClient client, string url, T data)
-    {
-        var json = System.Text.Json.JsonSerializer.Serialize(data);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        return await client.PostAsync(url, content);
-    }
-
-    public static async Task<HttpResponseMessage> PutJson<T>(this HttpClient client, string url, T data)
-    {
-        var json = System.Text.Json.JsonSerializer.Serialize(data);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        return await client.PutAsync(url, content);
-    }
-}

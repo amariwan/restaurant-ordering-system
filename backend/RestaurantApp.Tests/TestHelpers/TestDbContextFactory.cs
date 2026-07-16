@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using RestaurantApp.Core.Entities;
 using RestaurantApp.Core.Enums;
 using RestaurantApp.Core.Interfaces;
@@ -38,23 +39,25 @@ public static class TestDbContextFactory
         await db.SaveChangesAsync();
 
         db.Tables.AddRange(
-            new RestaurantApp.Core.Entities.Table { Number = 1, Status = TableStatus.Free },
-            new RestaurantApp.Core.Entities.Table { Number = 2, Status = TableStatus.Occupied }
+            new RestaurantApp.Core.Entities.Table { Number = 1, PosX = 0.10, PosY = 0.10, Capacity = 4, Area = "Main Hall", Status = TableStatus.Free },
+            new RestaurantApp.Core.Entities.Table { Number = 2, PosX = 0.30, PosY = 0.10, Capacity = 2, Area = "Main Hall", Status = TableStatus.Occupied }
         );
         await db.SaveChangesAsync();
 
+        // Work factor 4 is the minimum and fastest for tests
+        const string TestPassword = "TestPass123!";
         var adminUser = new RestaurantApp.Core.Entities.User
         {
             Name = "Admin",
             Email = "admin@test.com",
-            PasswordHash = "$2a$12$abc123",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(TestPassword, 4),
             Role = UserRole.Admin
         };
         var waiterUser = new RestaurantApp.Core.Entities.User
         {
             Name = "Waiter",
             Email = "waiter@test.com",
-            PasswordHash = "$2a$12$abc123",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(TestPassword, 4),
             Role = UserRole.Waiter
         };
 
@@ -62,7 +65,7 @@ public static class TestDbContextFactory
         await db.SaveChangesAsync();
     }
 
-    public static IMapper CreateMapper() => new MapperConfiguration(cfg => cfg.AddProfile<MappingProfiles>()).CreateMapper();
+    public static IMapper CreateMapper() => new MapperConfiguration(cfg => cfg.AddProfile<MappingProfiles>(), NullLoggerFactory.Instance).CreateMapper();
 
     public static IOrderNotifier CreateNoopNotifier() => new NoopOrderNotifier();
 

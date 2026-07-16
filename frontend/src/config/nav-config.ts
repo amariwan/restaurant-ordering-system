@@ -8,7 +8,7 @@ export const navGroups: NavGroup[] = [
       {
         title: 'Dashboard',
         navKey: 'dashboard',
-        url: '/dashboard',
+        url: '/admin',
         icon: 'dashboard',
         isActive: false
       },
@@ -17,6 +17,13 @@ export const navGroups: NavGroup[] = [
         navKey: 'orders',
         url: '/orders',
         icon: 'post',
+        isActive: false
+      },
+      {
+        title: 'Board',
+        navKey: 'board',
+        url: '/orders/board',
+        icon: 'kanban',
         isActive: false
       },
       {
@@ -32,13 +39,6 @@ export const navGroups: NavGroup[] = [
         url: '/menu',
         icon: 'pizza',
         isActive: false
-      },
-      {
-        title: 'Tables',
-        navKey: 'tables',
-        url: '/admin/tables',
-        icon: 'table',
-        isActive: false
       }
     ]
   },
@@ -52,13 +52,6 @@ export const navGroups: NavGroup[] = [
         url: '/kitchen',
         icon: 'chefHat',
         isActive: false
-      },
-      {
-        title: 'Manage Menu',
-        navKey: 'manageMenu',
-        url: '/admin/menu',
-        icon: 'product',
-        isActive: false
       }
     ]
   },
@@ -66,6 +59,20 @@ export const navGroups: NavGroup[] = [
     label: 'Administration',
     labelKey: 'administration',
     items: [
+      {
+        title: 'Tables',
+        navKey: 'tables',
+        url: '/admin/tables',
+        icon: 'table',
+        isActive: false
+      },
+      {
+        title: 'Manage Menu',
+        navKey: 'manageMenu',
+        url: '/admin/menu',
+        icon: 'product',
+        isActive: false
+      },
       {
         title: 'Users',
         navKey: 'users',

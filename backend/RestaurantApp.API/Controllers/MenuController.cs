@@ -50,6 +50,14 @@ public class MenuController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("categories/reorder")]
+    [Authorize(Roles = RoleConstants.Admin)]
+    public async Task<IActionResult> ReorderCategories([FromBody] List<ReorderItemRequest> items)
+    {
+        await _menuService.ReorderCategoriesAsync(items);
+        return Ok();
+    }
+
     [HttpPost("upload-image")]
     [Authorize(Roles = RoleConstants.Admin)]
     public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
@@ -110,5 +118,13 @@ public class MenuController : ControllerBase
     {
         await _menuService.DeleteMenuItemAsync(id);
         return NoContent();
+    }
+
+    [HttpPatch("items/reorder")]
+    [Authorize(Roles = RoleConstants.Admin)]
+    public async Task<IActionResult> ReorderMenuItems([FromBody] List<ReorderItemRequest> items)
+    {
+        await _menuService.ReorderMenuItemsAsync(items);
+        return Ok();
     }
 }

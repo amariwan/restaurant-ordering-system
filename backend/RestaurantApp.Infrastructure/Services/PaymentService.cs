@@ -56,6 +56,12 @@ public class PaymentService : IPaymentService
             PaidAt = DateTime.UtcNow
         };
 
+        var newPaid = alreadyPaid + request.Amount;
+        if (newPaid >= total - 0.01m)
+            order.PaymentStatus = PaymentStatus.Paid;
+        else if (newPaid > 0m)
+            order.PaymentStatus = PaymentStatus.PartiallyPaid;
+
         _db.Payments.Add(payment);
         await _db.SaveChangesAsync();
 

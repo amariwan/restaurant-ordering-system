@@ -31,6 +31,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useFilteredNavGroups } from '@/hooks/use-nav';
 import { signOut } from '@/lib/auth/client';
 import { useI18n } from '@/lib/i18n/context';
+import type { User } from '@/features/restaurant/api/types';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
@@ -41,10 +42,15 @@ export default function AppSidebar() {
   const { isOpen: _isOpen } = useMediaQuery();
   const router = useRouter();
   const filteredGroups = useFilteredNavGroups(navGroups);
-  const user = getUser();
-  const role = parseRole();
+  const [user, setUser] = React.useState<User | null>(null);
+  const [role, setRole] = React.useState<string | null>(null);
   const { t, dir } = useI18n();
   const nav = t.nav as Record<string, string>;
+
+  React.useEffect(() => {
+    setUser(getUser());
+    setRole(parseRole());
+  }, []);
 
   return (
     <Sidebar collapsible='icon' side={dir === 'rtl' ? 'right' : 'left'}>
@@ -53,7 +59,7 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
               <Link href='/admin'>
-                <div className='bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
+                <div className='bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg shadow-sm'>
                   <Icons.pizza className='size-4' />
                 </div>
                 <div className='grid flex-1 text-start text-sm leading-tight'>
@@ -130,69 +136,77 @@ export default function AppSidebar() {
           );
         })}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size='lg'
-                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                >
-                  <Icons.user className='size-4 shrink-0' />
-                  <div className='grid flex-1 text-start text-sm leading-tight'>
-                    <span suppressHydrationWarning className='truncate font-semibold'>
-                      {user?.name || 'User'}
-                    </span>
-                    <span
-                      suppressHydrationWarning
-                      className='truncate text-xs capitalize text-muted-foreground'
-                    >
-                      {role || '—'}
-                    </span>
-                  </div>
-                  <Icons.chevronsDown className='ms-auto size-4' />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-                side='bottom'
-                align='end'
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='flex items-center gap-2 px-1 py-1.5 text-start text-sm'>
-                    <Icons.user className='size-4 shrink-0' />
-                    <div className='grid flex-1 text-start text-sm leading-tight'>
-                      <span className='truncate font-semibold'>{user?.name || 'User'}</span>
-                      <span className='truncate text-xs text-muted-foreground'>{user?.email}</span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => router.push('/profile')}>
-                    <Icons.user className='me-2 h-4 w-4' />
-                    {t.nav.profile}
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Button
-                    variant='ghost'
-                    className='p-0 w-full h-auto justify-start text-destructive hover:text-destructive'
-                    onClick={() => signOut({ redirectTo: '/' })}
+      {user && (
+        <SidebarFooter className='border-t'>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size='lg'
+                    className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                   >
-                    <Icons.logout className='me-2 h-4 w-4' />
-                    {t.nav.logout}
-                  </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+                    <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground'>
+                      <Icons.user className='size-4 shrink-0' />
+                    </div>
+                    <div className='grid flex-1 text-start text-sm leading-tight'>
+                      <span suppressHydrationWarning className='truncate font-semibold'>
+                        {user?.name}
+                      </span>
+                      <span
+                        suppressHydrationWarning
+                        className='truncate text-xs capitalize text-muted-foreground'
+                      >
+                        {role}
+                      </span>
+                    </div>
+                    <Icons.chevronsDown className='ms-auto size-4' />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
+                  side='bottom'
+                  align='end'
+                  sideOffset={4}
+                >
+                  <DropdownMenuLabel className='p-0 font-normal'>
+                    <div className='flex items-center gap-3 px-2 py-2 text-start text-sm'>
+                      <div className='flex aspect-square size-9 items-center justify-center rounded-full bg-sidebar-accent'>
+                        <Icons.user className='size-4 shrink-0' />
+                      </div>
+                      <div className='grid flex-1 text-start text-sm leading-tight'>
+                        <span className='truncate font-semibold'>{user?.name}</span>
+                        <span className='truncate text-xs text-muted-foreground'>
+                          {user?.email}
+                        </span>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => router.push('/profile')}>
+                      <Icons.user className='me-2 h-4 w-4' />
+                      {t.nav.profile}
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Button
+                      variant='ghost'
+                      className='p-0 w-full h-auto justify-start text-destructive hover:text-destructive'
+                      onClick={() => signOut({ redirectTo: '/' })}
+                    >
+                      <Icons.logout className='me-2 h-4 w-4' />
+                      {t.nav.logout}
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
       <SidebarRail />
     </Sidebar>
   );

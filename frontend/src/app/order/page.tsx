@@ -46,7 +46,7 @@ export default function SelfOrderPage() {
   const toast = useToast();
   const mutation = useOrdersCreateMutation();
 
-  const { data: tables, isLoading: tablesLoading } = useQuery(tablesAllOptions);
+  const { data: tables, isLoading: tablesLoading } = useQuery(tablesAllOptions());
   const { data: categories } = useQuery(menuCategoriesOptions);
   const { data: menuData, isLoading: menuLoading } = useQuery(menuItemsOptions());
 
@@ -526,9 +526,9 @@ function MenuGrid({
 }: MenuGridProps) {
   if (isLoading) {
     return (
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className='animate-pulse rounded-xl bg-muted h-52' />
+          <div key={i} className='animate-pulse rounded-xl bg-muted h-52 ring-1 ring-border' />
         ))}
       </div>
     );
@@ -537,20 +537,22 @@ function MenuGrid({
   if (items.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center py-16 text-muted-foreground'>
-        <IconGrillFork className='mb-3 size-10 opacity-30' />
-        <p className='text-sm'>{noItemsLabel}</p>
+        <div className='rounded-full bg-muted p-4 mb-3'>
+          <IconGrillFork className='size-8 opacity-50' />
+        </div>
+        <p className='text-sm font-medium'>{noItemsLabel}</p>
       </div>
     );
   }
 
   return (
-    <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
       {items.map((item) => (
-        <Card key={item.id} className='overflow-hidden transition-shadow hover:shadow-md'>
-          <div className='relative h-36 bg-muted'>
+        <Card key={item.id} className='group/card overflow-hidden border-0 ring-1 ring-border shadow-sm hover:shadow-lg transition-all duration-300'>
+          <div className='relative h-40 bg-muted overflow-hidden'>
             {imageErrors.has(item.id) || !item.imageUrl ? (
-              <div className='flex h-full items-center justify-center text-muted-foreground'>
-                <IconPhoto className='size-8' />
+              <div className='flex h-full items-center justify-center text-muted-foreground/40'>
+                <IconPhoto className='size-10' />
               </div>
             ) : (
               <Image
@@ -558,28 +560,31 @@ function MenuGrid({
                 src={item.imageUrl}
                 alt={localizedValue(item, 'name', locale)}
                 fill
-                className='object-cover'
+                className='object-cover transition-transform duration-500 group-hover/card:scale-110'
                 sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 onError={() => setImageErrors((prev) => new Set(prev).add(item.id))}
               />
             )}
+            <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent' />
           </div>
-          <CardContent className='p-3'>
-            <h3 className='truncate text-sm font-semibold'>
-              {localizedValue(item, 'name', locale)}
-            </h3>
-            <p className='text-xs text-muted-foreground'>
+          <CardContent className='space-y-2 pt-4'>
+            <div className='flex items-start justify-between gap-2'>
+              <h3 className='text-sm font-semibold tracking-tight'>
+                {localizedValue(item, 'name', locale)}
+              </h3>
+              <span className='text-sm font-bold text-primary shrink-0 tabular-nums'>{formatCurrency(item.price)}</span>
+            </div>
+            <p className='text-xs font-medium text-muted-foreground/70'>
               {localizedValue(item, 'categoryName', locale)}
             </p>
             {localizedValue(item, 'description', locale) && (
-              <p className='mt-1 line-clamp-2 text-xs text-muted-foreground'>
+              <p className='line-clamp-2 text-xs text-muted-foreground/80 leading-relaxed'>
                 {localizedValue(item, 'description', locale)}
               </p>
             )}
-            <div className='mt-3 flex items-center justify-between'>
-              <span className='text-sm font-bold'>{formatCurrency(item.price)}</span>
-              <Button size='sm' className='h-8 gap-1' onClick={() => onAdd(item)}>
-                <IconPlus className='size-3' />
+            <div className='pt-1'>
+              <Button size='sm' className='w-full' onClick={() => onAdd(item)}>
+                <IconPlus className='mr-1.5 size-3.5' />
                 {addLabel}
               </Button>
             </div>

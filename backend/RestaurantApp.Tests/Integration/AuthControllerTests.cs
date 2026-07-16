@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RestaurantApp.Core.DTOs.Auth;
+using RestaurantApp.Core.DTOs.Users;
 using RestaurantApp.Core.Entities;
 using RestaurantApp.Core.Enums;
 using RestaurantApp.Tests.TestHelpers;
@@ -49,7 +50,7 @@ public class AuthControllerTests : IClassFixture<TestWebApplicationFactory>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         body.Should().NotBeNull();
-        body!.AccessToken.Should().NotBeNullOrEmpty();
+        body!.Token.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -120,7 +121,7 @@ public class AuthControllerTests : IClassFixture<TestWebApplicationFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var body = await response.Content.ReadFromJsonAsync<AuthResponse>();
         body.Should().NotBeNull();
-        body!.AccessToken.Should().NotBeNullOrEmpty();
+        body!.Token.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -193,8 +194,19 @@ public class AuthControllerTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task Me_WithValidAdminToken_Returns200WithUser()
     {
-        // Arrange
-        var token = _factory.GenerateJwtToken("admin@test.com", UserRole.Admin);
+        // Arrange: create the user in DB so GetCurrentUserAsync can find them by ID
+        var db = _factory.CreateDbContext();
+        var user = new User
+        {
+            Name = "Admin User",
+            Email = "me-admin@test.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("TestPass123!", 4),
+            Role = UserRole.Admin
+        };
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+
+        var token = _factory.GenerateJwtToken("me-admin@test.com", UserRole.Admin, user.Id);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
@@ -204,7 +216,7 @@ public class AuthControllerTests : IClassFixture<TestWebApplicationFactory>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         body.Should().NotBeNull();
-        body!.Email.Should().Be("admin@test.com");
+        body!.Email.Should().Be("me-admin@test.com");
     }
 
     [Fact]
@@ -272,7 +284,7 @@ public class AuthControllerTests : IClassFixture<TestWebApplicationFactory>
     #endregion
 }
 
-// Extension method for JSON posting
+// Extension methods for JSON posting/putting in integration tests
 internal static class HttpClientExtensions
 {
     public static async Task<HttpResponseMessage> PostJson<T>(this HttpClient client, string url, T data)
@@ -280,5 +292,12 @@ internal static class HttpClientExtensions
         var json = System.Text.Json.JsonSerializer.Serialize(data);
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
         return await client.PostAsync(url, content);
+    }
+
+    public static async Task<HttpResponseMessage> PutJson<T>(this HttpClient client, string url, T data)
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(data);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        return await client.PutAsync(url, content);
     }
 }
